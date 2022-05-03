@@ -43,6 +43,7 @@ public class HelloServlet extends HttpServlet {
 ## 쓰레드
 
 ### 요청 마다 쓰레드 생성
+![](img/01_thread.png)
 - 장점
   - 동시 요청을 처리할 수 있다.
   - 리소스(CPU, 메모리)가 허용할 때 까지 처리가능
@@ -53,6 +54,7 @@ public class HelloServlet extends HttpServlet {
   - 쓰레드 생성에 제한이 없다 -> 고객 요청이 너무 많이 오면, CPU, 메모리 임게점을 넘어서 서버가 다운될 수 있다.
 
 ### 쓰레드 풀
+![](img/02_thread.png)
 - 특징
   - 필요한 쓰레드를 쓰레드 풀에 보관하고 관리한다.
   - 쓰레드 풀에 생성 가능한 쓰레드의 최대치를 관리한다.
