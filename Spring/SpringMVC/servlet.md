@@ -104,6 +104,15 @@ HttpServletRequest 객체는 추가로 여러가지 부가기능도 함께 제�
 	- ```request.getSession(create: true)```
 ---
 
+```java
+printStartLine(request); // START LINE 정보
+printHeaders(request); // Header 정보
+printHeaderUtils(request);
+printEtc(request);
+```
+
+
+
 ### HTTP 요청 데이터 - 개요
 
 HTTP 요청 메시지를 통해 클라이언트에서 서버로 데이터를 전달하는 방법 3가지
@@ -224,6 +233,116 @@ public class HelloData {
  
  JSON 결과를 파싱해서 사용할 수 있는 자바 객체로 변환하려면, Jackson, Gson 같은 JSON 변환 라이브러리를 추가해서 사용해야 한다.  
  스프링 부트로 Spring MVC를 선택하면 기본으로 Jackson 라이브러리 (ObjectMapper)를 함께 제공한다.
+ 
+ ---
+ 
+ ## HttpServletResponse - 기본 사용법
+ 
+ ### HttpServletResponse 역할
+ 
+ - HTTP 응답 메시지 생성
+ - HTTP 응답 코드 지정
+ - 헤더 생성
+ - 바디 생성
+
+ 편의 기능 제공
+
+ - Content-Type, 쿠키, Redirect
+
+ ```java
+ //[status-line]
+ response.setStatus(HttpServletResponse.SC_OK); //200
+  
+ //[response-headers]
+ response.setHeader("Content-Type", "text/plain;charset=utf-8");
+ response.setHeader("Cache-Control", "no-cache, no-store, mustrevalidate");
+ response.setHeader("Pragma", "no-cache");
+ response.setHeader("my-header","hello");
+  
+ //[Header 편의 메서드]
+ content(response);
+ cookie(response);
+ redirect(response); 
+
+ //[message body]
+ PrintWriter writer = response.getWriter();
+ writer.println("ok");
+ ```
+---
+
+### HTTP 응답 데이터 - 단순 텍스트, HTML
+
+HTTP 응답 메시지는 주로 다음 내용을 담아서 전달한다.
+
+- 단순 텍스트 응답
+	- writer.println("ok");
+- HTML 응답
+- HTTP API - MessageBody JSON 응답
+
+HttpServletResponse - HTML 응답
+
+```java
+
+response.setContentType("text/html");
+response.setCharacterEncoding("utf-8");
+ 
+PrintWriter writer = response.getWriter();
+
+writer.println("<html>");
+writer.println("<body>");
+writer.println(" <div>안녕?</div>");
+writer.println("</body>");
+writer.println("</html>");
+```
+
+#
+
+### HTTP 응답 데이터 - API JSON
+
+```java
+private ObjectMapper objectMapper = new ObjectMapper();
+
+//Content-Type: application/json
+ response.setHeader("content-type", "application/json");
+ response.setCharacterEncoding("utf-8");
+ 
+ HelloData data = new HelloData();
+ data.setUsername("kim");
+ data.setAge(20);
+ 
+ //{"username":"kim","age":20}
+ String result = objectMapper.writeValueAsString(data);
+ 
+ response.getWriter().write(result);
+ ```
+ 
+ HTTP응답으로 JSON을 반환할 때는 content-type을 application/json으로 지정해야 한다.
+ Jackson 라이브러리가 제공하는 objectMapper.writeValueAsString()을 사용하면 객체를 JSON 문자로 변경할 수 있다.
+ 
+ ---
+ ### 정리
+ 
+ 클라이언트에서 서버로 데이터를 보내는 방법은 딱 세가지다.
+ 
+ - GET - 쿼리 파라미터 (/url?usernane=hello&age=20)
+ - POST - HTML Form (content-type: application/x-www-form-urlencoded)
+ - HTTP message body에 데이터를 직접 담아서 요청 (HTTP API에서 주로 사용, 주로 JSON)
+ 
+ 그 중에서도 GET 쿼리 파라미터 방식과 POST HTML Form 방식은 모양이 똑같아서  
+ 서버에서 읽을 때 request.getParameter 메소드로 두 가지 방식 다 데이터를 읽을 수 있다.
+ 
+ ---
+ ### Reference
+- [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard)
+ 
+ 
+ 
+ 
+
+
+
+
+
  
  
  
