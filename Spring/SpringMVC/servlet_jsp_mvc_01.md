@@ -76,8 +76,8 @@ public class MemberRepository {
 }
 ```
 
-회원 저장소는 싱글톤 패턴을 적용해서 설계한다. 현재는 스프링 없이 순수 서블릿으로 설계하는 것이 목표이다.  
-객체를 단 하나만 생성해서 공유해야 하기 때문에 생성자를 private 접근자로 막아둔다.
+- 회원 저장소는 싱글톤 패턴을 적용해서 설계한다. 현재는 스프링 없이 순수 서블릿으로 설계하는 것이 목표이다.
+- 객체를 단 하나만 생성해서 공유해야 하기 때문에 생성자를 private 접근자로 막아둔다.
 
 ### 회원 저장소 테스트 
 ```java
@@ -174,27 +174,139 @@ public class MemberFormServlet extends HttpServlet {
 ![](img/servlet_jsp_mvc_01.PNG)
 ![](img/servlet_jsp_mvc_02.PNG)
 
-- 저장 버튼을 누르면 action 경로인 servlet/members/save 경로로 메소드 post 요청을 보내게 설계했다.
-- html 코드를 짜 봤는데 서블릿, 순수 자바로 코드를 짜려니까 너무 불편하다.
+- 저장 버튼을 누르면 action 경로인 servlet/members/save 경로로 메소드 post 요청을 보내도록 설계했다.
+- HTML 코드를 짜 봤는데 순수 자바로 코드를 짜려니까 개발자한테 너무 불편하다.
 
 ![](img/servlet_jsp_mvc_03.PNG)
 
 - 저번에 학습했던 내용대로 Form 형식으로 데이터를 보내도 마치 쿼리 파라미터처럼 데이터가 넘어가는 것을 확인할 수 있다.
 
+#
+
+### 회원 저장
+
+회원 저장코드도 서블릿을 이용해서 작성한다.
 
 
+```java
+String username = request.getParameter("username");
+int age = Integer.parseInt(request.getParameter("age")); // request.getParameter()의 응답결과는 항상 문자이기 때문에 형변환 필수
+```
 
+- Form 으로 데이터를 받는 것도 형식은 파라미터 스트링이랑 똑같기 때문에 request.getParameter() 메소드로 쉽게 꺼낼 수 있다.
 
+```java
+Member member = new Member(username, age);
+memberRepository.save(member);
 
+response.setContentType("text/html");
+response.setCharacterEncoding("utf-8");
 
+PrintWriter w = response.getWriter();
+w.write("<html>\n" +
+        "<head>\n" +
+        " <meta charset=\"UTF-8\">\n" +
+        "</head>\n" +
+        "<body>\n" +
+        "성공\n" +
+        "<ul>\n" +
+        " <li>id="+member.getId()+"</li>\n" +
+        " <li>username="+member.getUsername()+"</li>\n" +
+        " <li>age="+member.getAge()+"</li>\n" +
+        "</ul>\n" +
+        "<a href=\"/index.html\">메인</a>\n" +
+        "</body>\n" +
+        "</html>");
+```
 
+- 정적인 html 파일과는 달리 이렇게 동적으로 코드를 짜면 중간에 원하는 코드를 삽입해서 화면을 띄울 수 있다.
 
+#
 
+### 회원 목록 조회
 
+```java
+package hello.servlet.web.servlet;
 
+import hello.servlet.domain.member.Member;
+import hello.servlet.domain.member.MemberRepository;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 
+@WebServlet(name = "memberListServlet", urlPatterns = "/servlet/members")
+public class MemberListServlet extends HttpServlet {
 
+    private MemberRepository memberRepository = MemberRepository.getInstance();
 
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        List<Member> members = memberRepository.findAll();
 
+        response.setContentType("text/html");
+        response.setCharacterEncoding("utf-8");
+
+        PrintWriter w = response.getWriter();
+
+        w.write("<html>");
+        w.write("<head>");
+        w.write(" <meta charset=\"UTF-8\">");
+        w.write(" <title>Title</title>");
+        w.write("</head>");
+        w.write("<body>");
+        w.write("<a href=\"/index.html\">메인</a>");
+        w.write("<table>");
+        w.write(" <thead>");
+        w.write(" <th>id</th>");
+        w.write(" <th>username</th>");
+        w.write(" <th>age</th>");
+        w.write(" </thead>");
+        w.write(" <tbody>");
+/*
+ w.write(" <tr>");
+ w.write(" <td>1</td>");
+ w.write(" <td>userA</td>");
+ w.write(" <td>10</td>");
+ w.write(" </tr>");
+*/
+        for (Member member : members) {
+            w.write(" <tr>");
+            w.write(" <td>" + member.getId() + "</td>");
+            w.write(" <td>" + member.getUsername() + "</td>");
+            w.write(" <td>" + member.getAge() + "</td>");
+            w.write(" </tr>");
+        }
+        w.write(" </tbody>");
+        w.write("</table>");
+        w.write("</body>");
+        w.write("</html>");
+
+    }
+}
+```
+
+![](img/servlet_jsp_mvc_05.PNG)
+
+- 중간에 for문을 삽입해서 tr, td 문법으로 간단한 테이블을 출력시켰다.
+- 이렇게 자바코드로 HTML을 짜니까 간단한 기능을 구현하는데도 코드가 매우 복잡하고 긴 것을 확인할 수 있다.
+
+---
+
+### 정리
+
+- 학습했던 서블릿을 이용하여 간단한 데이터들 요청, 응답이 어떤 방식으로 이루어지는지 확인했다.
+- 서블릿 덕분에 동적으로 원하는 HTML을 만들 수 있다.
+- 하지만 자바 코드로 HTML을 만들려고 해보니 코드가 매우 복잡하고 비효율적으로 길어진다.
+- 더 편하게 개발할 수는 없을까? 라는 의문이 자꾸 들게된다.
+
+---
+
+### Reference
+- [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard)
