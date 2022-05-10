@@ -46,8 +46,25 @@ JSP를 포함한 다른 뷰 템플릿들은 해당 파일을 열면, JSP 파일 
 
 ### 타임리프 기본 기능
 
-- 타임리프를 사용하려면 다음 선언을 하면 된다.
+- 타임리프를 사용하려면 다음 선언을 추가 해주면 된다.
 
 ```java 
 <html xmlns:th ="http://www.thymeleaf.org">
 ```
+
+기본 표현식: [https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#standard-expression-syntax](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#standard-expression-syntax)
+
+---
+
+## 텍스트 - text, utext
+
+타임리프의 가장 기본 기능인 텍스트를 출력하는 기능이다.  
+  
+타임리프는 기본적으로 HTML 태그의 속성에 기능을 정의해서 동작한다.  
+HTML의 콘텐츠에 데이터를 출력할 때는 다음과 같이 th:text를 사용하면 된다.
+```java
+<span th:text="${data}">
+```  
+
+HTML 태그의 속성이 아니라 HTML 콘텐츠 영역안에서 직접 데이터를 출력하고 싶으면 다음과 같이 [[...]]를 사용하면 된다.
+
