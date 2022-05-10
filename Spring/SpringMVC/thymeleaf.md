@@ -1,6 +1,8 @@
 # 7. 타임리프
 
-스프링과 통합하여 다양한 기능을 편리하게 지원하는 View 템플릿 타임리프의 개념을 간단히 공부하고, 실제 동작하는 기본 기능을 위주로 알아보자.
+좋은 백엔드 개발자가 되려면, JSP든 타임리프든 SSR 렌더링 기술 중 한 가지 정도는 능숙하게 다룰 수 있어야 한다.  
+  
+그 중에서도 스프링과 통합하여 다양한 기능을 편리하게 지원하는 View 템플릿 타임리프의 개념을 간단히 알아보고, 실제 동작하는 기능 위주로 공부해보자.
 
 ## 타임리프 소개
 - 공식 사이트: [https://www.thymeleaf.org/](https://www.thymeleaf.org/)
@@ -46,9 +48,9 @@ JSP를 포함한 다른 뷰 템플릿들은 해당 파일을 열면, JSP 파일 
 
 ### 타임리프 기본 기능
 
-- 타임리프를 사용하려면 다음 선언을 추가 해주면 된다.
+- 타임리프를 사용하려면 다음 선언을 추가한다.
 
-```java 
+```html
 <html xmlns:th ="http://www.thymeleaf.org">
 ```
 
@@ -62,9 +64,126 @@ JSP를 포함한 다른 뷰 템플릿들은 해당 파일을 열면, JSP 파일 
   
 타임리프는 기본적으로 HTML 태그의 속성에 기능을 정의해서 동작한다.  
 HTML의 콘텐츠에 데이터를 출력할 때는 다음과 같이 th:text를 사용하면 된다.
-```java
+```html
 <span th:text="${data}">
 ```  
 
 HTML 태그의 속성이 아니라 HTML 콘텐츠 영역안에서 직접 데이터를 출력하고 싶으면 다음과 같이 [[...]]를 사용하면 된다.
+
+```java
+package hello.thymeleaf.basic;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/basic")
+public class BasicController {
+
+    @GetMapping("text-basic")
+    public String textBasic(Model model) {
+        model.addAttribute("data", "Hello Spring!");
+        return "basic/text-basic";
+    }
+}
+```
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>컨텐츠에 데이터 출력하기</h1>
+<ul>
+    <li>th:text 사용 <span th:text="${data}"></span></li>
+    <li>컨텐츠 안에서 직접 출력하기 = [[${data}]]</li>
+</ul>
+</body>
+</html>
+```
+
+![](img/thymeleaf_01.PNG)
+
+간단하게 Hello Spring 문장을 thymeleaf를 이용해서 출력시켜보았다.
+
+#
+
+### Escape
+
+HTML 문서는 <,> 같은 특수 문자를 기반으로 정의된다.  
+따라서 뷰 템플릿으로 HTML 화면을 생성할 때는 출력하는 데이터에 이러한 특수 문자가 있는 것을 주의해서 사용해야 한다.
+
+```java
+model.addAttribute("data", "Hello <b>Spring!</b>");
+```
+
+위 Hello Spring! 문장 중 태그를 사용해서 Spring! 이라는 단어가 진하게 나오도록 코드를 수정해보았다.
+
+![](img/thymeleaf_02.PNG)
+
+![](img/thymeleaf_03.PNG)
+
+내가 기대했던 결과는 Spring! 단어가 진하게 나오는거였지만, 태그가 그대로 브라우저에서 보이는 소스코드도 이상한 문자들이 섞여있는 것을 볼 수 있었다.
+
+#
+
+### HTML 엔티티
+
+- 웹 브라우저는 < 를 HTML 태그의 시작으로 인식한다.  
+- 따라서 < 를 태그의 시작이 아니라 문자로 표현할 수 있는 방법이 필요한데 이 것을 HTML 엔티티라 한다.  
+- 그리고 이렇게 HTML에서 사용하는 특수문자를 HTML 엔티티로 변경하는 것을 이스케이프(escape)라 한다.  
+- 그리고 타임리프가 제공하는 th:text, [[...]] 는 기본적으로 이스케이프(escape)를 제공한다.  
+- < -> &lt
+- < -> &gt
+- 기타 수 많은 HTML 엔티티가 있다.
+
+#
+
+### Unescape
+
+타임리프는 기본적으로 이스케이프를 제공하기 때문에 기능을 원하지 않을때는
+- th:text   ->    th:utext
+- [[...]]   ->    [(...)]  
+
+로 바꿔주면 된다.
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h1>text vs utext</h1>
+<ul>
+  <li>th:text = <span th:text="${data}"></span></li>
+  <li>th:utext = <span th:utext="${data}"></span></li>
+</ul>
+<h1><span th:inline="none">[[...]] vs [(...)]</span></h1>
+<ul>
+  <li><span th:inline="none">[[...]] = </span>[[${data}]]</li>
+  <li><span th:inline="none">[(...)] = </span>[(${data})]</li>
+</ul>
+</body>
+</html>
+```
+
+![](img/thymeleaf_04.PNG)
+
+- 실제 서비스를 개발하다 보면 escape를 사용하지 않아서 HTML이 정상 렌더링 되지 않는 수많은 문제가 발생한다.
+- escape를 기본으로 하고, 꼭 필요할 때만 unescape를 사용하자!
+
+#
+
+### 변수 - SpringEL
+
+타임리프에서 변수를 사용할 때는 변수 표현식을 사용한다.
+
+- 변수 표현식: ${...}
 
