@@ -128,7 +128,7 @@ model.addAttribute("data", "Hello <b>Spring!</b>");
 
 ![](img/thymeleaf_03.PNG)
 
-내가 기대했던 결과는 Spring! 단어가 진하게 나오는거였지만, 태그가 그대로 브라우저에서 보이는 소스코드도 이상한 문자들이 섞여있는 것을 볼 수 있었다.
+내가 기대했던 결과는 Spring! 단어가 진하게 나오는 것이었지만, 태그가 그대로 브라우저에서 보이는 소스코드도 이상한 문자들이 섞여있는 것을 볼 수 있었다.
 
 #
 
@@ -232,4 +232,446 @@ th:with를 사용하면 지역 변수를 선언해서 사용할 수 있다. 지�
 
 ---
 
+## 기본 객체들
+
+타임 리프는 기본 객체들을 제공한다.
+- ${#request}
+- ${#response}
+- ${#session}
+- ${#servletContext}
+- ${#locale}
+
+그런데 #request는 HttpServletRequest 객체가 그대로 제공되기 때문에 데이터를 조회하려면  
+request.getParameter("data")처럼 불편하게 접근해야 한다.  
+  
+이런 점을 해결하기 위해 편의 객체도 제공한다.
+
+-HTTP 요청 파라미터 접근: param
+  -ex) ${param.paramData}
+-HTTP 세션 접근: session
+  -ex) ${session.sessionData}
+-스프링 빈 접근: @
+  -ex) ${@helloBean.hello('Spring!')}
+  
+```java
+@GetMapping("/basic-objects")
+    public String basicObjects(HttpSession session) {
+        session.setAttribute("sessionData", "Hello Session");
+        return "basic/basic-objects";
+    }
+
+    @Component("helloBean")
+    static class HelloBean {
+        public String hello(String data) {
+            return "Hello" + data;
+        }
+    }
+```
+
+```html
+<body>
+<h1>식 기본 객체 (Expression Basic Objects)</h1>
+<ul>
+    <li>request = <span th:text="${#request}"></span></li>
+    <li>response = <span th:text="${#response}"></span></li>
+    <li>session = <span th:text="${#session}"></span></li>
+    <li>servletContext = <span th:text="${#servletContext}"></span></li>
+    <li>locale = <span th:text="${#locale}"></span></li>
+</ul>
+<h1>편의 객체</h1>
+<ul>
+    <li>Request Parameter = <span th:text="${param.paramData}"></span></li>
+    <li>session = <span th:text="${session.sessionData}"></span></li>
+    <li>spring bean = <span th:text="${@helloBean.hello('Spring!')}"></span></
+    li>
+</ul>
+</body>
+```
+
+![](img/thymeleaf_05.PNG)
+
+---
+
+## 유틸리티 객체와 날짜
+
+타임리프는 문자, 숫자, 날짜 URI등을 편리하게 다루는 다양한 유틸리티 객체들을 제공한다.
+
+타임리프 유틸리티 객체들
+- #message : 메시지, 국제화 처리
+- #uris : URI 이스케이프 지원
+- #dates : java.util.Date 서식 지원
+- #calendars : java.util.Calendar 서식 지원
+- #temporals : 자바8 날짜 서식 지원
+- #numbers : 숫자 서식 지원
+- #strings : 문자 관련 편의 기능
+- #objects : 객체 관련 기능 제공
+- #bools : boolean 관련 기능 제공
+- #arrays : 배열 관련 기능 제공
+- #lists , #sets , #maps : 컬렉션 관련 기능 제공
+- #ids : 아이디 처리 관련 기능 제공, 뒤에서 설명
+
+#
+  
+타임리프 유틸리티 객체
+- [https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#expression-utility-objects](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#expression-utility-objects)
+
+유틸리티 객체 예시
+- [https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expression-utility-objects](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#appendix-b-expression-utility-objects)
+
+이런 유틸리티 객체들은 대략 이런 것이 있다 알아두고, 필요할 때 찾아서 사용하자!
+
+#
+
+### 자바8 날짜
+
+타임리프에서 자바8 날짜인 LocalDate, LocalDateTime, Instant를 사용하려면 추가 라이브러리가 필요한데,  
+스프링 부트 타임리프를 사용하면 해당 라이브러리가 자동으로 추가되고 통합된다.  
+  
+타임리프 자바8 날짜 지원 라이브러리  
+thymeleaf-extras-java8time
+ 
+자바8 날짜용 유틸리티 객체  
+#temporals
+
+```java
+@GetMapping("/date")
+    public String data(Model model) {
+        model.addAttribute("localDateTime", LocalDateTime.now());
+        return "basic/date";
+    }
+```
+```html
+<span th:text="${#temporals.format(localDateTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+```
+
+---
+
+## URL 링크
+
+타임리프에서 URL을 생성할 때는 @{...} 문법을 사용하면 된다.
+
+```java
+@GetMapping("/link")
+    public String link(Model model) {
+        model.addAttribute("param1", "data1");
+        model.addAttribute("param2", "data2");
+        return "basic/link";
+    }
+```
+
+### 단순한 URL
+
+```html
+<li><a th:href="@{/hello}">basic url</a></li> 
+<!--http://localhost:8080/hello-->
+```
+#
+### 쿼리 파라미터
+```html
+<li><a th:href="@{/hello(param1=${param1}, param2=${param2})}">hello query param</a></li> 
+<!--http://localhost:8080/hello?param1=data1&param2=data2-->
+```
+#
+### 경로 변수
+```html
+<li><a th:href="@{/hello/{param1}/{param2}(param1=${param1}, param2=${param2})}">path variable</a></li>
+<!--http://localhost:8080/hello/data1/data2-->
+```
+#
+### 경로 변수 + 쿼리 파라미터
+```html
+<li><a th:href="@{/hello/{param1}(param1=${param1}, param2=${param2})}">path variable + query parameter</a></li>
+<!--http://localhost:8080/hello/data1?param2=data2-->
+```
+
+---
+
+## 리터럴
+
+### Literals
+
+리터럴은 소스 코드상에 고정된 값을 말하는 용어이다.  
+  
+타임리프는 다음과 같은 리터럴이 있다.
+
+- 문자: 'hello'
+- 숫자: 10
+- 불린: true, false
+- null: null
+
+타임리프에서 문자 리터럴은 항상 작은 따옴표로 감싸야 한다.  
+  
+그런데 문자를 항상 '로 감싸는 것은 너무 귀찮은 일이다.  
+공백 없이 쭉 이어진다면 하나의 의미있는 토큰으로 인지해서 다음과 같이 작은 따옴표를 생략할 수 있다.  
+룰: A-Z, a-z, 0-9, [], ., -, _
+
+**오류**
+```html
+<span th:text="hello world!"></span>
+```
+문자 리터럴은 원칙상 '로 감싸야 한다. 중간에 공백이 있어서 하나의 토큰으로도 인식되지 않는다.  
+  
+**수정**
+```html
+<span th:text="'hello world!'"></span>
+```
+
+```html
+<li>'hello' + ' world!' = <span th:text="'hello' + ' world!'"></span></li> <!--hello world!-->
+<li>'hello world!' = <span th:text="'hello world!'"></span></li> <!--hello world!-->
+<li>'hello ' + ${data} = <span th:text="'hello ' + ${data}"></span></li> <!--hello Spring-->
+```
+
+### 리터럴 대체(Literal substitutions)
+```html
+<span th:text="|hello $(data)|"> <!--hello Spring-->
+```
+
+---
+
+## 연산
+
+타임리프 연산은 자바와 크게 다르지 않다. HTML 안에서 사용하기 때문에 HTML 엔티티를 사용하는 부분만 주의하자
+
+- 비교연산: HTML 엔티티를 사용해야 하는 부분을 주의하자,
+  - \> (gt), < (lt), >= (ge), <= (le), ! (not), == (eq), != (neq, ne)
+```html
+<li>1 > 10 = <span th:text="1 &gt; 10"></span></li>
+<li>1 gt 10 = <span th:text="1 gt 10"></span></li>
+<li>1 >= 10 = <span th:text="1 >= 10"></span></li>
+<li>1 ge 10 = <span th:text="1 ge 10"></span></li>
+<li>1 == 10 = <span th:text="1 == 10"></span></li>
+<li>1 != 10 = <span th:text="1 != 10"></span></li>
+```
+#
+- 조건식: 자바의 조건식고 유사하다.
+```html
+<li>(10 % 2 == 0)? '짝수':'홀수' = <span th:text="(10 % 2 == 0)? '짝수':'홀수'"></span></li>
+```
+#
+- Elvis 연산자: 조건식의 편의 버전
+```html
+<li>${data}?: '데이터가 없습니다.' = <span th:text="${data}?: '데이터가없습니다.'"></span></li> <!--Spring -->
+<li>${nullData}?: '데이터가 없습니다.' = <span th:text="${nullData}?: '데이터가 없습니다.'"></span></li> <!--데이터가 없습니다-->
+```
+#
+- No- Operation: \_ 인 경우 마치 타임리프가 실행되지 않는 것 처럼 동작한다.
+
+이 것을 잘 사용하면 HTML의 내용 그대로 활용할 수 있다. 마지막 예를 보면 데이터가 없습니다. 부분이 그대로 출력된다.
+
+```html
+<li>${data}?: _ = <span th:text="${data}?: _">데이터가 없습니다.</span></li> <!--Spring-->
+<li>${nullData}?: _ = <span th:text="${nullData}?: _">데이터가 없습니다.</span></li> <!--데이터가 없습니다-->
+```
+
+---
+
+## 반복
+
+타임리프에서 반복은 th:each를 사용한다.
+
+```java
+@GetMapping("/each")
+    public String each(Model model) {
+        addUsers(model);
+        return "basic/each";
+
+    }
+    
+private void addUsers(Model model) {
+        List<User> list = new ArrayList<>();
+        list.add(new User("userA", 10));
+        list.add(new User("userB", 20));
+        list.add(new User("userC", 30));
+
+        model.addAttribute("users", list);
+    }
+```
+
+#
+
+```html
+<h1>기본 테이블</h1>
+<table border="1">
+    <tr>
+        <th>username</th>
+        <th>age</th>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.username}">username</td>
+        <td th:text="${user.age}">0</td>
+    </tr>
+</table>
+```
+
+![](img/thymeleaf_06.PNG)
+
+#
+
+### 반복 상태 유지
+
+```html
+<tr th:each="user, userStat : ${user}">
+```
+반복의 두번째 파라미터를 설정해서 반복의 상태를 확인 할 수 있다.  
+두 번째 파라미터는 생략 가능한데, 생략하면 지정한 변수명 (user) + Stat이 된다.  
+  
+```html
+<h1>반복 상태 유지</h1>
+<table border="1">
+    <tr>
+        <th>count</th>
+        <th>username</th>
+        <th>age</th>
+        <th>etc</th>
+    </tr>
+    <tr th:each="user, userStat : ${users}">
+        <td th:text="${userStat.count}">username</td>
+        <td th:text="${user.username}">username</td>
+        <td th:text="${user.age}">0</td>
+        <td>
+            index = <span th:text="${userStat.index}"></span>
+            count = <span th:text="${userStat.count}"></span>
+            size = <span th:text="${userStat.size}"></span>
+            even? = <span th:text="${userStat.even}"></span>
+            odd? = <span th:text="${userStat.odd}"></span>
+            first? = <span th:text="${userStat.first}"></span>
+            last? = <span th:text="${userStat.last}"></span>
+            current = <span th:text="${userStat.current}"></span>
+        </td>
+    </tr>
+</table>
+```
+![](img/thymeleaf_07.PNG)
+
+---
+
+## 조건부 평가
+
+타임리프의 조건식 if, unless
+
+### if, unless
+
+타임리프는 해당 조건이 맞지 않으면 태그 자체를 렌더링하지 않는다.
+
+```html
+<h1>if, unless</h1>
+<table border="1">
+  <tr>
+    <th>count</th>
+    <th>username</th>
+    <th>age</th>
+  </tr>
+  <tr th:each="user, userStat : ${users}">
+    <td th:text="${userStat.count}">1</td>
+    <td th:text="${user.username}">username</td>
+    <td>
+      <span th:text="${user.age}">0</span>
+      <span th:text="'미성년자'" th:if="${user.age lt 20}"></span>
+      <span th:text="'미성년자'" th:unless="${user.age ge 20}"></span>
+    </td>
+  </tr>
+</table>
+```
+![](img/thymeleaf_08.PNG)
+
+#
+
+### switch
+
+\* 은 만족하는 조건이 없을 때 사용하는 디폴트이다.
+
+```html
+<h1>switch</h1>
+<table border="1">
+  <tr>
+    <th>count</th>
+    <th>username</th>
+    <th>age</th>
+  </tr>
+  <tr th:each="user, userStat : ${users}">
+    <td th:text="${userStat.count}">1</td>
+    <td th:text="${user.username}">username</td>
+    <td th:switch="${user.age}">
+      <span th:case="10">10살</span>
+      <span th:case="20">20살</span>
+      <span th:case="*">기타</span>
+    </td>
+  </tr>
+</table>
+```
+![](img/thymeleaf_09.PNG)
+
+---
+
+## 주석
+
+```java
+@GetMapping("/comments")
+    public String comments(Model model) {
+        model.addAttribute("data", "Spring!");
+        return "basic/comments";
+    }
+```
+
+```html
+<h1>예시</h1>
+<span th:text="${data}">html data</span>
+<h1>1. 표준 HTML 주석</h1>
+<!--
+<span th:text="${data}">html data</span>
+-->
+<h1>2. 타임리프 파서 주석</h1>
+<!--/* [[${data}]] */-->
+<!--/*-->
+<span th:text="${data}">html data</span>
+<!--*/-->
+<h1>3. 타임리프 프로토타입 주석</h1>
+<!--/*/
+<span th:text="${data}">html data</span>
+/*/-->
+```
+
+**1. 표준 HTML 주석**  
+자바스크립트의 표준 HTML 주석은 타임리프가 렌더링 하지 않고, 그대로 남겨둔다.  
+  
+**2. 타임리프 파서 주석**  
+타임리프 파서 주석은 타임리프의 진짜 주석이다. 렌더링에서 주석 부분을 제거한다.  
+  
+**3. 타임리프 프로토타입 주석**  
+타임리프 프로토타입은 약간 특이한데, HTML 주석에 약간의 구문을 더했다.  
+HTML 파일을 웹 브라우저에서 그대로 열어보면 HTML 주석이기 때문에 이 부분이 웹 브라우저가 렌더링 하지 않는다.  
+타임리프 렌더링을 거치면 이 부분이 정상 렌더링 된다.  
+쉽게 이야기해서 HTML 파일을 그대로 열어보면 주석처리가 되지만, 타임리프를 렌더링 한 경우에만 보이는 기능이다.
+
+
+#
+
+### 타임리프 렌더링 결과
+
+![](img/thymeleaf_10.PNG)
+![](img/thymeleaf_11.PNG)
+
+### HTML 파일
+![](img/thymeleaf_12.PNG)
+
+---
+
+## 블록
+
+<th:block>은 HTML 태그가 아닌 타임리프의 유일한 자체 태그다.
+
+```html
+<th:block th:each="user : ${users}">
+  <div>
+    사용자 이름1 <span th:text="${user.username}"></span>
+    사용나 나이1 <span th:text="${user.age}"></span>
+  </div>
+  <div>
+    요약 <span th:text="${user.username} + ' / ' + ${user.age}"></span>
+  </div>
+</th:block>
+```
+
+---
 
