@@ -713,3 +713,163 @@ public String javascript(Model model) {
     var user = [[${user}]];
 </script>
 ```
+
+
+결과  
+![](img/thymeleaf_13.PNG)
+#
+자바스크립트 인라인을 사용하지 않은 경우 어떤 문제들이 있는지 알아보고  
+인라인을 사용하면 해당 문제들이 어떻게 해결되는지 확인해보자.
+
+### 텍스트 렌더링
+
+- var username = [[${user.username}]];
+  - 인라인 사용 전 -> var username = userA;
+  - 인라인 사용 후 -> var username = "userA";
+
+인라인 사용 전 렌더링 결과를 보면 자바스크립트 오류가 발생하고, "userA" 대신 userA 라는 변수 이름이 그대로 남아있다.  
+다음 으로 나오는 숫자 age의 경우에는 "가 필요 없기때문에 정상 렌더링 된다.  
+  
+인라인 사용 후 렌더링 결과를 보면 문자 타입인 경우 " 를 포함해준다.  
+추가로 자바스크립트에서 문제가 될 수 있는 문자가 포함되어 있으면 이스케이프 처리도 해준다.
+
+#
+
+### 자바스크립트 내추럴 템플릿
+
+타임리프는 HTML 파일을 직접 열어도 동작하는 내추럴 템플릿 기능을 제공한다.  
+자바스크립트 기능을 사용하면 주석을 활용해서 이 기능을 사용할 수 있다.
+
+- var username2 = /\*[[${user.username}]]\*/ "test username";
+  - 인라인 사용 전 -> var username2 = /\*userA\*/ "test username";
+  - 인라인 사용 후 -> var username2 = "userA";
+
+인라인 사용 전 결과를 보면 정말 그대로 출력한 것을 볼 수 있다.  
+인라인을 사용하면 주석 부분은 제거되고, 기대했던대로 "userA"만 정확히 출력된 것을 볼 수 있다.
+
+#
+
+### 객체
+
+타임리프의 자바스크립트 인라인 기능을 사용하면 객체를 JSON으로 자동으로 변환해준다.
+
+- var user = [[${user}]];
+  - 인라인 사용 전 -> var user = BasicController.User(username=userA, age=10);
+  - 인라인 사용 후 -> var user = {"username":"userA", "age":10};
+
+인라인 사용 전은 객체의 toString()이 호출된 값이다.  
+인라인 사용 후는 객체를 JSON으로 변환 해준다.
+
+---
+
+## 템플릿 조각
+
+웹 페이지를 개발할 때는 공통 영역이 많이 있다. 이런 영역들을 코드를 복사해서 사용한다면 변경시 여러 페이지를  
+다 수정해야 하므로 상당히 비효율 적이다. 타임리프는 이런 문제를 해결하기 위해 템플릿 조각과 레이아웃 기능을 지원한다.
+
+```java
+@Controller
+@RequestMapping("/template")
+public class TemplateController {
+
+    @GetMapping("/fragment")
+    public String template() {
+        return "template/fragment/fragmentMain";
+    }
+
+}
+```
+
+### footer.html
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="copy">
+    푸터 자리 입니다.
+</footer>
+<footer th:fragment="copyParam (param1, param2)">
+    <p>파라미터 자리 입니다.</p>
+    <p th:text="${param1}"></p>
+    <p th:text="${param2}"></p>
+</footer>
+</body>
+</html>
+```
+
+### fragment.html
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>부분 포함</h1>
+<h2>부분 포함 insert</h2>
+<div th:insert="~{template/fragment/footer :: copy}"></div>
+
+<h2>부분 포함 replace</h2>
+<div th:replace="~{template/fragment/footer :: copy}"></div>
+
+<h2>부분 포함 단순 표현식</h2>
+<div th:replace="template/fragment/footer :: copy"></div>
+
+<h1>파라미터 사용</h1>
+<div th:replace="~{template/fragment/footer :: copyParam ('데이터1', '데이터2')}"></div>
+</body>
+</html>
+```
+
+템플릿 조각은 무엇보다도 직접 실행을 해봐야 어떻게 되는건지 이해가 된다.
+
+![](img/thymeleaf_14.PNG)
+![](img/thymeleaf_15.PNG)
+
+우선 GetMapping의 리턴은 fragmentMain.html로 시켜주고,  
+  
+footer.html 템플릿에 있는 th:fragment="copy" 부분이  
+fragment.html ~{template/fragment/footer :: copy} 로 이동한 것을 볼 수 있다.  
+  
+그 중에서도 th:insert 를 사용한 부분은 현재 태그인 div 내부에 footer 태그를 추가하였고.  
+th:replace를 사용하면 현재 태그인 div를 대체한다.  
+  
+~{...}를 사용하는 것이 원칙이지만 템플릿 조각을 사용하는 코드가 단순하면 이 부분을 생략 할 수도 있다.  
+  
+그리고 당연히 파라미터도 동적으로 조각을 렌더링 할 수 있다.
+
+---
+
+## 템플릿 레이아웃
+
+코드 조각을 레이아웃에 넘겨서 사용하는 방법을 알아보자.
+
+예를 들어 <head>에 공통으로 사용하는 css, javascript 같은 정보들이 있는데,  
+이런 공통 정보들을 한 곳에 모아두고, 공통으로 사용하지만  
+각 페이지마다 필요한 정보를 더 추가해서 사용하고 싶다면 다음과 같이 사용하면 된다.
+
+```java
+@GetMapping("layout")
+public String layout() {
+    return "template/layout/layoutMain";
+}
+```
+
+### base.html
+```html
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="common_header(title,links)">
+
+<title th:replace="${title}">레이아웃 타이틀</title>
+
+<!-- 공통 -->
+<link rel="stylesheet" type="text/css" media="all" th:href="@{/css/awesomeapp.css}">
+<link rel="shortcut icon" th:href="@{/images/favicon.ico}">
+<script type="text/javascript" th:src="@{/sh/scripts/codebase.js}"></script>
+
+<!-- 추가 -->
+<th:block th:replace="${links}" />
+</head>
+```
+
