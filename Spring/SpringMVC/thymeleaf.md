@@ -827,7 +827,7 @@ public class TemplateController {
 ![](img/thymeleaf_14.PNG)
 ![](img/thymeleaf_15.PNG)
 
-우선 GetMapping의 리턴은 fragmentMain.html로 시켜주고,  
+우선 GetMapping의 리턴은 fragmentMain.html로 시켜주는데,  
   
 footer.html 템플릿에 있는 th:fragment="copy" 부분이  
 fragment.html ~{template/fragment/footer :: copy} 로 이동한 것을 볼 수 있다.  
