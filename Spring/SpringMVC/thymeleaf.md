@@ -675,3 +675,41 @@ HTML 파일을 웹 브라우저에서 그대로 열어보면 HTML 주석이기 �
 
 ---
 
+## 자바스크립트 인라인
+
+타임리프는 자바스크립트에서 타임리프를 편리하게 사용할 수 있는 자바스크립트 인라인 기능을 제공한다  
+```html  
+<script th:inline="javascript">
+```
+#
+
+```java
+@GetMapping("/javascript")
+public String javascript(Model model) {
+ model.addAttribute("user", new User("userA", 10));
+ addUsers(model);
+ return "basic/javascript";
+}
+```
+
+```html
+<!-- 자바스크립트 인라인 사용 전 -->
+<script>
+    var username = [[${user.username}]];
+    var age = [[${user.age}]];
+    //자바스크립트 내추럴 템플릿
+    var username2 = /*[[${user.username}]]*/ "test username";
+    //객체
+    var user = [[${user}]];
+</script>
+
+<!-- 자바스크립트 인라인 사용 후 -->
+<script th:inline="javascript">
+    var username = [[${user.username}]];
+    var age = [[${user.age}]];
+    //자바스크립트 내추럴 템플릿
+    var username2 = /*[[${user.username}]]*/ "test username";
+    //객체
+    var user = [[${user}]];
+</script>
+```
