@@ -49,7 +49,7 @@ JSP는 첫 줄에 위 코드를 추가해주어야한다.
 - 회원 등록 폼 JSP를 보면 첫 줄을 제외하고는 완전히 HTML과 똑같다
 - JSP는 서버 내부에서 서블릿으로 변환되는데, 우리가 만들었던 MemberFormServlet과 거의 비슷한 모습으로 변환된다.
 
-![](img/servlet_jsp_mvc_04.PNG)
+![](img/servlet_jsp_mvc_06.PNG)
 
 #
 
