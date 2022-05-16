@@ -845,8 +845,7 @@ th:replace를 사용하면 현재 태그인 div를 대체한다.
 
 코드 조각을 레이아웃에 넘겨서 사용하는 방법을 알아보자.
 
-예를 들어 <head>에 공통으로 사용하는 css, javascript 같은 정보들이 있는데,  
-이런 공통 정보들을 한 곳에 모아두고, 공통으로 사용하지만  
+예를 들어 \<head>에 공통으로 사용하는 css, javascript 같은 정보들이 있는데  이런 공통 정보들을 한 곳에 모아두고, 공통으로 사용하지만  
 각 페이지마다 필요한 정보를 더 추가해서 사용하고 싶다면 다음과 같이 사용하면 된다.
 
 ```java
@@ -872,4 +871,93 @@ public String layout() {
 <th:block th:replace="${links}" />
 </head>
 ```
+
+### layoutMain.html
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="template/layout/base :: common_header(~{::title},~{::link})">
+    <title>메인 타이틀</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/themes/smoothness/jquery-ui.css}">
+</head>
+<body>
+메인 컨텐츠
+</body>
+</html>
+```
+
+- common_header(~{::title},~{::link}) 중에
+  - ::title은 현재 페이지의 title 태그들을 전달한다.
+  - ::link는 현재 페이지의 link 태그들을 전달한다.
+  
+![](img/thymeleaf_16.PNG)
+
+레이아웃 개념을 두고, 그 레이아웃에 필요한 코드 조각을 전달해서 완성하는 것으로 이해하면 된다.
+
+---
+
+## 템플릿 레이아웃2
+
+레이아웃 개념을 \<html> 전체에 적용할 수도 있다.  
+
+사이트 100페이지의 모양이 다 똑같아야하고, title과 replace만 바꾸고 싶으면?
+
+```java
+ @GetMapping("/layoutExtend")
+    public String layoutExtend() {
+        return "template/layoutExtend/layoutExtendMain";
+    }
+```
+
+### layoutFile.html
+```html
+<!DOCTYPE html>
+<html th:fragment="layout (title, content)" xmlns:th="http://
+www.thymeleaf.org">
+<head>
+    <title th:replace="${title}">레이아웃 타이틀</title>
+</head>
+<body>
+<h1>레이아웃 H1</h1>
+<div th:replace="${content}">
+    <p>레이아웃 컨텐츠</p>
+</div>
+<footer>
+    레이아웃 푸터
+</footer>
+</body>
+</html>
+```
+
+### layoutExtendMain.html
+```html
+<!DOCTYPE html>
+<html th:replace="~{template/layoutExtend/layoutFile :: layout(~{::title},~{::section})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>메인 페이지 타이틀</title>
+</head>
+<body>
+<section>
+    <p>메인 페이지 컨텐츠</p>
+    <div>메인 페이지 포함 내용</div>
+</section>
+</body>
+</html>
+```
+
+GetMapping의 리턴값으로 layoutExtendMain이 실행이 되고 layoutExtendMain은 html자체를 layoutFile로 th:replace 시킨다.  
+layoutFile.html 을 기본 레이아웃이 되고 title과 section 태그가 넘어간다.
+
+![](img/thymeleaf_17.PNG)
+
+레이아웃을 쓰거나 사이트가 작으면 조각조각 넣거나 보통 두 가지 중에 선택을 한다.  
+페이지가 많이 없을때는 레이아웃 대신 fragment를 사용하는 것도 괜찮다.  
+하지만 페이지가 많아지고 관리가 중요할 것 같으면 layout을 사용하는 것이 좋다.
+
+---
+
+### Reference
+- [스프링 MVC 2편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2/dashboard)
 
