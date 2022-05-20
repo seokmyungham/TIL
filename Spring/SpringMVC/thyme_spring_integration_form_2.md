@@ -392,4 +392,34 @@ public Map<String, String> regions() {
   
 이렇게하면 해당 컨트롤러를 요청할 때 regions에서 반환한 값이 자동으로 모델에 담기게 된다.
 
+#
+
+**addForm.html - 추가**
+```html
+<!-- multi checkbox -->
+<div>
+    <div>등록 지역</div>
+        <div th:each="region : ${regions}" class="form-check form-check-inline">
+        <input type="checkbox" th:field="*{regions}" th:value="${region.key}" class="form-check-input">
+        <label th:for="${#ids.prev('regions')}" th:text="${region.value}" class="form-check-label">서울</label>
+    /div>
+</div>
+```
+
+타임리프는 같은 이름의 여러 체크박스를 생성해야 할 때 HTML 태그 속성에서 id가 모두 다를 수 있도록하는 기능을 지원한다.  
+th:for="${#ids.prev('regions')}" 을 사용하면 타임리프가 체크박스를 each 루프 안에서 반복해서 만들 때  
+임의로 1, 2, 3 숫자를 뒤에 붙여준다  
+
+![](img/thyme_spring_integration_form_10.PNG)
+![](img/thyme_spring_integration_form_08.PNG)
+
+\<label for="id 값">에 지정돈 id가 checkbox에서 동적으로 생성된 regions1, regions2, regions3에 맞추어  
+순서대로 입력된 것을 확인할 수 있다.
+
+![](img/thyme_spring_integration_form_09.PNG)
+
+\_regions를 이용하여 웹 브라우저에서 체크를 하나도 하지 않았을 때, 클라이언트가 서버에 아무런 데이터를 보내지 않는 것을 방지한다.  
+\_regions가 체크박스 숫자만큼 생성될 필요는 없지만, 타임리프가 생성되는 옵션 수 만큼 생성해서 그런것이니 무시하자.
+
+#
 
