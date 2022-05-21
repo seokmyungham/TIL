@@ -9,7 +9,7 @@
   - 공통 처리 가능
   - 프론트 컨트롤러를 제외한 나머지 컨트롤러는 서블릿을 사용하지 않아도 된다.
 
-![](img/servlet_jsp_mvc_07)
+![](img/servlet_jsp_mvc_07.PNG)
 
 스프링 웹 MVC의 핵심도 바로 **FrontController**  
 스프링 웹 MVC의 **DispatcherServlet**이 프론트 컨트롤러 패턴으로 구현되어 있다.
@@ -22,6 +22,6 @@
 목표는 기존 코드를 최대한 유지하면서, 프론트 컨트롤러를 도입하는 것이다.
 먼저 구조를 맞추어두고 점진적으로 리팩터링 해보자.
 
-**V1의 구조**
-![](img/servlet_jsp_mvc_08)
+**V1의 구조**  
+![](img/servlet_jsp_mvc_08.PNG)
 
