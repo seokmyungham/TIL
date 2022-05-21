@@ -466,7 +466,49 @@ ItemType.values()를 사용하면 해당 ENUM의 모든 정보를 배열로 반�
 상품 상세와 수정에도 라디오 버튼을 넣고 HTML에서 코드를 확인 해보면 선택한 식품에 checked="checked"가 적용된 것을 볼 수 있다.
 ```th:field="${item.itemType}"``` 과 ```th:value="${type.name()}"```의 값을 비교해서 값이 일치하면 자동으로 checked가 추가된다.
 
-#
+---
 
-### 타임리프에서 ENUM에 직접 접근하기
+## 셀렉트 박스
 
+셀렉트 박스는 여러 선택지 중에 하나를 선택할 대 사용할 수 있다.
+
+- 배송 방식
+  - 빠른 배송
+  - 일반 배송
+  - 느린 배송
+
+```java
+@ModelAttribute("deliveryCodes")
+public List<DeliveryCode> deliveryCodes() {
+    List<DeliveryCode> deliveryCodes = new ArrayList<>();
+    deliveryCodes.add(new DeliveryCode("FAST", "빠른 배송"));
+    deliveryCodes.add(new DeliveryCode("NORMAL", "일반 배송"));
+    deliveryCodes.add(new DeliveryCode("SLOW", "느린 배송"));
+    return deliveryCodes;
+}
+```
+
+참고:  
+@ModelAttribute가 있는 deliveryCodes() 메서드는 컨트롤러가 호출 될 때 마다 사용되므로 deliveryCodes 객체도 계속 생성된다.  
+이런 부분은 미리 생성해두고 재사용하는 것이 더 효율적이다.  
+
+```html
+<!-- SELECT -->
+<div>
+    <div>배송 방식</div>
+    <select th:field="*{deliveryCode}" class="form-select">
+        <option value="">==배송 방식 선택==</option>
+        <option th:each="deliveryCode : ${deliveryCodes}" th:value="${deliveryCode.code}"
+                th:text="${deliveryCode.displayName}">FAST</option>
+    </select>
+    </div>
+<hr class="my-4">
+```
+
+![](img/thyme_spring_integration_form_15.PNG)
+![](img/thyme_spring_integration_form_14.PNG)
+
+---
+
+### Reference
+- [스프링 MVC 2편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2/dashboard)
