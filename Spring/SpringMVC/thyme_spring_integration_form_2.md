@@ -407,8 +407,7 @@ public Map<String, String> regions() {
 ```
 
 타임리프는 같은 이름의 여러 체크박스를 생성해야 할 때 HTML 태그 속성에서 id가 모두 다를 수 있도록하는 기능을 지원한다.  
-th:for="${#ids.prev('regions')}" 을 사용하면 타임리프가 체크박스를 each 루프 안에서 반복해서 만들 때  
-임의로 1, 2, 3 숫자를 뒤에 붙여준다  
+th:for="${#ids.prev('regions')}" 을 사용하면 타임리프가 체크박스를 each 루프 안에서 반복해서 만들 때 임의로 1, 2, 3 숫자를 뒤에 붙여준다  
 
 ![](img/thyme_spring_integration_form_10.PNG)
 ![](img/thyme_spring_integration_form_08.PNG)
@@ -421,5 +420,53 @@ th:for="${#ids.prev('regions')}" 을 사용하면 타임리프가 체크박스�
 \_regions를 이용하여 웹 브라우저에서 체크를 하나도 하지 않았을 때, 클라이언트가 서버에 아무런 데이터를 보내지 않는 것을 방지한다.  
 \_regions가 체크박스 숫자만큼 생성될 필요는 없지만, 타임리프가 생성되는 옵션 수 만큼 생성해서 그런것이니 무시하자.
 
+---
+
+## 라디오 버튼
+
+라디오 버튼은 여러 선택지 중에 하나를 선택할 때 사용할 수 있다.
+
+- 상품 종류
+    - 도서, 식품, 기타
+
+```java
+@ModelAttribute("itemTypes")
+    public ItemType[] itemTypes() {
+        return ItemType.values();
+    }
+```
+
+itemTypes를 등록 폼, 조회, 수정 폼에서 모두 사용하므로 @ModelAttribute를 적용한다.  
+ItemType.values()를 사용하면 해당 ENUM의 모든 정보를 배열로 반환한다.
+
+```html
+<!-- radio button -->
+<div>
+    <div>상품 종류</div>
+        <div th:each="type : ${itemTypes}" class="form-check form-check-inline">
+        <input type="radio" th:field="*{itemType}" th:value="${type.name()}" class="form-check-input">
+        <label th:for="${#ids.prev('itemType')}" th:text="${type.description}" class="form-check-label">
+        BOOK
+        </label>
+    </div>
+</div>
+```
+![](img/thyme_spring_integration_form_12.PNG)
+![](img/thyme_spring_integration_form_11.PNG)
+
+음식을 선택하면 tpye.name()인 FOOD 하나만 값이 넘어오고, 아무것도 선택하지 않으면 null이 넘어온다.  
+체크 박스는 수정시 체크를 해제하면 아무 값도 넘어가지 않기 때문에, 별도의 히든 필드로 이런 문제를 해결했다.  
+  
+라디오 버튼은 이미 선택이 되어 있다면, 수정시에도 항상 하나를 선택하도록 되어있으므로  
+체크박스와 달리 별도의 히든 필드를 사용할 필요가 없다.  
+
+![](img/thyme_spring_integration_form_13.PNG)
+
+
+상품 상세와 수정에도 라디오 버튼을 넣고 HTML에서 코드를 확인 해보면 선택한 식품에 checked="checked"가 적용된 것을 볼 수 있다.
+```th:field="${item.itemType}"``` 과 ```th:value="${type.name()}"```의 값을 비교해서 값이 일치하면 자동으로 checked가 추가된다.
+
 #
+
+### 타임리프에서 ENUM에 직접 접근하기
 
