@@ -546,7 +546,7 @@ public class MyView {
 이번에는 v3를 조금 변경해서 실제 구현하는 개발자들이 매우 편리하게 개발할 수 있는 v4버전을 개발해보자.
 
 **V4 구조**  
-![](img/servlet_jsp_mvc_10.PNG)
+![](img/servlet_jsp_mvc_11.PNG)
 - 기본적인 구조는 V3과 같다. 대신 컨트롤러가 ModelView를 반환하지 않고, ViewName만 반환한다.
 
 #
