@@ -31,3 +31,48 @@ public MessageSource messageSource() {
     - 파일의 위치는 /resources/messages.properties에 두면 된다.
     - 여러 파일을 한번에 지정할 수 있다. 여기서는 messages, errors 둘을 지정했다.
 - defaultEncoding: 인코딩 정보를 지정한다. utf-8을 사용하면 된다.
+
+#
+
+### 스프링 부트
+
+스프링 부트를 사용하면 다음과 같이 메시지 소스를 설정할 수 있다.
+
+**application.properties**  
+```spring.messages.basename=messages,config.i18n.messages```  
+
+MessageSource를 스프링 빈으로 등록하지 않고, 스프링 부트와 관련된 별도의 설정을 하지 않으면 messages라는 이름으로 기본 등록된다.  
+따라서 messages_en.properties, messages_ko.properties, messages.properties 파일만 등록하면 자동으로 인식된다.
+```spring.messages.basename=messages```
+
+---
+
+## 메시지 파일 만들기
+
+- messages.properties: 기본 값으로 사용(한글)
+- messages_en.properties: 영어 국제화 사용
+
+/resources/messages.properties
+```java
+hello=안녕
+hello.name=안녕 {0}
+```
+
+/resources/messages_en.properties
+```java
+hello=hello
+hello.name=hello
+```
+
+## 스프링 메시지 소스 사용
+
+**MessageSource 인터페이스**
+```java
+public interface MessageSource {
+
+    String getMessage(String code, @Nullable Object[] args, @Nullable String defaultMessage, Locale locale);
+    String getMessage(String code, @Nullable Object[] args, Locale locale) throws NoSuchMessageException;
+```
+
+MessageSource 인터페이스를 보면 코드를 포함한 일부 파라미터로 메시지를 읽어오는 기능을 제공한다.
+
