@@ -47,32 +47,90 @@ MessageSource를 스프링 빈으로 등록하지 않고, 스프링 부트와 �
 
 ---
 
-## 메시지 파일 만들기
+## 웹 애플리케이션에 메시지 적용하기
 
 - messages.properties: 기본 값으로 사용(한글)
 - messages_en.properties: 영어 국제화 사용
 
 /resources/messages.properties
-```java
-hello=안녕
-hello.name=안녕 {0}
+```properties
+label.item=상품
+label.item.id=상품 ID
+label.item.itemName=상품명
+label.item.price=가격
+label.item.quantity=수량
+
+page.items=상품 목록
+page.item=상품 상세
+page.addItem=상품 등록
+page.updateItem=상품 수정
+
+button.save=저장
+button.cancel=취소
 ```
+
+### 타임리프 메시지 적용
+
+타임리프의 메시지 표현식 #{...}를 사용하면 스프링의 메시지를 편리하게 조회할 수 있다.  
+예를 들어서 방금 등록한 상품이라는 이름을 조회하려면 #{label.item}이라고 하면 된다.
+
+**렌더링 전**
+```<div th:text="#{label.item}"></h2>```
+
+**렌더링 후**
+```<div>상품</h2>```
+
+#
+
+**페이지 이름에 적용**
+- ```<h2>상품 등록 폼</h2>```
+  - ```<h2 th:text="#{page.addItem}">상품 등록</h2>```
+ 
+**레이블에 적용**
+- ```<label for="itemName">상품명</label>```
+  - ```<label for="itemName" th:text="#{label.item.itemName}">상품명</label>```
+  - ```<label for="price" th:text="#{label.item.price}">가격</label>```
+  - ```<label for="quantity" th:text="#{label.item.quantity}">수량</label>```
+
+**버튼에 적용**
+- ```<button type="submit">상품 등록</button>```
+  - ```<button type="submit" th:text="#{button.save}">저장</button>```
+  - ```<button type="button" th:text="#{button.cancel}">취소</button>```
+
+
+  
+- 참고로 파라미터는 다음과 같이 사용할 수 있다.  
+```hello.name=안녕 {0}```  
+```<p th:text="#{hello.name(${item.itemName})}"></p>```
+
+---
+
+## 웹 어플리케이션에 국제화 적용하기
 
 /resources/messages_en.properties
-```java
-hello=hello
-hello.name=hello
+```properties
+label.item=Item
+label.item.id=Item ID
+label.item.itemName=Item Name
+label.item.price=price
+label.item.quantity=quantity
+
+page.items=Item List
+page.item=Item Detail
+page.addItem=Item Add
+page.updateItem=Item Update
+
+button.save=Save
+button.cancel=Cancel
 ```
 
-## 스프링 메시지 소스 사용
+사실 앞에서 템플릿 파일에 모두 #{...}를 통해서 메시지를 사용하도록 적용해두었기 떄문에  
+en.properties 파일만 만들어두면 국제화 작업은 거의 끝난다.
 
-**MessageSource 인터페이스**
-```java
-public interface MessageSource {
+### 웹으로 확인하기
 
-    String getMessage(String code, @Nullable Object[] args, @Nullable String defaultMessage, Locale locale);
-    String getMessage(String code, @Nullable Object[] args, Locale locale) throws NoSuchMessageException;
-```
-
-MessageSource 인터페이스를 보면 코드를 포함한 일부 파라미터로 메시지를 읽어오는 기능을 제공한다.
+웹 브라우저의 언어 설정 값을 변경하면서 국제화 적용을 확인해보자.
+크롬 브라우저 -> 설정 -> 언어를 검색하고, 우선 순위를 변경하면 된다.  
+우선 순위를 영어로 변경하고 테스트해보자.  
+웹 브라우저의 언어 설정 값을 변경하면 요청시 Accept-Language의 값이 변경된다.
 
