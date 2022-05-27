@@ -82,6 +82,63 @@ button.cancel=취소
 
 #
 
+**addForm.html**
+```html
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.addItem}">상품 등록</h2>
+    </div>
+
+    <form action="item.html" th:action th:object="${item}" method="post">
+        <div>
+            <label for="itemName" th:text="#{label.item.itemName}">상품명</label>
+            <input type="text" id="itemName" th:field="*{itemName}" class="form-control" placeholder="이름을 입력하세요">
+        </div>
+        <div>
+            <label for="price" th:text="#{label.item.price}">가격</label>
+            <input type="text" id="price" th:field="*{price}" class="form-control" placeholder="가격을 입력하세요">
+        </div>
+        <div>
+            <label for="quantity" th:text="#{label.item.quantity}">수량</label>
+            <input type="text" id="quantity" th:field="*{quantity}" class="form-control" placeholder="수량을 입력하세요">
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.save}">저장</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        onclick="location.href='items.html'"
+                        th:onclick="|location.href='@{/message/items}'|"
+                        type="button" th:text="#{button.cancel}">취소</button>
+            </div>
+        </div>
+
+    </form>
+
+</div> <!-- /container -->
+</body>
+</html>
+```
+
 **페이지 이름에 적용**
 - ```<h2>상품 등록 폼</h2>```
   - ```<h2 th:text="#{page.addItem}">상품 등록</h2>```
@@ -132,5 +189,20 @@ en.properties 파일만 만들어두면 국제화 작업은 거의 끝난다.
 웹 브라우저의 언어 설정 값을 변경하면서 국제화 적용을 확인해보자.
 크롬 브라우저 -> 설정 -> 언어를 검색하고, 우선 순위를 변경하면 된다.  
 우선 순위를 영어로 변경하고 테스트해보자.  
-웹 브라우저의 언어 설정 값을 변경하면 요청시 Accept-Language의 값이 변경된다.
+웹 브라우저의 언어 설정 값을 변경하면 요청시 Accept-Language의 값이 변경된다.  
+
+![](img/message_internationalization_01.PNG)
+  
+크롬의 언어 우선순위를 영어(미국)을 1순위로 변경한다음 HTTP 요청을 확인해보면 
+  
+![](img/message_internationalization_03.PNG)
+
+Accept-Language의 en-US의 값이 1.0으로 1순위, en이 0.9로 2순위가 된 것을 확인할 수 있다.  
+  
+![](img/message_internationalization_02.PNG)
+
+---
+
+### Reference
+- [스프링 MVC 2편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2/dashboard)
 
