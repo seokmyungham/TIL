@@ -5,7 +5,7 @@
 **직접 만든 MVC프레임워크 구조**  
 ![](img/springmvc_structure_01.PNG)
 
-**SpringMVC 구조**
+**SpringMVC 구조**  
 ![](img/springmvc_structure_02.PNG)
 
 **직접 만든 프레임워크 -> 스프링 MVC 비교**
@@ -216,7 +216,6 @@ public class SpringMemberControllerV2 {
 }
 ```
 
-메서드 매핑 정보마다 /springmvc/v2/members라는 중복이 있기 때문에  
-클래스 래밸에 다음과 같이 @RequestMapping을 사용하면 중복을 제거할 수 있다.
+메서드 매핑 정보마다 /springmvc/v2/members라는 중복이 있기 때문에 클래스 래밸에 다음과 같이 @RequestMapping을 사용하면 코드 중복을 제거할 수 있다.
 
 ---
