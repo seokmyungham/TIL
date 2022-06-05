@@ -219,3 +219,71 @@ public class SpringMemberControllerV2 {
 메서드 매핑 정보마다 /springmvc/v2/members라는 중복이 있기 때문에 클래스 래밸에 다음과 같이 @RequestMapping을 사용하면 코드 중복을 제거할 수 있다.
 
 ---
+
+## 스프링 MVC - 실용적인 방식
+
+스프링 MVC는 개발자가 편리하게 개발할 수 있도록 수 많은 편의 기능을 제공한다.  
+  
+MVC 프레임워크 만들기에서 v3을 v4로 개선했던 것처럼 코드를 개선해보자.
+
+```java
+package hello.servlet.web.springmvc.v3;
+
+import hello.servlet.domain.member.Member;
+import hello.servlet.domain.member.MemberRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/springmvc/v3/members")
+public class SpringMemberControllerV3 {
+
+    private MemberRepository memberRepository = MemberRepository.getInstance();
+
+    @GetMapping("/new-form")
+    public String newForm() {
+        return "new-form";
+    }
+
+    @PostMapping("/save")
+    public String save(
+            @RequestParam("username") String username,
+            @RequestParam("age") int age,
+            Model model) {
+
+        Member member = new Member(username, age);
+        memberRepository.save(member);
+
+        model.addAttribute("member", member);
+        return "save-result";
+    }
+
+    @GetMapping
+    public String members(Model model) {
+
+        List<Member> members = memberRepository.findAll();
+
+        model.addAttribute("members", members);
+        return "members";
+    }
+}
+```
+
+- Model 파라미터
+    - save(), members()를 보면 Model을 파라미터로 받는 것을 확인할 수 있다. 스프링 MVC도 이런 편의 긴으을 제공한다.
+- ViewName 직접반환
+    - 뷰의 논리 이름을 반환할 수 있다.
+- @RequestParam 사용
+    - 스프링은 HTTP 요청 파라미터를 @RequestParam으로 받을 수 있다.
+    - @RequestParam("username")과 request.getParameter("username")는 거의 같은 코드이다.
+- @RequestMapping -> @GetMapping, @PostMapping
+    - @RequestMapping은 HTTP 메서드도 함께 구분할 수 있다.
+    - Get, Post, Put, Delete, Patch 모두 애노테이션이 준비되어 있다.
+
+---
+
+### Reference
+- [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard)
