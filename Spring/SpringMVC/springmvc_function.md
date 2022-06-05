@@ -65,7 +65,7 @@ logging.level.root=debug
 logging.level.hello.springmvc=debug
 ```
 
-![](img/springmvc_function_01.PNG)
+![](img/springmvc_function_02.PNG)
 
 **올바른 로그 사용법**
 - log.debug("data="+data)
