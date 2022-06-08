@@ -74,7 +74,79 @@ public ObjectError(String objectName, String defaultMessage) {}
 
 #
 
+**addForm 수정**
+
+```html
+<form action="item.html" th:action th:object="${item}" method="post">
+    
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+            th:text="${err}">전체 오류 메시지</p>
+        </div>
+
+        <div>
+            <label for="itemName" th:text="#{label.item.itemName}">상품명</label>
+            <input type="text" id="itemName" th:field="*{itemName}"
+                   th:errorclass="field-error" class="form-control"
+                   placeholder="이름을 입력하세요">
+            <div class="field-error" th:errors="*{itemName}">
+                상품명 오류
+            </div>
+        </div>
+        <div>
+            <label for="price" th:text="#{label.item.price}">가격</label>
+            <input type="text" id="price" th:field="*{price}"
+                   th:errorclass="field-error" class="form-control"
+                   placeholder="가격을 입력하세요">
+            <div class="field-error" th:error="*{price}">
+                가격 오류
+            </div>
+        </div>
+        <div>
+            <label for="quantity" th:text="#{label.item.quantity}">수량</label>
+            <input type="text" id="quantity" th:field="*{quantity}"
+                   th:errorclass="field-error" class="form-control"
+                   placeholder="수량을 입력하세요">
+            <div class="field-error" th:error="*{quantity}">
+                수량 오류
+            </div>
+        </div>
+```
+
+**타임리프 스프링 검증 오류 통합 기능**
+타임리프는 스프링의 BindingResult를 활용해서 편리하게 검증 오류를 표현하는 기능을 제공한다.
+- #fields: #fields로 BindingResult가 제공하는 검증 오류에 접근할 수 있다.
+- th:errors: 해당 필드에 오류가 있는 경우에 태그를 출력한다. th:if의 편의 버전이다.
+- th:errorclass: th:field에서 지정한 필드에 오류가 있으면 class정보를 추가한다.
+
+#
+
+- 검증과 오류 메시지 공식 메뉴얼
+    - [https://www.thymeleaf.org/doc/tutorials/3.0/thymeleafspring.html#validation-and-error-messages](https://www.thymeleaf.org/doc/tutorials/3.0/thymeleafspring.html#validation-and-error-messages)
+
+---
+
+## BindingResult 2
+
+스프링이 제공하는 검증 오류를 보관하는 객체이다. 검증 오류가 발생하면 여기에 보관하면 된다.  
+BindingResult가 있으면 @ModelAttribute에 데이터 바인딩 시 오류가 발생해도 컨트롤러가 호출된다.
+
+**@ModelAttribute에 바인딩 시 타입 오류가 발생하면?**
+- BindingResult가 없으면 -> 400 오류가 발생하면서 컨트롤러가 호출되지 않고, 오류 페이지로 이동한다.
+- BindingResult가 있으면 -> 오류 정보(FieldError)를 BindingResult에 담아서 컨트롤러를 정상 호출한다.
+
+숫자가 입력되어야 할 곳에 문자를 입력해서 타입을 다르게해서 BindingResult를 호출하고 bindingResult의 값을 확인해보자  
+![](img/validation_06.PNG)
 
 
+**주의**
+- BindingResult는 검증할 대상 바로 다음에 와야한다.
+- BindingResult는 Model에 자동으로 포함된다.
 
+---
+
+## FieldError, ObjectError
+
+![](img/validation_07.PNG)  
+현재 오류가 발생하는 경우 고객이 입력한 내용이 모두 사라진다. 이 문제도 해결해보자
 
