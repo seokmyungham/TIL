@@ -198,3 +198,100 @@ MessageCodesResolver를 통해서 생성된 순서대로 오류 코드를 보관
 ### 오류 메시지 출력
 타임리프 화면을 렌더링 할 때 th:errors가 실행된다.  
 만약 이때 오류가 있다면 생성된 오류 메시지 코드를 순서대로 돌아가면서 메시지를 찾는다. 그리고 없으면 디폴트 메시지를 출력한다.
+
+---
+
+## 오류 코드와 메시지 처리5
+
+MessageCodesResolver는 required.item.itemName처럼 구체적인 것을 먼저 만들어주고,
+required처럼 덜 구체적인 것을 가장 나중에 만든다.  
+  
+모든 오류 코드에 대해서 메시지를 각각 다 정의하면 개발자 입장에서 너무 힘들기 때문에 크게 중요하지 않은 메시지는  
+범용성 있는 required 같은 메시지로 끝내고, 정말 중요한 메시지는 꼭 필요할 때 구체적으로 적어서 사용하는 방식이 더 효과적이다.
+
+```properties
+#required.item.itemName=상품 이름은 필수입니다.
+#range.item.price=가격은 {0} ~ {1} 까지 허용합니다.
+#max.item.quantity=수량은 최대 {0} 까지 허용합니다.
+#totalPriceMin=가격 * 수량의 합은 {0}원 이상이어야 합니다. 현재 값 = {1}
+
+#==ObjectError==
+#Level1
+totalPriceMin.item=상품의 가격 * 수량의 합은 {0}원 이상이어야 합니다. 현재 값 = {1}
+
+#Level2 - 생략
+totalPriceMin=전체 가격은 {0}원 이상이어야 합니다. 현재 값 = {1}
+
+
+#==FieldError==
+#Level1
+required.item.itemName=상품 이름은 필수입니다.
+range.item.price=가격은 {0} ~ {1} 까지 허용합니다.
+max.item.quantity=수량은 최대 {0}까지 허용합니다.
+
+#Level2 - 생략
+
+#Level3
+required.java.lang.String = 필수 문자입니다.
+required.java.lang.Integer = 필수 숫자입니다.
+min.java.lang.String = {0} 이상의 문자를 입력해주세요.
+min.java.lang.Integer = {0} 이상의 숫자를 입력해주세요.
+range.java.lang.String = {0} ~ {1} 까지의 문자를 입력해주세요.
+range.java.lang.Integer = {0} ~ {1} 까지의 숫자를 입력해주세요.
+max.java.lang.String = {0} 까지의 문자를 허용합니다.
+max.java.lang.Integer = {0} 까지의 숫자를 허용합니다.
+
+#Level4
+required = 필수 값 입니다.
+min = {0} 이상이어야 합니다.
+range = {0} ~ {1} 범위를 허용합니다.
+max = {0} 까지 허용합니다.
+```
+
+크게 객체 오류와 필드 오류를 나눈다, 그리고 범용성에 따라 레벨을 나누었다.
+
+itemName의 경우 required 검증 오류 메시지가 발생하면 다음 코드 순서대로 메시지가 생성된다.
+1. required.item.itemName
+2. required.itemName
+3. required.java.lang.String
+4. required
+
+그리고 이렇게 생성된 메시지 코드를 기반으로 순서대로 MessageSource에서 메시지를 찾는다.
+
+---
+
+## 오류 코드와 메시지 처리6
+
+검증 오류 코드는 다음과 같이 2가지로 나눌 수 있다.
+- 개발자가 직접 설정한 오류 코드: rejectValue()를 직접 호출
+- 스프링이 직접 검증 오류에 추가한 경우
+
+price 필드에 문자를 입력해보자  
+로그를 확인해보면 BindingResult에 FieldError가 담겨있고, 다음과 같은 메시지 코드들이 생성된 것을 확인할 수 있다.
+
+![](img/validation_08.PNG)
+
+다음과 같이 4가지 메시지 코드가 입력되어 있는 것을 볼 수 있다.
+- typeMismatch.item.price
+- typeMismatch.price
+- typeMismatch.java.lang.Integer
+- typeMismatch
+
+스프링은 타입 오류가 발생하면 typeMismatch라는 오류 코드를 사용하는 것을 알 수 있다.  
+이 오류 코드가 MessageCodesResolver를 통하면서 4가지 메시지 코드가 생성된 것이다.  
+  
+error.properties에 typeMismatch에 관한 메시지 코드를 추가한다.
+
+```properties
+typeMismatch.java.lang.Integer=숫자를 입력해주세요.
+typeMismatch=타입 오류입니다.
+```
+
+![](img/validation_09.PNG)
+
+결과적으로 소스코드를 하나도 건들지 않고, 원하는 메시지를 단계별로 설정할 수 있다.
+
+---
+
+### Reference
+- [스프링 MVC 2편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2/dashboard)
