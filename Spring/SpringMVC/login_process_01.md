@@ -250,6 +250,8 @@ public class TestDataInit {
 }
 ```
 
+![](img/login_process_04.PNG)  
+
 ---
 
 ## 로그인 기능
@@ -411,6 +413,7 @@ public class LoginController {
 </body>
 </html>
 ```
+![](img/login_process_05.PNG) 
 
 ---
 
@@ -543,6 +546,9 @@ public class HomeController {
 
 로그인에 성공하면 사용자 이름이 출력되면서 상품 관리, 로그아웃 버튼을 확인할 수 있다.  
 로그인에 성공시 세션 쿠키가 지속해서 유지되고, 웹 브라우저에서 서버에 요청시 memberId 쿠키를 계속 보내준다.
+
+![](img/login_process_03.PNG)  
+![](img/login_process_02.PNG)  
 
 ---
 
