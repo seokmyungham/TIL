@@ -375,7 +375,8 @@ public String homeLoginV3Spring(
 
 ### TrackingModes
 
-로그인을 처음 시도하면 URL이 다음과 같이 jsessionid를 포함한다.
+로그인을 처음 시도하면 URL이 다음과 같이 jsessionid를 포함한다.  
+![](img/login_process_07.PNG)
 
 이것은 웹 브라우저가 쿠키를 지원하지 않을 때 쿠키 대신 URL을 통해서 세션을 유지하는 방법이다.  
 URL 전달 방식을 끄고 항상 쿠키를 통해서만 세션을 유지하고 싶으면 다음 옵션을 추가하면 된다.  
@@ -384,3 +385,54 @@ URL 전달 방식을 끄고 항상 쿠키를 통해서만 세션을 유지하고
 ```
 server.servlet.session.tracking-modes=cookie
 ```
+
+#
+
+## 세션 정보와 타임아웃 설정
+
+```java
+package hello.login.web.session;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Date;
+
+@Slf4j
+@RestController
+public class SessionInfoController {
+
+
+    @GetMapping("/session-info")
+    public String sessionInfo(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return "세션이 없습니다";
+        }
+
+        //세션 데이터 출력
+        session.getAttributeNames().asIterator()
+                .forEachRemaining(name -> log.info("session name={}, value={}", name, session.getAttribute(name)));
+
+        log.info("sessionId={}", session.getId());
+        log.info("maxInactiveInterval", session.getMaxInactiveInterval());
+        log.info("createTime={}", new Date(session.getCreationTime()));
+        log.info("lastAccessedTime={}", new Date(session.getLastAccessedTime()));
+        log.info("isNew={}", session.isNew());
+
+        return "세션 출력";
+    }
+}
+```
+
+- sessionId: 세션id, JSESSIONID의 값이다
+- maxInactiveInterval: 세션의 유효 시간 예) 1800초 (30분)
+- creationTime: 세션 생성일시
+- lastAccessedTime: 세션과 연결된 사용자가 최근에 서버에 접근한 시간. 클라이언트에서 서버로 sessionId를 요청한 경우에 갱신된다.
+- isNew: 새로 생성된 세션인지, 아니면 이미 과거에 만들어졌고, 클라이언트에서 서버로 sessionId를 요청해서 조회한 세션인지 여부
+
+![](img/login_process_08.PNG)
