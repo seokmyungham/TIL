@@ -112,7 +112,9 @@ public class LogInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {       
+        //예외가 발생해도 호출 되는 것을 보장
+        
         String requestURI = request.getRequestURI();
         String logId = (String) request.getAttribute(LOG_ID);
         log.info("RESPONSE [{}][{}]", logId, requestURI);
@@ -131,4 +133,64 @@ public class LogInterceptor implements HandlerInterceptor {
 - return true
     - true면 정상 호출이다. 다음 인터셉터나 컨트롤러가 호출된다.
 
+```java
+//@RequestMapping: HandlerMethod
+//정적 리소스: ResourceHttpRequestsHandler
+if (handler instanceof HandlerMethod) {
+    HandlerMethod hm = (HandlerMethod) handler; //호출할 컨트롤러 메서드의 모든 정보가 포함되어 있다.
+    }
+```
+
+- 핸들러 정보는 어떤 핸들러 매핑을 사용하는지에 따라 달라진다.
+- 스프링을 사용하면 일반적으로 @Controller, @RequestMapping을 활용한 핸들러 매핑을 사용하는데 이 경우 핸들러 정보로 HandlerMethod가 넘어온다.
+- @Controller가 아니라 /resources/static와 같은 정적 리소스가 호출 되는 경우 ResourceHttpRequestsHandler가 핸들러 정보로 넘어온다.
+
+#
+
+### WebConfig - 인터셉터 등록
+
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LogInterceptor())
+                .order(1)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**", "/*.ico", "/error");
+    }
+}
+```
+
+WebMvcConfigurer가 제공하는 addInterceptors()를 사용해서 인터셉터를 등록한다.  
+필터와 비교해보면 인터셉터는 addPathPatterns, excludePathPatterns로 매우 정밀하게 URL 패턴을 지정할 수 있다.
+
+### PathPattern 공식 문서
+```
+? 한 문자 일치
+* 경로(/) 안에서 0개 이상의 문자 일치
+** 경로 끝까지 0개 이상의 경로(/) 일치
+{spring} 경로(/)와 일치하고 spring이라는 변수로 캡처
+{spring:[a-z]+} matches the regexp [a-z]+ as a path variable named "spring"
+{spring:[a-z]+} regexp [a-z]+ 와 일치하고, "spring" 경로 변수로 캡처
+{*spring} 경로가 끝날 때 까지 0개 이상의 경로(/)와 일치하고 spring이라는 변수로 캡처
+
+/pages/t?st.html — matches /pages/test.html, /pages/tXst.html but not /pages/
+toast.html
+/resources/*.png — matches all .png files in the resources directory
+/resources/** — matches all files underneath the /resources/ path, including /
+resources/image.png and /resources/css/spring.css
+/resources/{*path} — matches all files underneath the /resources/ path and 
+captures their relative path in a variable named "path"; /resources/image.png 
+will match with "path" → "/image.png", and /resources/css/spring.css will match 
+with "path" → "/css/spring.css"
+/resources/{filename:\\w+}.dat will match /resources/spring.dat and assign the 
+value "spring" to the filename variable
+```
+![https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/pattern/PathPattern.html](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/pattern/PathPattern.html)
+
+---
+
+## 스프링 인터셉터 - 인증 체크
 
