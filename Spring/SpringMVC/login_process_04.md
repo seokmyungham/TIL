@@ -188,9 +188,79 @@ with "path" → "/css/spring.css"
 /resources/{filename:\\w+}.dat will match /resources/spring.dat and assign the 
 value "spring" to the filename variable
 ```
-![https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/pattern/PathPattern.html](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/pattern/PathPattern.html)
+[https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/pattern/PathPattern.html](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/pattern/PathPattern.html)
 
 ---
 
 ## 스프링 인터셉터 - 인증 체크
 
+### LoginCheckInterceptor
+```java
+package hello.login.web.interceptor;
+
+import hello.login.web.SessionConst;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@Slf4j
+public class LoginCheckInterceptor implements HandlerInterceptor {
+
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        String requestURI = request.getRequestURI();
+
+        log.info("인증 체크 인터셉터 실행 {}", requestURI);
+        HttpSession session = request.getSession();
+
+        if (session == null || session.getAttribute(SessionConst.LOGIN_MEMBER) == null) {
+            log.info("미 인증 사용차 요청");
+            //로그인으로 redirect
+            response.sendRedirect("/login?redirectURL=" + requestURI);
+            return false;
+        }
+        return true;
+    }
+}
+```
+
+컨트롤러 호출 전에만 인증이 필요하기 때문에 preHandle만 구현했다.
+
+### WebConfig 추가
+
+```java
+@Override
+public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(new LogInterceptor())
+        .order(1)
+        .addPathPatterns("/**")
+        .excludePathPatterns("/css/**", "/*.ico", "/error");
+    
+    registry.addInterceptor(new LoginCheckInterceptor())
+        .order(2)
+        .addPathPatterns("/**")
+        .excludePathPatterns("/", "/members/add", "/login", "logout",
+                "/css/**", "/*.ico", "/error");
+}
+```
+
+서블릿 필터와 비교해보면 excludePathPatterns와 같은 기능을 통해 매우 편리하게 적용할 수 있다는걸 느낄 수 있다.
+
+---
+
+## 정리
+
+- 서블릿 필터와 스프링 인터셉터는 웹과 관련된 공통 관심사를 해결하기 위한 기술이다.
+- 서블릿 필터와 비교해서 스프링 인터셉터가 개발자 입장에서 훨씬 편리하다는 걸 느낄 수 있었다.
+- 특별한 문제가 없다면 인터셉터를 사용하는 것이 더 좋다.
+
+---
+
+### Reference
+- [스프링 MVC 2편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2/dashboard)
