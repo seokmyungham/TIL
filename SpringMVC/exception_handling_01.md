@@ -291,4 +291,138 @@ public class ErrorPageController {
 
 ![](img/exception_handling_06.PNG)
 
+---
 
+## 서블릿 예외 처리 - 필터
+
+```
+1. WAS(여기까지 전파) <- 필터 <- 서블릿 <- 인터셉터 <- 컨트롤러(예외발생)
+2. WAS '/error-page/500' 다시 요청 -> 필터 -> 서블릿 -> 인터셉터 -> 컨트롤러(/error-page/500) -> View
+```
+
+오류가 발생하면 오류 페이지를 출력하기 위해 WAS 내부에서 다시 한번 호출이 발생한다.  
+이때 필터, 서블릿, 인터셉터도 모두 다시 호출되는데, 클라이언트 요청 시 이미 호출되었던 필터나 인터셉터를  
+서버 내부에서 오류 페이지를 호출한다고 해서 한번 더 호출 되는 것은 매우 비효율 적이다.  
+  
+그렇기 때문에 클라이언트로 부터 발생한 정상 요청인지, 아니면 오류 페이지를 출력하기 위한 내부 요청인지 구분할 수 있어야 한다.  
+서블릿은 이러한 문제를 해결하기 위해 DispatcherType이라는 추가 정보를 제공한다.
+
+#
+
+### DispatcherType
+
+필터는 정상요청, 오류 내부요청인지 구분할 수 있도록 dispatcherType이라는 옵션을 제공한다.  
+
+```
+javax.servlet.DispatcherType
+
+public enum DispatcherType {
+    FORWARD,
+    INCLUDE,
+    REQUEST,
+    ASYNC,
+    ERROR
+}
+```
+
+- REQUEST: 클라이언트 
+- ERROR: 오류 요청
+- FORWARD: 다른 서블릿이나 JSP를 호출할 때 (EX: RequsetDispatcher.forward(request, response))
+- INCLUDE: 서블릿에서 다른 서블릿이나 JSP 결과를 포함할 때 (EX: RequestDispatcher.include(request, response))
+- ASYNC: 서블릿 비동기 호출
+
+### WebConfig
+```java
+package hello.exception;
+
+import hello.exception.filter.LogFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+
+@Configuration
+public class WebConfig {
+
+    @Bean
+    public FilterRegistrationBean logFilter() {
+        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(new LogFilter());
+        filterRegistrationBean.setOrder(1);
+        filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR);
+        return filterRegistrationBean;
+    }
+}
+```
+
+filterRegistrationBean.setDispatcherTypes()에 위 처럼 두가지를 모두 넣으면 클라이언트 요청, 오류 페이지 요청에서도 필터가 호출된다.  
+아무것도 넣지 않으면 기본 값이 DispatcherType.REQUEST이다. 그러면 클라이언트의 요청 때만 필터가 적용된다.  
+오류 페이지 요청 전용 필터를 적용하고 싶으면 DispatcherType.ERROR만 지정하면 된다.
+
+#
+
+## 서블릿 예외 처리 - 인터셉터
+
+앞서 필터의 경우에는 필터를 등록할 때 어떤 DispatcherType인 경우에 필터를 적용할 지 선택할 수 있었다.  
+그런데 인터셉터는 서블릿이 제공하는 기능이 아니라 스프링이 제공하는 기능이기 때문에 DispatcherType과 무관하게 항상 호출된다.  
+  
+대신 인터셉터는 excludePathPatterns 기능을 이용해서 오류 페이지 경로를 쉽게 추가하거나 제외할 수 있다.
+
+```java
+package hello.exception;
+
+import hello.exception.filter.LogFilter;
+import hello.exception.interceptor.LogInterceptor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LogInterceptor())
+                .order(1)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**", "/*.ico"
+                        , "/error", "/error-page/**");
+    }
+
+
+//    @Bean
+    public FilterRegistrationBean logFilter() {
+        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(new LogFilter());
+        filterRegistrationBean.setOrder(1);
+        filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR);
+        return filterRegistrationBean;
+    }
+}
+```
+
+만약 /error-ex 요청이 들어오게 되면  
+필터는 DispatcherType으로 중복 호출을 제거할 수 있고,  
+인터셉터는 경로 정보로 중복 호출을 제거할 수 있다.
+
+```
+1. WAS(/error-ex, dispatchType=REQUEST) -> 필터 -> 서블릿 -> 인터셉터 -> 컨트롤러
+2. WAS(여기까지 전파) <- 필터 <- 서블릿 <- 인터셉터 <- 컨트롤러(예외발생)
+3. WAS 오류 페이지 확인
+4. WAS(/error-page/500, dispatchType=ERROR) -> 필터(x) -> 서블릿 -> 인터셉터(x) -> 컨트롤러(/error-page/500) -> View
+```
+
+---
+
+### Reference
+- [스프링 MVC 2편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2/dashboard)
