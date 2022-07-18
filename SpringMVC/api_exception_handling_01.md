@@ -65,7 +65,7 @@ public class ApiExceptionController {
 }
 ```
 
-![](img/api_exception_handling_01.png)
+![](img/api_exception_handling_01.png)  
 Postman으로 http://localhost:8080/api/members/bad를 호출해서 IllegalArgumentException이 발생하도록 해보면  
 상태 코드가 500인 것을 확인할 수 있다.  
 
