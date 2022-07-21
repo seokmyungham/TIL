@@ -17,7 +17,7 @@ ResponseStatusExceptionResolver는 예외에 따라 HTTP 상태 코드를 지정
 
 ### @ResponseStatus가 달려있는 예외
 ```java
-package hello.exception.exception.exception;
+package hello.exception.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -97,8 +97,111 @@ DefaultHandlerExceptionResolver 덕분에 상태코드가 400인 것을 확인�
 
 ## 1. ExceptionHandlerExceptionResolver
 
+### API 예외처리의 어려운 점
+- HandlerExceptionResolver를 떠올려 보면 ModelAndView를 반환해야 했다. 이것은 API 응답에는 필요하지 않다
+- API 응답을 위해서 HttpServletResponse에 직접 응답 데이터를 넣어주었다. 이것은 매우 불편하다
+    - 스프링 컨트롤러에 비유하면 마치 과거 서블릿을 사용하던 시절로 돌아간 것 같다.
+- 특정 컨트롤러에서만 발생하는 예외를 별도로 처리하기 어렵다.
+
+### @ExceptionHandler
+스프링은 API 예외 문제 처리를 해결하기 위해 @ExceptionHandler라는 애노테이션을 사용하는 매우 편리한 기능을 제공한다.  
+스프링은 ExceptionHandlerExceptionResolver를 기본으로 제공하고,  
+기본으로 제공하는 ExceptionResolver중에 우선순위도 가장 높다. 실무에서 API 예외 처리는 대부분 이 기능을 사용한다.
 
 
+#
 
+```java
+package hello.exception.exhandler;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class ErrorResult {
+    private String code;
+    private String message;
+}
+```
+예외가 발생했을 때 API 응답으로 사용하는 객체를 정의했다.
+
+#
+
+### ApiExceptionV2Controller
+
+```java
+package hello.exception.exhandler;
+
+import hello.exception.exception.UserException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@Slf4j
+@RestController
+public class ApiExceptionV2Controller {
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResult illegalExHandle(IllegalArgumentException e) {
+        log.error("[exceptionHandle] ex", e);
+        return new ErrorResult("BAD", e.getMessage());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResult> userExhandle(UserException e) {
+        log.error("[exceptionHandle] ex", e);
+        ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
+        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler
+    public ErrorResult exHandle(Exception e) {
+        log.error("[exceptionHandle] ex", e);
+        return new ErrorResult("EX", "내부 오류");
+    }
+
+    @GetMapping("/api2/members/{id}")
+    public MemberDto getMember(@PathVariable("id") String id) {
+
+        if (id.equals("ex")) {
+            throw new RuntimeException("잘못된 사용자");
+        }
+
+        if (id.equals("bad")) {
+            throw new IllegalArgumentException("잘못된 입력 값");
+        }
+
+        if (id.equals("user-ex")) {
+            throw new UserException("사용자 오류");
+        }
+
+        return new MemberDto(id, "hello " + id);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String memberId;
+        private String name;
+    }
+}
+```
+
+### @ExceptionHandler 예외 처리 방법
+@ExceptionHandler 애노테이션을 선언한 다음, 해당 컨트롤러에서 처리하고 싶은 예외를 지정해주면 된다.  
+해당 컨트롤러에서 예외가 발생하면 이 메서드가 호출된다. 지정한 예외 또는 그 예외의 자식 클래스는 모두 잡을 수 있다.
+  
+예외를 생략할 수도 있는데, 생략하면 메서드 파라미터의 예외가 지정된다.
+
+### 파라미터와 응답
+@ExceptionHandler에는 마치 스프링의 컨트롤러의 파라미터 응답처럼 다양한 파라미터와 응답을 지정할 수 있다.  
+https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-exceptionhandler-args
+
+#
 
