@@ -201,7 +201,158 @@ public class ApiExceptionV2Controller {
 
 ### 파라미터와 응답
 @ExceptionHandler에는 마치 스프링의 컨트롤러의 파라미터 응답처럼 다양한 파라미터와 응답을 지정할 수 있다.  
+스프링 공식 문서:  
 https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-exceptionhandler-args
 
 #
 
+### 실행 흐름
+```java
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+@ExceptionHandler(IllegalArgumentException.class)
+public ErrorResult illegalExHandle(IllegalArgumentException e) {
+    log.error("[exceptionHandle] ex", e);
+    return new ErrorResult("BAD", e.getMessage());
+}
+```
+
+- 컨트롤러를 호출한 결과 IllegalArgumentException 예외가 컨트롤러 밖으로 던져진다.
+- 예외가 발생했으므로 ExceptionResolver가 작동한다.
+    - 가장 우선순위가 높은 ExceptionHandlerExceptionResolver가 실행된다.
+- ExceptionHandlerExceptionResolver는 해당 컨트롤러에 IllegalArgumentException을 처리할 수 있는 @ExceptionHandler가 있는지 확인한다.
+- illegalExHandle()를 실행한다.
+    - @RestController 이므로 illegalExHandle()에도 @ResponseBody가 적용된다.
+    - 따라서 HTTP 컨버터가 사용되고, 응답이 다음과 같은 JSON으로 반환된다.
+- @ResponseStatus(HttpStatus.BAD_REQUEST)를 지정했으므로 HTTP 상태 코드 400으로 응답한다.
+
+![](img/api_exception_handling_11.png)
+
+---
+
+## API 예외 처리 - @ControllerAdvice
+
+@ControllerAdvice 또는 @RestControllerAdvice를 사용하면 정상코드와 예외 처리 코드 둘을 분리할 수 있다.
+
+### ExControllerAdvice
+```java
+package hello.exception.exhandler.advice;
+
+import hello.exception.exception.UserException;
+import hello.exception.exhandler.ErrorResult;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@Slf4j
+@RestControllerAdvice
+public class ExControllerAdvice {
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResult illegalExHandle(IllegalArgumentException e) {
+        log.error("[exceptionHandle] ex", e);
+        return new ErrorResult("BAD", e.getMessage());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResult> userExhandle(UserException e) {
+        log.error("[exceptionHandle] ex", e);
+        ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
+        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler
+    public ErrorResult exHandle(Exception e) {
+        log.error("[exceptionHandle] ex", e);
+        return new ErrorResult("EX", "내부 오류");
+    }
+}
+```
+
+### ApiExceptionV2Controller - 수정
+```java
+package hello.exception.exhandler;
+
+import hello.exception.exception.UserException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@Slf4j
+@RestController
+public class ApiExceptionV2Controller {
+
+    @GetMapping("/api2/members/{id}")
+    public MemberDto getMember(@PathVariable("id") String id) {
+
+        if (id.equals("ex")) {
+            throw new RuntimeException("잘못된 사용자");
+        }
+
+        if (id.equals("bad")) {
+            throw new IllegalArgumentException("잘못된 입력 값");
+        }
+
+        if (id.equals("user-ex")) {
+            throw new UserException("사용자 오류");
+        }
+
+        return new MemberDto(id, "hello " + id);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String memberId;
+        private String name;
+    }
+}
+```
+
+### @ControllerAdvice
+- @ControllerAdvice는 대상으로 지정한 여러 컨트롤러에 @ExceptionHandler, @InitBinder기능을 부여해주는 역할을 한다.
+- @ControllerAdvice에 대상을 지정하지 않으면 모든 컨트롤러에 적용된다. (글로벌)
+- @RestControllerAdvice는 @ControllerAdvice와 같고, @ResponseBody가 추가되어 있다.
+
+#
+
+```java
+// Target all Controllers annotated with @RestController
+@ControllerAdvice(annotations = RestController.class)
+public class ExampleAdvice1 {}
+
+// Target all Controllers within specific packages
+@ControllerAdvice("org.example.controllers")
+public class ExampleAdvice2 {}
+
+// Target all Controllers assignable to specific classes
+@ControllerAdvice(assignableTypes = {ControllerInterface.class,
+AbstractController.class})
+public class ExampleAdvice3 {}
+```
+
+특정 애노테이션이 있는 컨트롤러, 특정 패키지, 특정 클래스를 원하는 방법으로 지정할 수 있다.  
+대상 컨트롤러 지정을 생략하면 모든 컨트롤러에 적용된다.  
+  
+스프링 공식 문서:  
+https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-controller-advice
+
+---
+
+## 정리
+
+- HTML 화면 오류의 경우 BasicErrorController를 사용하는게 제일 편하다.
+- 단순히 5xx, 4xx 관련된 오류 화면을 등록해서 보여주기만 하면 된다.
+- API 오류의 경우 ExceptionHandlerExceptionResolver, @ExceptionHandler 기능을 적극 사용하자
+
+---
+
+### Reference
+- [스프링 MVC 2편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2/dashboard)
