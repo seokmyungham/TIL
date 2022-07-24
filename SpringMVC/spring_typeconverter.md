@@ -1,4 +1,4 @@
-# 10. 스프링 타입 컨버터
+# 15. 스프링 타입 컨버터
 
 HTTP 요청 파라미터는 모두 문자로 처리된다.  
 따라서 요청 파라미터를 자바에서 다른 타입으로 변환해서 사용하고 싶으면 타입 변환 과정을 거쳐야 한다.
@@ -258,6 +258,8 @@ public class WebConfig implements WebMvcConfigurer {
 스프링은 내부에서 ConversionService를 제공한다.  
 우리는 WebMvcConfigurer가 제공하는 addFormatters()를 사용해서 추가하고 싶은 컨버터를 등록하면 된다.  
 이렇게 하면 스프링은 내부에서 사용하는 ConversionService에 컨버터를 추가해준다.
+
+#
 
 ### HelloController
 ```java
