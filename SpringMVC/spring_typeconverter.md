@@ -420,3 +420,281 @@ Form 객체를 데이터를 전달하는 폼 객체로 사용한다.
     - 따라서 IpPort -> String으로 변환된다.
 - POST /converter/edit
     - @ModelAttribute를 사용해서 String -> IpPort로 변환된다.
+
+---
+
+## 포맷터 - Formatter
+
+Converter는 입력과 출력 타입에 제한이 없는, 범용 타입 변환 기능을 제공한다.  
+일반적인 웹 애플리케이션 환경에서는, 불린 타입을 숫자로 바꾸는 것 같은 범용 기능 보다,  
+문자를 다른 타입으로 변환하거나, 다른 타입을 문자로 변환하는 상황이 대부분이다.
+
+- 화면에 숫자를 출력해야 할 때, Integer -> String 출력 시점
+    - 숫자 1000 -> 문자 "1,000" / 문자 "1,000" -> 숫자 1000
+- 날짜 객체를 문자인 "2021-01-01 10:50:11" 와 같이 출력하거나 또는 그 반대의 상황
+
+### Cnverter vs Formatter
+- Converter는 범용(객체 -> 객체)
+- Formatter는 문자에 특화(객체 -> 문자, 문자 -> 객체) + 현지화(Locale)
+    - Converter의 특별한 버전
+
+#
+
+### Formatter 인터페이스
+```java
+public interface Printer<T> {
+    String print(T object, Locale locale);
+}
+
+public interface Parser<T> {
+    T parse(String text, Locale locale) throws ParseException;
+}
+
+public interface Formatter<T> extends Printer<T>, Parser<T> {
+}
+```
+
+- String print(T object, Locale locale): 객체를 문자로 변경한다.
+- T parse(String text, Locale locale): 문자를 객체로 변환한다.
+
+### MyNumberFormatter
+```java
+package hello.typeconverter.formatter;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.Formatter;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
+@Slf4j
+public class MyNumberFormatter implements Formatter<Number> {
+
+    @Override
+    public Number parse(String text, Locale locale) throws ParseException {
+        log.info("text={}, locale={}", text, locale);
+        NumberFormat format = NumberFormat.getInstance(locale);
+        return format.parse(text);
+    }
+
+    @Override
+    public String print(Number object, Locale locale) {
+        log.info("object={}, locale={}", object, locale);
+        return NumberFormat.getInstance(locale).format(object);
+    }
+}
+```
+
+"1,000" 처럼 숫자 중간의 쉼표를 적용하려면 자바가 기본으로 제공하는 NumberFormat 객체를 사용하면 된다.  
+이 객체는 Locale 정보를 활용해서 나라별로 다른 숫자 포맷을 만들어준다.  
+  
+parse()를 사용해서 문자를 숫자로 변환한다.  
+Number 타입은 Integer, Long과 같은 숫자 타입의 부모 클래스이다.  
+  
+print()를 사용해서 객체를 문자로 변환한다.
+
+---
+
+## 포맷터를 지원하는 컨버전 서비스
+
+컨버전 서비스에는 컨버터만 등록할 수 있고, 포맷터를 등록할 수 는 없다.  
+그런데 포맷터를 지원하는 컨버전 서비스를 사용하면 컨버전 서비스에 포맷터를 추가 할 수 있다.  
+내부에서 어댑터 패턴을 사용해서 Formatter가 Converter처럼 동작하도록 지원한다.
+
+### FormattingConversionService - DefaultFormattingConversionService
+```java
+package hello.typeconverter.formatter;
+
+import hello.typeconverter.converter.IpPortToStringConverter;
+import hello.typeconverter.converter.StringToIpPortConverter;
+import hello.typeconverter.type.IpPort;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.format.support.DefaultFormattingConversionService;
+
+import static org.assertj.core.api.Assertions.*;
+
+public class FormattingConversionServiceTest {
+
+    @Test
+    void formattingConversionService() {
+
+        DefaultFormattingConversionService conversionService =
+                new DefaultFormattingConversionService();
+
+        //컨버터 등록
+        conversionService.addConverter(new StringToIpPortConverter());
+        conversionService.addConverter(new IpPortToStringConverter());
+        //포맷터 등록
+        conversionService.addFormatter(new MyNumberFormatter());
+
+        //컨버터 사용
+        IpPort ipPort = conversionService.convert("127.0.0.1:8080", IpPort.class);
+        assertThat(ipPort).isEqualTo(new IpPort("127.0.0.1", 8080));
+        //포맷터 사용
+        assertThat(conversionService.convert(1000, String.class)).isEqualTo("1,000");
+        assertThat(conversionService.convert("1,000", Long.class)).isEqualTo(1000L);
+    }
+}
+```
+
+DefaultFormattingConversionService는 FormattingConversionService에 기본적인 통화, 숫자 관련 몇가지 기본 포맷터를 추가해서 제공한다.  
+
+![](img/spring_typeconverter_05.png)
+
+#
+
+### WebConfig에 포맷터 적용
+```java
+package hello.typeconverter;
+
+import hello.typeconverter.converter.IntegerToStringConverter;
+import hello.typeconverter.converter.IpPortToStringConverter;
+import hello.typeconverter.converter.StringToIntegerConverter;
+import hello.typeconverter.converter.StringToIpPortConverter;
+import hello.typeconverter.formatter.MyNumberFormatter;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        //우선순위는 컨버터가 포맷터보다 우선이다.
+        //registry.addConverter(new StringToIntegerConverter());
+        //registry.addConverter(new IntegerToStringConverter());
+        
+        registry.addConverter(new StringToIpPortConverter());
+        registry.addConverter(new IpPortToStringConverter());
+
+        //추가
+        registry.addFormatter(new MyNumberFormatter());
+    }
+}
+```
+
+### formatter - 객체 -> 문자
+http://localhost:8080/converter-view  
+
+![](img/spring_typeconverter_06.png)
+
+model에 숫자 10000이 넘어가면, MyNumberFormatter가 적용되어서 문자 10,000이 출력된다.
+
+### formatter - 문자 -> 객체
+http://localhost:8080/hello-v2?data=10,000
+
+![](img/spring_typeconverter_07.png)
+
+"10,000"이라는 포맷팅 된 문자가 Interger 타입의 숫자 10000으로 정상 변환 된 것을 확인할 수 있다.
+
+---
+
+## 스프링이 제공하는 기본 포맷터
+
+스프링은 자바에서 기본으로 제공하는 타입들에 대해 수 많은 포맷터를 기본으로 제공한다.
+그런데 포맷터는 기본 형식이 지정되어 있기 때문에, 객체의 각 필드마다 다른 형식으로 포맷을 지정하기는 어렵다.  
+  
+스프링은 이런 문제를 해결하기 위해 애노테이션 기반으로 원하는 형식을 지정해서 사용할 수 있는  
+매우 유용한 포맷터 두 가지를 기본으로 제공한다.
+
+- @NumberFormat: 숫자 관련 형식 지정 포맷터, NumberFormatAnnotationFormatterFactory
+- @DateTimeFormat: 날짜 관련 형식 지정 포맷터, Jsr310DateTimeFormatAnnotationFormatterFactory
+
+### FormatterController
+```java
+package hello.typeconverter.controller;
+
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.time.LocalDateTime;
+
+@Controller
+public class FormatterConverter {
+
+    @GetMapping("/formatter/edit")
+    public String formatterForm(Model model) {
+        Form form = new Form();
+        form.setNumber(10000);
+        form.setLocalDateTime(LocalDateTime.now());
+
+        model.addAttribute("form", form);
+        return "formatter-form";
+    }
+
+    @PostMapping("/formatter/edit")
+    public String formatterEdit(@ModelAttribute Form form) {
+        return "formatter-view";
+    }
+
+    @Data
+    static class Form {
+
+        @NumberFormat(pattern = "###, ###")
+        private Integer number;
+
+        @DateTimeFormat(pattern = "yyy-MM-dd HH:mm:ss")
+        private LocalDateTime localDateTime;
+    }
+}
+```
+
+### formatter-form.html
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form th:object="${form}" th:method="post">
+    number <input type="text" th:field="*{number}"><br/>
+    localDateTime <input type="text" th:field="*{localDateTime}"><br/>
+    <input type="submit"/>
+</form>
+</body>
+</html>
+```
+
+### formatter-view.html
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<ul>
+  <li>${form.number}: <span th:text="${form.number}" ></span></li>
+  <li>${{form.number}}: <span th:text="${{form.number}}" ></span></li>
+  <li>${form.localDateTime}: <span th:text="${form.localDateTime}" ></span></
+  li>
+  <li>${{form.localDateTime}}: <span th:text="${{form.localDateTime}}" ></
+    span></li>
+</ul>
+</body>
+</html>
+```
+
+![](img/spring_typeconverter_08.png)  
+![](img/spring_typeconverter_09.png)
+
+컨버터를 사용하든, 포맷터를 사용하든 등록 방법은 다르지만,  
+사용할 때는 컨버전 서비스를 통해서 일관성 있게 사용할 수 있다.
+
+---
+
+### Reference
+- [스프링 MVC 2편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2/dashboard)
+
