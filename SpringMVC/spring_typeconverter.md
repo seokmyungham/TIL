@@ -278,3 +278,145 @@ http://localhost:8080/ip-port?ipPort=127.0.0.1:8080
 직접 만들었던 StringToIpPortConverter가 동작하면서 ?ipPort=127.0.0.1:8080 쿼리 스트링이  
 ipPort 객체 타입으로 잘 변환 된 것을 확인할 수 있다.
 
+---
+
+## 뷰 템플릿에 컨버터 적용하기
+
+타임리프는 렌더링 시에 컨버터를 적용해서 렌더링 하는 방법을 편리하게 지원한다. (객체를 문자로 변환)
+
+### ConverterController
+```java
+package hello.typeconverter.controller;
+
+import hello.typeconverter.type.IpPort;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class ConverterController {
+
+    @GetMapping("/converter-view")
+    public String converterView(Model model) {
+        model.addAttribute("number", 10000);
+        model.addAttribute("ipPort", new IpPort("127.0.0.1", 8080));
+        return "converter-view";
+    }
+}
+```
+
+Model에 숫자 10000과, ipPort 객체를 담아서 "converter-view" 뷰 템플릿으로 전달한다.
+
+### converter-view
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thyemleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul>
+    <li>${number}: <span th:text="${number}"></span></li>
+    <li>${{number}}: <span th:text="${{number}}"></span></li>
+    <li>${ipPort}: <span th:text="${ipPort}"></span></li>
+    <li>${{ipPort}}: <span th:text="${{ipPort}}"></span></li>
+</ul>
+
+</body>
+</html>
+```
+
+![](img/spring_typeconverter_02.png)  
+![](img/spring_typeconverter_03.png)  
+
+
+타임리프는 ${{...}}를 사용하면 ConversionService를 사용해서 변환된 결과를 출력해준다.  
+
+- 변수 표현식: ${...}
+- 컨버전 서비스 적용: ${{...}}
+
+#
+
+### 컨버터를 폼에 적용하기
+```java
+package hello.typeconverter.controller;
+
+import hello.typeconverter.type.IpPort;
+import lombok.Data;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+@Controller
+public class ConverterController {
+
+    @GetMapping("/converter-view")
+    public String converterView(Model model) {
+        model.addAttribute("number", 10000);
+        model.addAttribute("ipPort", new IpPort("127.0.0.1", 8080));
+        return "converter-view";
+    }
+
+    @GetMapping("/converter/edit")
+    public String converterForm(Model model) {
+
+        IpPort ipPort = new IpPort("127.0.0.1", 8080);
+        Form form = new Form(ipPort);
+
+        model.addAttribute("form", form);
+        return "converter-form";
+    }
+
+    @PostMapping("/converter/edit")
+    public String converterEdit(@ModelAttribute Form form, Model model) {
+        IpPort ipPort = form.getIpPort();
+        model.addAttribute("ipPort", ipPort);
+        return "converter-view";
+    }
+
+
+    @Data
+    static class Form {
+        private IpPort ipPort;
+
+        public Form(IpPort ipPort) {
+            this.ipPort = ipPort;
+        }
+    }
+}
+```
+
+Form 객체를 데이터를 전달하는 폼 객체로 사용한다.
+
+### converter-form
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form th:object="${form}" th:method="post">
+    th:field <input type="text" th:field="*{ipPort}"><br/>
+    th:value <input type="text" th:value="*{ipPort}">(보여주기 용도)<br/>
+    <input type="submit">
+</form>
+
+</body>
+</html>
+```
+
+![](img/spring_typeconverter_04.png)  
+
+타임리프의 th:field는 id, name을 출력하는 다양한 기능 뿐만 아니라, 컨버전 서비스도 함께 적용된다.  
+  
+- GET /converter/edit
+    - th:field가 자동으로 ConversionService를 적용해서 ${{ipPort}} 처럼 적용이 되었다.
+    - 따라서 IpPort -> String으로 변환된다.
+- POST /converter/edit
+    - @ModelAttribute를 사용해서 String -> IpPort로 변환된다.
