@@ -144,7 +144,7 @@ public class ServletUploadControllerV2 {
 request.getParts(): multipart/form-data 전송 방식에서 각각 나누어진 부분을 받아서 확인할 수 있다.
 
 ### 결과
-![](/img/file_upload_02.png)
+![](img/file_upload_02.png)
 
 #
 
