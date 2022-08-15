@@ -281,7 +281,7 @@ HttpServletRequest request, HttpServletResponse response
 - 하지만 MVC 패턴에도 여러 단점들이 존재했는데 중복 코드가 너무 많고, 사용하지 않는 코드들도 있었다.
 - 컨트롤러 호출 전에 공통 처리를 해주는 무언가가 있으면 좋을 것 같다는 생각이 든다.
 
----
+--- 
 
 ### Reference
 - [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard)
