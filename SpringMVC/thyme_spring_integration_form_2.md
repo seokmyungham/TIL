@@ -132,7 +132,7 @@ public enum ItemType {
         this.description = description;
     }
 }
-```
+``` 
 
 **배송 방식**
 ```java
