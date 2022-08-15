@@ -202,7 +202,7 @@ if (!errors.isEmpty()) {
     color: #dc3545;
 }
 ```
-
+ 
 **글로벌 오류 메시지**
 ```html
 <div th:if="${errors?.containsKey('globalError')}">
