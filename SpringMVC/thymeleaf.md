@@ -57,7 +57,7 @@ JSP를 포함한 다른 뷰 템플릿들은 해당 파일을 열면, JSP 파일 
 기본 표현식: [https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#standard-expression-syntax](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#standard-expression-syntax)
 
 ---
-
+ 
 ## 텍스트 - text, utext
 
 타임리프의 가장 기본 기능인 텍스트를 출력하는 기능이다.  
