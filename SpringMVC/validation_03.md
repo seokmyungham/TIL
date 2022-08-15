@@ -26,7 +26,7 @@ totalPriceMin=가격 * 수량의 합은 {0}원 이상이어야 합니다. 현재
 스프링 부트가 해당 메시지 파일을 인식할 수 있게 다음 설정을 추가한다.  
 이렇게 하면 messages.properties, errors.properties 두 파일을 모두 인식한다. (생략하면 messages.properties를 기본으로 인식한다.)  
   
-errors에 등록한 메시지를 사용하도록 코드를 변경하자
+errors에 등록한 메시지를 사용하도록 코드를 변경하자 
 
 ```java
 @PostMapping("/add")
