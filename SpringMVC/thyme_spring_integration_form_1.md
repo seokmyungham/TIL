@@ -36,7 +36,7 @@
 - [https://www.thymeleaf.org/doc/tutorials/3.0/thymeleafspring.html#views-and-view-resolvers](https://www.thymeleaf.org/doc/tutorials/3.0/thymeleafspring.html#views-and-view-resolvers)
 
 스프링 부트는 이런 부분을 모두 자동화 해준다!  
-
+ 
 **build.gradle**
 
 ```java
