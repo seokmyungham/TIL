@@ -252,7 +252,7 @@ public String mappingProduces() {
 ```
 
 HTTP 요청의 Accept 헤더를 기반으로 미디어 타입으로 매핑한다.  
-만약 맞지 않으면 HTTP 406 상태코드(Not Acceptable)을 반환한다.
+만약 맞지 않으면 HTTP 406 상태코드(Not Acceptable)을 반환한다. 
 
 ---
 
