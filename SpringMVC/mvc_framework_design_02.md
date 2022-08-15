@@ -17,7 +17,7 @@ public interface ControllerV4 {
     String process(Map<String, String> paramMap, Map<String, Object> model);
 }
 ```
-
+ 
 지금까지 우리가 개발한 프론트 컨트롤러는 한가지 방식의 컨트롤러 인터페이스만 사용할 수 있다.  
 ControllerV3, ControllerV4는 완전히 다른 인터페이스이다. 따라서 호환이 불가능하다.  
 
