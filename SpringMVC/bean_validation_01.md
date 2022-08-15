@@ -13,7 +13,7 @@ implementation 'org.springframework.boot:spring-boot-starter-validation'
 **Jakarta Bean Vaildation**  
 jakarta.validation-api: Bean Validation 인터페이스  
 hibernate-validator: 구현체
-
+ 
 ### Item - Bean Validation 애노테이션 적용
 
 ```java
