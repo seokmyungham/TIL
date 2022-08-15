@@ -308,7 +308,7 @@ public class MemberListServlet extends HttpServlet {
 - 하지만 자바 코드로 HTML을 만들려고 해보니 코드가 매우 복잡하고 비효율적으로 길어진다.
 - 더 편하게 개발할 수는 없을까? 라는 의문이 자꾸 들게된다.
 
----
+--- 
 
 ### Reference
 - [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard)
