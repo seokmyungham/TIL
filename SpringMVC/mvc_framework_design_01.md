@@ -23,7 +23,7 @@
 먼저 구조를 맞추어두고 점진적으로 리팩터링 해보자.
 
 **V1의 구조**  
-![](img/servlet_jsp_mvc_08.PNG)
+![](img/servlet_jsp_mvc_08.PNG) 
 
 **ControllerV1**
 ```java
