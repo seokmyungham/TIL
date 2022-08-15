@@ -48,7 +48,7 @@ public String addItemV1(@ModelAttribute Item item, BindingResult bindingResult, 
 ```
 
 BindingResult bindingResult 파라미터의 위치는 @ModelAttribute Item item 다음에 와야 한다.
-
+ 
 #
 
 ### FieldError 생성자
