@@ -27,7 +27,7 @@ src/main/resources/static/basic/hello-form.html 과 같은 경로에 파일이 �
 정적 리소스는 해당 파일을 변경 없이 그대로 서비스하는 것이다.
 
 #
-
+ 
 ### 뷰 템플릿
 
 뷰 템플릿을 거쳐서 HMTL이 생성되고, 뷰가 응답을 만들어서 전달한다.  
