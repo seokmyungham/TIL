@@ -15,7 +15,7 @@
 - ModelView -> ModelAndView
 - viewResolver -> ViewResolver
 - MyView -> View
-
+ 
 ---
 
 ## DispatcherServlet 구조 살펴보기
