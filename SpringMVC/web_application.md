@@ -155,6 +155,7 @@ SSR을 사용하더라도, 자바스크립트를 통해서 화면 일부를 동�
 - 서블릿의 등장 이후 JSP, MVC 패턴, 다양한 기술들이 등장하였고 결국 현 시점에는 서블릿 기반 기술인 Spring MVC, Spring Boot가 주류를 차지하고 있다.
 - Spring MVC 와 매우 좋은 시너지를 내는 뷰 템플릿, 내추럴 템플릿인 타임리프(Thymeleaf)가 등장하였다.
  ---
+ 
 ### Reference
-- [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard)
+- [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard) 
 
