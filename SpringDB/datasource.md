@@ -29,3 +29,23 @@ SQL을 실행하는 시간 뿐 아니라 이러한 복잡한 과정이 계속 �
 - 애플리케이션 로직은 커넥션 풀에서 받은 커넥션을 사용해서 SQL을 데이터베이스에 전달하고 그 결과를 받아서 처리한다
 - 커넥션을 모두 사용하고 나면, 커넥션을 종료하는 것이 아니라! 다음에 다시 사용할 수 있도록 해당 커넥션을 그대로 풀에 반환한다  
   
+성능 테스트를 통해 적전할 커넥션 풀 숫자를 설정해야한다.  
+커넥션 풀로 얻는 이점이 매우 커서 실무에서는 항상 기본으로 사용되고, 스프링 부트 2.0부터 기본으로 제공하는 hikariCP를 주로 사용한다.
+
+#
+
+대부분 커넥션 풀은 DataSource 인터페이스를 이미 구현해두어서 개발자는 DataSource 인터페이스에만 의존하도록 로직을 작성하면 된다.
+
+```java
+public interface DataSource {
+    Connection getConnection() throws SQLException;
+}
+```
+
+또한 스프링은 DataSource를 구현한 DriverManagerDataSource 클래스를 제공한다.  
+따라서 DriverManagerDataSource를 통해서 DriverManager를 사용하다가 커넥션 풀을 사용하도록 코드를 변경해도 로직은 변경하지 않아도 된다.
+
+---
+
+## Reference
+- [스프링 DB 1편 - 데이터 접근 핵심 원리](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-db-1/dashboard)
