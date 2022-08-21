@@ -204,11 +204,13 @@ class MemberRepositoryV1Test {
 
 ### DriverManager 사용
 ![](img/datasource_05.PNG)  
+  
 DriverManagerDataSource를 사용하면 conn0~5 번호를 통해서 항상 새로운 커넥션이 생성되어 사용되는 것을 확인할 수 있다.
 
 
 ### ConnectionPool 사용
 ![](img/datasource_06.PNG)  
+  
 커넥션 풀 사용시 conn0 커넥션이 계속 재사용 된 것을 확인할 수 있다.  
 테스트가 순서대로 진행되어 커넥션을 사용하고 다시 돌려주는 것을 반복한다.  
   
