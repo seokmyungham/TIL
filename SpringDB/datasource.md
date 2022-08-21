@@ -42,7 +42,8 @@ public interface DataSource {
 }
 ```
 
-또한 스프링은 DataSource를 구현한 DriverManagerDataSource 클래스를 제공한다.  
+DriverManager는 DataSource를 사용하지 않기 때문에 DriverManager는 직접 사용해야한다.  
+그 대신 스프링은 DataSource를 구현한 DriverManagerDataSource 클래스를 제공한다.  
 따라서 DriverManagerDataSource를 통해서 DriverManager를 사용하다가 커넥션 풀을 사용하도록 코드를 변경해도 로직은 변경하지 않아도 된다.
 
 ---
