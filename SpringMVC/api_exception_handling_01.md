@@ -141,7 +141,7 @@ Postman으로 http://localhost:8080/api/members/bad를 다시 호출해보면 �
 ---
 
 ## HandlerExceptionResolver 활용
-
+ 
 예외가 발생하면 WAS까지 예외가 던져지고, WAS에서 오류 페이지 정보를 찾아서 다시 /error를 호출하는 과정은 너무 복잡하다.  
 ExceptionResolver를 활용하면 예외가 발생했을 때 이런 복잡한 과정 없이 Resolver에서 문제를 해결할 수 있다.
 
