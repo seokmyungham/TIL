@@ -352,7 +352,7 @@ public class LoginController {
 
 - 로그인 성공 -> redirect:/ 홈 화면으로 이동
 - 로그인 실패 -> bindingResult.rejecct()를 사용, 글로벌 오류 생성.
-    - 정보를 다시 입력하도록 로그인 폼 리턴
+    - 정보를 다시 입력하도록 로그인 폼 리턴 
 
 ### 로그인 폼 뷰 템플릿
 ```html
