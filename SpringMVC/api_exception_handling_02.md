@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class BadRequestException extends RuntimeException {
 }
 ```
-
+ 
 BadRequestException 예외가 컨트롤러 밖으로 넘어가면  
 ResponseStatusExceptionResolver가 해당 애노테이션을 확인해서 오류 코드를 원하는 코드로 변경하고, 메시지도 담는다.  
   
