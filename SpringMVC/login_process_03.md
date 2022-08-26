@@ -121,7 +121,7 @@ public class LogFilter implements Filter {
     - HTTP 요청을 구분하기 위해 요청당 임의의 uuid를 생성해둔다.
 - chain.doFilter(request, response)
     - 다음 필터가 있으면 필터를 호출하고, 필터가 없으면 서블릿을 호출한다. 만약 이 로직을 호출하지 않으면 다음 단계로 진행되지 않는다
-
+ 
 #
 
 ### WebConfig - 필터 설정
