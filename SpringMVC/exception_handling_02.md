@@ -54,7 +54,7 @@ BasicErrorController 컨트롤러는 다음 정보를 model에 담아서 뷰에 
 * message: Validation failed for object='data'. Error count: 1
 * errors: Errors(BindingResult)
 * path: 클라이언트 요청 경로 (`/hello`)
-```
+``` 
 
 ### 오류 정보 출력
 
