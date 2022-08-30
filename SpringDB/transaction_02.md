@@ -288,7 +288,7 @@ public void accountTransfer(String fromId, String toId, int money) throws SQLExc
 - 트랜잭션 템플릿 기본 동작
     - 비즈니스 로직이 정상 수행되면 커밋한다.
     - 언체크 예외가 발생하면 롤백한다. 그 예외의 경우 커밋한다.
-
+ 
 ---
 
 ## Reference
