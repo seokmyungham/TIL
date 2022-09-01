@@ -237,7 +237,7 @@ spring.datasource.password=
 스프링 부트의 데이터소스 자동 등록에 대한 더 자세한 내용  
 https://docs.spring.io/spring-boot/docs/current/reference/html/data.html#data.sql.datasource.production  
   
-자세한 설정 속성
+자세한 설정 속성  
 https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
 
 ---
