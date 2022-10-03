@@ -453,3 +453,45 @@ JdbcTemplate은 물론이고, MyBatis같은 기술에서도 자주 사용된다.
   
 서로 관례를 많이 사용하다 보니 BeanPropertyRowMapper는 언더스코어 표기법을 카멜로 자동 변환해준다.  
 따라서 ```select item_name``` 으로 조회해도 setItemName()에 문제 없이 값이 들어간다.
+
+---
+
+## SimpleJdbcInsert
+
+```java
+/**
+ * SimpleJdbcInsert
+ */
+@Slf4j
+@Repository
+public class JdbcTemplateItemRepositoryV3 implements ItemRepository {
+
+    private final NamedParameterJdbcTemplate template;
+    private final SimpleJdbcInsert jdbcInsert;
+
+    public JdbcTemplateItemRepositoryV3(DataSource dataSource) {
+        this.template = new NamedParameterJdbcTemplate(dataSource);
+		
+        this.jdbcInsert = new SimpleJdbcInsert(dataSource)
+                .withTableName("item") //데이터를 저장할 테이블 이름
+                .usingGeneratedKeyColumns("id"); //key를 생성하는 PK 컬럼 명을 지정
+//                .usingColumns("item_name", "price", "quantity") //생략 가능
+    }
+
+    @Override
+    public Item save(Item item) {
+        SqlParameterSource param = new BeanPropertySqlParameterSource(item);
+        Number key = jdbcInsert.executeAndReturnKey(param); // INSERT SQL을 실행하고, 생성 키 값도 편리하게 조회할 수 있다.
+        item.setId(key.longValue());
+        return item;
+    }
+```
+
+SimpleJdbcInsert는 생성 시점에 데이터베이스 테이블의 메타 데이터를 조회한다.  
+따라서 usingColumns을 생략할 수 있다. 특정 컬럼만 지정해서 저장하고 싶으면 usingColumns을 사용하면 된다.
+
+---
+
+## Reference
+- [스프링 DB 2편 - 데이터 접근 활용 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-db-2/dashboard)
+- [스프링 JdbcTemplate 사용 방법 공식 메뉴얼](https://docs.spring.io/spring-framework/docs/current/reference/html/data-access.html#jdbc-JdbcTemplate)
