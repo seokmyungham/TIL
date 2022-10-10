@@ -159,6 +159,27 @@ DataAccessException resultEx = exTranslator.translate("select", sql, e);
 스프링 SQL 예외 변환기는 ErrorCode를 sql-error-codes.xml 이 파일에 대입해서  
 어떤 스프링 데이터 접근 예외로 전환해야 할지 찾아낸다.  
 
+### sql-error-codes.xml
+
+```xml
+<bean id="H2" class="org.springframework.jdbc.support.SQLErrorCodes">
+    <property name="badSqlGrammarCodes">
+        <value>42000,42001,42101,42102,42111,42112,42121,42122,42132</value>
+    </property>
+    <property name="duplicateKeyCodes">
+        <value>23001,23505</value>
+    </property>
+</bean>
+<bean id="MySQL" class="org.springframework.jdbc.support.SQLErrorCodes">
+    <property name="badSqlGrammarCodes">
+        <value>1054,1064,1146</value>
+    </property>
+    <property name="duplicateKeyCodes">
+        <value>1062</value>
+    </property>
+</bean>
+```
+
 ---
 
 ## 스프링 예외 추상화 적용
