@@ -330,7 +330,7 @@ MyBatis 스프링 연동 모듈은 데이터베이스 커넥션, 트랜잭션과
 매퍼 구현체는 예외 변환까지 처리해준다.  
 MyBatis에서 발생한 예외를 스프링 예외 추상화인 `DataAccessException`에 맞게 변환해서 처리해준다.  
   
-![](img/spring_exceptiion_02.png)
+![](img/spring_exception_02.png)
 
 #
 
