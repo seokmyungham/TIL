@@ -1,5 +1,18 @@
 # 11. 검증2 - Bean Validation
 
+```java
+if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
+    bindingResult.addError(new FieldError("item", "price", item.getPrice(), false,
+    new String[]{"range.item.price"}, new Object[]{1000, 1000000}, null));
+}
+```
+
+검증 기능을 매번 위 코드 처럼 작성하는건 상당히 번거롭다.  
+특정 필드에 대한 검증 로직은 대부분 빈 값인지 아닌지, 특정 크기를 넘는지 아닌지와 같이 일반적인 로직이기 때문이다.  
+  
+검증 로직을 모든 프로젝트에 적용할 수 있게 애노테이션으로 공통화, 표준화 한 것이 Bean Validation이다.  
+Bean Validation을 잘 활용하면, 애노테이션 하나로 검증 로직을 매우 편리하게 적용할 수 있다.
+
 ## Bean Vaildation - 시작
 
 ### Bean Validation 의존관계 추가
