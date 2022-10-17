@@ -17,15 +17,12 @@ public interface ControllerV4 {
     String process(Map<String, String> paramMap, Map<String, Object> model);
 }
 ```
- 
-지금까지 우리가 개발한 프론트 컨트롤러는 한가지 방식의 컨트롤러 인터페이스만 사용할 수 있다.  
-ControllerV3, ControllerV4는 완전히 다른 인터페이스이다. 따라서 호환이 불가능하다.  
 
 #
 
 ### 어댑터 패턴
 
-어댑터 패턴을 이용해서 프론트 컨트롤러가 다양한 방식의 컨트롤러를 처리할 수 있도록 변경해보자.
+어댑터 패턴을 이용해서 프론트 컨트롤러가 다양한 방식의 컨트롤러를 처리할 수 있도록 할 수있다.
 
 **V5 구조**  
 ![](img/servlet_jsp_mvc_12.PNG)
@@ -113,7 +110,7 @@ public class ControllerV3HandlerAdapter implements MyHandlerAdapter {
 - ```ControllerV3 controller = (ControllerV3) handler;```
     - handler를 컨트롤러 V3로 변환한 다음에 V3 형식에 맞도록 호출한다.
     - supports()를 통해 ContollerV3만 지원하기 때문에 타입 변환은 걱정없이 실행해도 된다.
-    - ContollerV3는 ModelView를 반호나하므로 그대로 ModelView를 반환하면 된다.
+    - ContollerV3는 ModelView를 반하므로 그대로 ModelView를 반환하면 된다.
 
 #
 
@@ -363,11 +360,10 @@ ControllerV4는 뷰의 이름을 반환 했지만, 어댑터는 ModelView로 만
 
 ## 정리
 
-v1부터 v5까지 점진적으로 프레임워크를 발전시켜 보았다.  
-  
 여기에 애노테이션을 사용해서 컨트롤러를 더 편리하게 발전시킬 수도 있다.  
-만약 애노테이션을 사용해서 컨트롤러를 편리하게 사용할 수 있게 하려면 어떻게 해야할까?  
-바로 애노테이션을 지원하는 어댑터를 추가하면 된다! 다형성과 어댑터 덕분에 기본 구조를 유지하면서 프레임워크의 기능을 확장할 수 있다. 
+애노테이션을 지원하는 어댑터를 추가하면 될 것이다.  
+  
+다형성과 어댑터 덕분에 기본 구조를 유지하면서 프레임워크의 기능을 확장할 수 있다. 
 
 ---
 
