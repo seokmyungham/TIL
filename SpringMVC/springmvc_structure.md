@@ -1,23 +1,5 @@
 # 5. 스프링 MVC - 구조 이해
 
-지금까지 직접 만들었던 MVC 프레임워크와 스프링 MVC의 구조를 비교해보자.
-
-**직접 만든 MVC프레임워크 구조**  
-![](img/springmvc_structure_01.PNG)
-
-**SpringMVC 구조**  
-![](img/springmvc_structure_02.PNG)
-
-**직접 만든 프레임워크 -> 스프링 MVC 비교**
-- FrontController -> DispatcherServlet
-- handlerMappingMap -> HandlerMapping
-- MyHandlerAdapter -> HandlerAdapter
-- ModelView -> ModelAndView
-- viewResolver -> ViewResolver
-- MyView -> View
- 
----
-
 ## DispatcherServlet 구조 살펴보기
 
 ```org.springframework.web.servlet.DispatcherServlet```
@@ -109,8 +91,6 @@
 앞서 보았듯이 가장 우선순위가 높은 핸들러 매핑과 핸들러 어댑터는 RequestMappingHandlerMapping, RequestMappingHandlerAdapter이다.
 
 
-그럼 이제 본격적으로 애노테이션 기반의 컨트롤러를 사용해보자.  
-지금까지 만들었던 프레임워크에서 사용했던 컨트롤러를 @RequestMapping 기반의 스프링 MVC 컨트롤러로 변경해본다.
 
 **SpringMemberSaveControllerV1 - 회원 저장**
 ```java
@@ -166,7 +146,7 @@ public class SpringMemberSaveControllerV1 {
 - @RequestMapping("/springmvc/v2/members")
 - @RequestMapping("/springmvc/v2/members/save")
 
-이렇게 사용할 수도 있지만, 클래스 레벨에 다음과 같이 @RequestMapping을 두면 메서드 레벨과 조합이 된다.
+클래스 레벨에 다음과 같이 @RequestMapping을 두면 메서드 레벨과 조합이 된다.
 
 ```java
 package hello.servlet.web.springmvc.v2;
@@ -223,8 +203,6 @@ public class SpringMemberControllerV2 {
 ## 스프링 MVC - 실용적인 방식
 
 스프링 MVC는 개발자가 편리하게 개발할 수 있도록 수 많은 편의 기능을 제공한다.  
-  
-MVC 프레임워크 만들기에서 v3을 v4로 개선했던 것처럼 코드를 개선해보자.
 
 ```java
 package hello.servlet.web.springmvc.v3;
