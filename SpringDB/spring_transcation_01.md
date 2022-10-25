@@ -126,8 +126,8 @@ extneral() 메서드에는 ***@Transactional*** 이 없으므로 최종적으로
 트랜잭션을 적용하지 않고, 실제 callService 객체 인스턴스의 external()을 호출하는데, 
 extnernal()은 내부에서 internal()을 호출한다.  
   
-이 때 자바 문법에 따라 internal()은 this.internal()과 같으므로 실제 객체 인스턴스의 internal()을 호출하는 것과 같다.
-결과적으로 프록시의 internal()이 아니라 사진의 target에 있는 internal() 을 직접 호출하게 된 것이다.
+이 때 자바 문법에 따라 internal()은 this.internal()과 같으므로, 실제 객체 인스턴스의 internal()을 호출하는 것과 같다.  
+결과적으로 프록시를 거치지 않았기 때문에 트랜잭션을 적용하지 않고 사진의 target에 있는 internal() 을 그냥 호출하게 된 것이다.
 
 #
 
