@@ -259,25 +259,6 @@ public class WebConfig implements WebMvcConfigurer {
 우리는 WebMvcConfigurer가 제공하는 addFormatters()를 사용해서 추가하고 싶은 컨버터를 등록하면 된다.  
 이렇게 하면 스프링은 내부에서 사용하는 ConversionService에 컨버터를 추가해준다.
 
-#
-
-### HelloController
-```java
-@GetMapping("/ip-port")
-public String ipPort(@RequestParam IpPort ipPort) {
-    System.out.println("ipPort Ip = " + ipPort.getIp());
-    System.out.println("ipPort PORT = " + ipPort.getPort());
-    return "ok";
-}
-```
-
-http://localhost:8080/ip-port?ipPort=127.0.0.1:8080  
-
-![](img/spring_typeconverter_01.png)
-
-직접 만들었던 StringToIpPortConverter가 동작하면서 ?ipPort=127.0.0.1:8080 쿼리 스트링이  
-ipPort 객체 타입으로 잘 변환 된 것을 확인할 수 있다.
-
 ---
 
 ## 뷰 템플릿에 컨버터 적용하기
@@ -502,95 +483,9 @@ print()를 사용해서 객체를 문자로 변환한다.
 그런데 포맷터를 지원하는 컨버전 서비스를 사용하면 컨버전 서비스에 포맷터를 추가 할 수 있다.  
 내부에서 어댑터 패턴을 사용해서 Formatter가 Converter처럼 동작하도록 지원한다.
 
-### FormattingConversionService - DefaultFormattingConversionService
-```java
-package hello.typeconverter.formatter;
-
-import hello.typeconverter.converter.IpPortToStringConverter;
-import hello.typeconverter.converter.StringToIpPortConverter;
-import hello.typeconverter.type.IpPort;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.format.support.DefaultFormattingConversionService;
-
-import static org.assertj.core.api.Assertions.*;
-
-public class FormattingConversionServiceTest {
-
-    @Test
-    void formattingConversionService() {
-
-        DefaultFormattingConversionService conversionService =
-                new DefaultFormattingConversionService();
-
-        //컨버터 등록
-        conversionService.addConverter(new StringToIpPortConverter());
-        conversionService.addConverter(new IpPortToStringConverter());
-        //포맷터 등록
-        conversionService.addFormatter(new MyNumberFormatter());
-
-        //컨버터 사용
-        IpPort ipPort = conversionService.convert("127.0.0.1:8080", IpPort.class);
-        assertThat(ipPort).isEqualTo(new IpPort("127.0.0.1", 8080));
-        //포맷터 사용
-        assertThat(conversionService.convert(1000, String.class)).isEqualTo("1,000");
-        assertThat(conversionService.convert("1,000", Long.class)).isEqualTo(1000L);
-    }
-}
-```
-
 DefaultFormattingConversionService는 FormattingConversionService에 기본적인 통화, 숫자 관련 몇가지 기본 포맷터를 추가해서 제공한다.  
 
-![](img/spring_typeconverter_05.png)
-
 #
-
-### WebConfig에 포맷터 적용
-```java
-package hello.typeconverter;
-
-import hello.typeconverter.converter.IntegerToStringConverter;
-import hello.typeconverter.converter.IpPortToStringConverter;
-import hello.typeconverter.converter.StringToIntegerConverter;
-import hello.typeconverter.converter.StringToIpPortConverter;
-import hello.typeconverter.formatter.MyNumberFormatter;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-@Configuration
-public class WebConfig implements WebMvcConfigurer {
-
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        //우선순위는 컨버터가 포맷터보다 우선이다.
-        //registry.addConverter(new StringToIntegerConverter());
-        //registry.addConverter(new IntegerToStringConverter());
-        
-        registry.addConverter(new StringToIpPortConverter());
-        registry.addConverter(new IpPortToStringConverter());
-
-        //추가
-        registry.addFormatter(new MyNumberFormatter());
-    }
-}
-```
-
-### formatter - 객체 -> 문자
-http://localhost:8080/converter-view  
-
-![](img/spring_typeconverter_06.png)
-
-model에 숫자 10000이 넘어가면, MyNumberFormatter가 적용되어서 문자 10,000이 출력된다.
-
-### formatter - 문자 -> 객체
-http://localhost:8080/hello-v2?data=10,000
-
-![](img/spring_typeconverter_07.png)
-
-"10,000"이라는 포맷팅 된 문자가 Interger 타입의 숫자 10000으로 정상 변환 된 것을 확인할 수 있다.
-
----
 
 ## 스프링이 제공하는 기본 포맷터
 
@@ -646,45 +541,6 @@ public class FormatterConverter {
         private LocalDateTime localDateTime;
     }
 }
-```
-
-### formatter-form.html
-```html
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<form th:object="${form}" th:method="post">
-    number <input type="text" th:field="*{number}"><br/>
-    localDateTime <input type="text" th:field="*{localDateTime}"><br/>
-    <input type="submit"/>
-</form>
-</body>
-</html>
-```
-
-### formatter-view.html
-```html
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
-<ul>
-  <li>${form.number}: <span th:text="${form.number}" ></span></li>
-  <li>${{form.number}}: <span th:text="${{form.number}}" ></span></li>
-  <li>${form.localDateTime}: <span th:text="${form.localDateTime}" ></span></
-  li>
-  <li>${{form.localDateTime}}: <span th:text="${{form.localDateTime}}" ></
-    span></li>
-</ul>
-</body>
-</html>
 ```
 
 ![](img/spring_typeconverter_08.png)  
