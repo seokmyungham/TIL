@@ -2,7 +2,7 @@
 
 ## 1. 트랜잭션 추상화
 
-스프링은 ***PlatformTransactionManager*** 인터페이스를 통해 트랜잭션을 추상화 한다.
+스프링은 `PlatformTransactionManage` 인터페이스를 통해 트랜잭션을 추상화 한다.
 
 ### PlatformTransactionManager 인터페이스
 ```java
@@ -58,7 +58,7 @@ public interface PlatformTransactionManager extends TransactionManager {
 #
 
 프록시 내부 호출이란, 대상 객체의 내부에서 메서드 호출이 발생하여 프록시를 거치지 않고 대상 객체를 직접 호출하는 문제를 말한다.  
-이러면 @Transactioanl 이 붙어있어도 트랜잭션이 적용되지 않는 상황이 일어난다.
+이러면 ***@Transactioanl*** 이 붙어있어도 트랜잭션이 적용되지 않는 상황이 일어난다.
   
 ```java
 @Slf4j
