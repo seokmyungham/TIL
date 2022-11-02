@@ -2,7 +2,7 @@
 
 ## 서블릿 예외 처리 - 시작
 
-먼저 스프링이 아닌 순수 서블릿 컨테이너가 예외를 어떻게 처리하는지 알아보자.  
+스프링이 아닌 순수 서블릿 컨테이너가 예외를 어떻게 처리하는지 알아보자.  
   
 서블릿이 지원하는 예외 처리 방식은 2가지가 있다.
 - Exception(예외)
@@ -125,82 +125,6 @@ public class WebServerCustomizer implements WebServerFactoryCustomizer<Configura
 
 오류 페이지는 예외를 다룰 때 해당 예외와 그 자식 타입의 오류를 함께 처리한다.  
 예를 들어 위의 경우 RuntimeException은 물론이고 RuntimeException의 자식도 함께 처리한다.
-
-### 오류 처리 컨트롤러
-```java
-package hello.exception.servlet;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-@Slf4j
-@Controller
-public class ErrorPageController {
-
-    @RequestMapping("/error-page/404")
-    public String errorPage404(HttpServletRequest request, HttpServletResponse response) {
-        log.info("errorPage 404");
-        return "error-page/404";
-    }
-    
-    @RequestMapping("/error-page/500")
-    public String errorPage500(HttpServletRequest request, HttpServletResponse response) {
-        log.info("errorPage 500");
-        return "error-page/500";
-    }
-}
-```
-
-### 오류 처리 View
-```html
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8">
-</head>
-<body>
-<div class="container" style="max-width: 600px">
-    <div class="py-5 text-center">
-        <h2>404 오류 화면</h2>
-    </div>
-    <div>
-        <p>오류 화면 입니다.</p>
-    </div>
-    <hr class="my-4">
-</div> <!-- /container -->
-</body>
-</html>
-```
-
-```html
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8">
-</head>
-<body>
-<div class="container" style="max-width: 600px">
-    <div class="py-5 text-center">
-        <h2>500 오류 화면</h2>
-    </div>
-    <div>
-        <p>오류 화면 입니다.</p>
-    </div>
-    <hr class="my-4">
-</div> <!-- /container -->
-</body>
-</html>
-```
-
-
-### 테스트
-
-![](img/exception_handling_04.PNG)  
-![](img/exception_handling_05.PNG)
 
 ---
 
