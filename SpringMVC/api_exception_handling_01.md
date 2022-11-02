@@ -6,7 +6,7 @@ HTML 페이지의 경우 4xx, 5xx와 같은 단순 오류 페이지만 있으면
 ## HandlerExceptionResolver
 
 스프링 MVC는 컨트롤러 밖으로 예외가 던져진 경우 예외를 해결하고, 동작을 새로 정의할 수 있는 방법을 제공한다.  
-HandlerExceptionResolver를 사용해서 동작 방식을 변경할 수 있다. 줄여서 ExceptionResolver라 한다.
+`HandlerExceptionResolver`를 사용해서 동작 방식을 변경할 수 있다. 줄여서 ExceptionResolver라 한다.
 
 - 예외 상태 코드 변환
     - 예외를 response.sendError(xxx) 호출로 변경해서 서블릿에서 상태 코드에 따른 오류를 처리하도록 위임
@@ -21,53 +21,7 @@ HandlerExceptionResolver를 사용해서 동작 방식을 변경할 수 있다. 
 
 ### 상태 코드 변환
 
-IllegalArgumentException을 처리하지 못해서 컨트롤러 밖으로 넘어가는 일이 발생하면 HTTP 상태코드를 400으로 처리할 수 있다.
-
-### ApiExceptionController - 수정
-```java
-package hello.exception.api;
-
-import hello.exception.exception.UserException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-
-@Slf4j
-@RestController
-public class ApiExceptionController {
-
-    @GetMapping("/api/members/{id}")
-    public MemberDto getMember(@PathVariable("id") String id) {
-
-        if (id.equals("ex")) {
-            throw new RuntimeException("잘못된 사용자");
-        }
-
-        if (id.equals("bad")) {
-            throw new IllegalArgumentException("잘못된 입력 값");
-        }
-        
-        return new MemberDto(id, "hello " + id);
-    }
-
-
-    @Data
-    @AllArgsConstructor
-    static class MemberDto {
-        private String memberId;
-        private String name;
-    }
-
-}
-```
-
-![](img/api_exception_handling_01.png)  
-Postman으로 http://localhost:8080/api/members/bad를 호출해서 IllegalArgumentException이 발생하도록 해보면  
-상태 코드가 500인 것을 확인할 수 있다.  
+`IllegalArgumentException`을 처리하지 못해서 컨트롤러 밖으로 넘어가는 일이 발생하면 HTTP 상태코드를 400으로 처리할 수 있다.
 
 ![](img/api_exception_handling_02.png)  
 ![](img/api_exception_handling_03.png)  
@@ -115,15 +69,17 @@ public class MyHandlerExceptionResolver implements HandlerExceptionResolver {
 }
 ```
 
-ExceptionResolver가 ModelAndView를 반환하는 이유는 마치 try, catch를 하듯이,  
+ExceptionResolver가 빈 ModelAndView를 반환하는 이유는 마치 try, catch를 하듯이,  
 Exception을 처리해서 정상 흐름 처럼 변경하는 것이 목적이다.  
   
-여기서는 IllegalArgumentException이 발생하면  
-response.sendError(400)을 호출해서 HTTP 상태 코드를 400으로 지정하고, 빈 ModelAndView를 반환한다.
+IllegalArgumentException이 발생하면 response.sendError(400)을 호출해서 HTTP 상태 코드를 400으로 지정하고, 빈 ModelAndView를 반환한다.
   
-- 빈 ModelAndView: new ModelAndView()처럼 빈 ModelAndView를 반환하면 뷰를 렌더링 하지 않고, 정상 흐름으로 서블릿이 리턴된다.
-- ModelAndView 지정: ModelAndView에 View, Model 등의 정보를 지정해서 반환하면 뷰를 렌더링 한다.
-- null: null을 반환하면, 다음 ExceptionResolver를 찾아서 실행한다.
+- `빈 ModelAndView`
+    - new ModelAndView()처럼 빈 ModelAndView를 반환하면 뷰를 렌더링 하지 않고, 정상 흐름으로 서블릿이 리턴된다.
+- `ModelAndView 지정`
+    - ModelAndView에 View, Model 등의 정보를 지정해서 반환하면 뷰를 렌더링 한다.
+- `null`
+    - null을 반환하면, 다음 ExceptionResolver를 찾아서 실행한다.
     - 만약 처리할 수 있는 ExceptionResolver가 없으면 예외 처리가 안되고, 기존에 발생한 예외를 서블릿 밖으로 던진다.
 
 
@@ -135,7 +91,7 @@ public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resol
 }
 ```
 
-Postman으로 http://localhost:8080/api/members/bad를 다시 호출해보면 상태 코드가 400으로 바뀐 것을 볼 수 있다.  
+Postman으로 확인해보면 상태 코드가 400으로 바뀐 것을 볼 수 있다.  
 ![](img/api_exception_handling_04.png)
 
 ---
@@ -144,79 +100,6 @@ Postman으로 http://localhost:8080/api/members/bad를 다시 호출해보면 �
  
 예외가 발생하면 WAS까지 예외가 던져지고, WAS에서 오류 페이지 정보를 찾아서 다시 /error를 호출하는 과정은 너무 복잡하다.  
 ExceptionResolver를 활용하면 예외가 발생했을 때 이런 복잡한 과정 없이 Resolver에서 문제를 해결할 수 있다.
-
-### 사용자 정의 예외 추가 UserException
-```java
-package hello.exception.exception;
-
-public class UserException extends RuntimeException {
-
-    public UserException() {
-        super();
-    }
-
-    public UserException(String message) {
-        super(message);
-    }
-
-    public UserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public UserException(Throwable cause) {
-        super(cause);
-    }
-
-    protected UserException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-}
-```
-
-### ApiExceptionController - 예외 추가
-```java
-package hello.exception.api;
-
-import hello.exception.exception.UserException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-
-@Slf4j
-@RestController
-public class ApiExceptionController {
-
-    @GetMapping("/api/members/{id}")
-    public MemberDto getMember(@PathVariable("id") String id) {
-
-        if (id.equals("ex")) {
-            throw new RuntimeException("잘못된 사용자");
-        }
-
-        if (id.equals("bad")) {
-            throw new IllegalArgumentException("잘못된 입력 값");
-        }
-
-        if (id.equals("user-ex")) {
-            throw new UserException("사용자 오류");
-        }
-
-        return new MemberDto(id, "hello " + id);
-    }
-
-
-    @Data
-    @AllArgsConstructor
-    static class MemberDto {
-        private String memberId;
-        private String name;
-    }
-
-}
-```
 
 http://localhost:8080/api/members/user-ex 호출시 UserException이 발생하도록 한다.  
 
