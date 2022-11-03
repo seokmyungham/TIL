@@ -104,8 +104,6 @@ TransactionStatus inner = txManager.getTransaction(definition);
 - 그리고 트랜잭션 매니저와 AOP는 `UnexpectedRollbackException` 예외를 던진다.
 
 결과적으로 내부에서 발생해서 올라오는 예외를 외부 클래스에서 복구해도, 결과적으로 물리 트랜잭션은 롤백되고 `UnexpectedRollbackException`이 발생한다.  
-  
-이럴 때는 `REQUIRES_NEW` 옵션을 사용해서 트랜잭션을 분리시키거나, `REQUIRES_NEW`를 사용하지 않고 아예 구조 관계를 변경해야 한다.
 
 ---
 
