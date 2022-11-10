@@ -64,7 +64,7 @@
 - 주로 메모리상에서만 임시로 어떤 값을 보관하고 싶을 때 사용한다.
 
 ---
-
+ 
 ## Reference
 
 - [자바 ORM 표준 JPA 프로그래밍 - 기본편](https://www.inflearn.com/course/ORM-JPA-Basic/dashboard)
