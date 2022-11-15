@@ -40,7 +40,7 @@ public calss Member {
 
 ## 양방향 연관관계
 
-![](img/association_mapping_01.png)
+![](img/association_mapping_02.png)
 
 - 단방향과 양방향 테이블 형태는 모두 같다.
 - 테이블은 단지 외래 키 하나로 두 테이블의 연관관계를 관리할 수 있다.
