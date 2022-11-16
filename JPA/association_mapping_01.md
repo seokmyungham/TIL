@@ -17,7 +17,7 @@
 
 ```java
 @Entity
-public calss Member {
+public class Member {
     
     @Id @GeneratedValue
     private Long id;
