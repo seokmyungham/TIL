@@ -37,7 +37,7 @@ public class Item {
 ```
 
 ```java
-Entity
+@Entity
 public class Movie extends Item {
 
     private String director;
@@ -59,13 +59,19 @@ em.persist(movie);
 em.flush();
 em.clear();
 
+Movie findMovie = em.find(Movie.class, movie.getId());
+System.out.println("findMovie = " + findMovie);
+
 tx.commit();
 ```
 
 ![](img/advanced_mapping_02.PNG)
 
-- 단지 Movie에만 값을 넣어도 JPA가 알아서 INSERT 쿼리를 Item 테이블에도 날려준다.
+- 단지 Movie에만 값을 넣어도 JPA가 자동으로 INSERT 쿼리를 Item 테이블에도 날려준다.
 
+![](img/advanced_mapping_05.PNG)
+
+- 값을 단지 Movie 클래스로 찾아오는 경우에도 JPA가 자동으로 inner join 쿼리를 날려준다.
 
 ![](img/advanced_mapping_03.PNG)
 
@@ -73,12 +79,11 @@ tx.commit();
 
 ## @DiscriminatorColumn
 
-- `@DiscriminatorColumn` 어노테이션을 부모 클래스에 사용하면 테이블에 DTYPE이 생기면서, 어느 자식 타입의 데이터인지 확인할 수 있다.  
+- `@DiscriminatorColumn` 어노테이션을 부모 클래스에 사용하면 테이블에 DTYPE이 생기면서, DB에서 어느 자식 타입의 데이터인지 확인할 수 있다.  
 - name 속성으로 따로 컬럼 명을 지정할 수 있으며, 기본값은 엔티티 명이다.
+- `@DiscriminatorValue(“XXX”)` 을 자식 클래스에 사용해서 어떤 값으로 데이터에서 나타낼지 설정이 가능하다.
 
 ![](img/advanced_mapping_04.PNG)  
-
-- `@DiscriminatorValue(“XXX”)` 을 자식 클래스에 사용해서 어떤 값으로 데이터에서 나타낼지 설정이 가능하다.
 
 #
 
