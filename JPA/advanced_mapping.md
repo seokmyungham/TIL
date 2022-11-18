@@ -26,7 +26,7 @@
 ```java
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Item {
+public abstract class Item {
 
     @Id @GeneratedValue
     private Long id;
@@ -99,7 +99,7 @@ tx.commit();
 ```java
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class Item {
+public abstract class Item {
 
     @Id @GeneratedValue
     private Long id;
@@ -140,9 +140,6 @@ public abstract class Item {
 }
 ```
 
-- 부모 클래스를 추상 클래스로 만들어서 테이블 생성을 막는다.
-- 부모 속성을 상속받은 자식 클래스들만 테이블이 생성된다.
--
 - 이 전략은 데이터베이스 설계자와 ORM 전문가들이 둘 다 추천하지 않는 방법이다.
 - 부모 타입으로 데이터를 조회하게되면 매우 복잡한 쿼리가 나간다. (UNION SQL)
 - 성능이 느려지게 된다.
