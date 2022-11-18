@@ -81,11 +81,107 @@ tx.commit();
 
 - `@DiscriminatorColumn` 어노테이션을 부모 클래스에 사용하면 테이블에 DTYPE이 생기면서, DB에서 어느 자식 타입의 데이터인지 확인할 수 있다.  
 - name 속성으로 따로 컬럼 명을 지정할 수 있으며, 기본값은 엔티티 명이다.
-- `@DiscriminatorValue(“XXX”)` 을 자식 클래스에 사용해서 어떤 값으로 데이터에서 나타낼지 설정이 가능하다.
+- `@DiscriminatorValue(“XXX”)` 을 자식 클래스에 사용하면 어떤 값으로 데이터에서 나타낼지 설정이 가능하다.
 
 ![](img/advanced_mapping_04.PNG)  
 
+- DTYPE은 DB 운영상 항상 있는게 좋다.
+
+---
+
+## 단일 테이블 전략
+
+![](img/advanced_mapping_06.PNG)  
+
+- 간단한 프로젝트를 진행할 때 조인 전략이 너무 복잡하다고 느껴지면 단일 테이블 전략을 활용하는 것도 가능하다.
+- 한 테이블에 모든 것들이 들어가고, DTYPE으로 엔티티를 구별하는 전략이다.
+
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public class Item {
+
+    @Id @GeneratedValue
+    private Long id;
+
+    private String name;
+    private int price;
+}
+```
+  
+![](img/advanced_mapping_07.PNG)  
+![](img/advanced_mapping_08.PNG)
+
+- 심플하게 Item 테이블에 모든 것들이 들어간다.
+- 조인 전략과 다르게 단일 테이블 전략에서는 @DiscriminatorColumn 생략해도 DTYPE이 자동으로 생성된다.
+- 단일 테이블이므로 DTYPE이 없으면 엔티티 구분이 안되기 때문이다.
+
+![](img/advanced_mapping_09.PNG)
+
+- 저장과 조회쿼리 모두 Item에만 한 번 날리는 모습을 볼 수 있다.
+- 조인을 할 필요도 없다.
+
+---
+
+## 구현 클래스마다 테이블 전략
+
+![](img/advanced_mapping_10.PNG)
+
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Item {
+
+    @Id @GeneratedValue
+    private Long id;
+
+    private String name;
+    private int price;
+}
+```
+
+- 부모 클래스를 추상 클래스로 만들어서 테이블 생성을 막는다.
+- 부모 속성을 상속받은 자식 클래스들만 테이블이 생성된다.
+-
+- 이 전략은 데이터베이스 설계자와 ORM 전문가 둘 다 추천하지 않는 방법이다.
+- 부모 타입으로 데이터를 조회하게되면 매우 복잡한 쿼리가 나간다. (UNION SQL)
+- 성능이 느려지게 된다.
+
+---
+
+## 각 전략의 장단점
+
+### 조인 전략 장점
+
+- 테이블이 정규화 되어있다.
+- 외래키 참조 무결성 제약조건을 활용 가능하다.
+    - 자식 테이블들이 부모의 기본키를 따라가므로 데이터를 믿을 수 있다.
+- 저장공간이 효율적이다
+
+### 조인 전략 단점
+
+- 조회시 조인을 많이 사용해야한다. (성능이 저하되기는 하는데 그렇게 크지는 않음)
+- 데이터 저장시 INSERT 쿼리를 2번 호출한다.
+
 #
 
+### 단일 테이블 전략 장점
 
+- 조회 성능이 빠르다. (조인이 필요없음)
+- 조회 쿼리가 단순하다.
 
+### 단일 테이블 전략 단점
+
+- 자식 엔티티가 매핑한 컬럼은 모두 null을 허용해야한다. (데이터 무결성 보장 X)
+
+#
+
+## 결론
+
+- 기본적으로 조인 전략을 채용해서 사용하도록 설계를 하되
+- 조인 전략의 장단점, 단일 테이블 전략의 장단점을 잘 생각해서 하나를 선택하자. (trade off)
+- 구현 클래스마다 테이블을 생성하는 전략은 선택에서 제외하자.
+
+## Reference
+
+- [자바 ORM 표준 JPA 프로그래밍 - 기본편](https://www.inflearn.com/course/ORM-JPA-Basic/dashboard)
