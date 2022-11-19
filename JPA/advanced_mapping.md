@@ -179,6 +179,8 @@ public abstract class Item {
 - 조인 전략의 장단점, 단일 테이블 전략의 장단점을 잘 생각해서 하나를 선택하자. (trade off)
 - 구현 클래스마다 테이블을 생성하는 전략은 선택에서 제외하자.
 
+---
+
 ## Reference
 
 - [자바 ORM 표준 JPA 프로그래밍 - 기본편](https://www.inflearn.com/course/ORM-JPA-Basic/dashboard)
