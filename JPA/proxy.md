@@ -18,6 +18,8 @@
 
 #
 
+## 프록시 객체 초기화
+
 ![](img/proxy_02.PNG)
 
 - `em.getReference(Member.class, "id1");`를 호출한다고 즉시 데이터베이스에 조회 쿼리가 날라가는 것이 아니다.
