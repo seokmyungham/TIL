@@ -128,6 +128,83 @@ public class Member {
 
 ---
 
+## 값 타입 컬렉션
+
+- 일대다 매핑처럼 엔티티를 컬렉션으로 쓰는 것이 아니라, 값 타입을 컬렉션으로 쓰는 것을 말한다.
+- 값 타입을 하나 이상 저장할 때 사용하고, 컬렉션을 저장하기 위한 별도의 테이블이 필요하다.
+- `@ElementCollection`, `@CollectionTable`으로 사용할 수 있다.
+
+```java
+@Entity
+public class Member {
+
+    @Id @GeneratedValue
+    @Column(name = "MEMBER_ID")
+    private Long id;
+
+    @Column(name = "USERNAME")
+    private String username;
+
+    //기간 Period
+    @Embedded
+    private Period workPeriod;
+
+    //주소 Address
+    @Embedded
+    private Address homeAddress;
+
+    @ElementCollection
+    @CollectionTable(name = "FAVORITE_FOOD", joinColumns =
+        @JoinColumn(name = "MEMBER_ID"))
+    private Set<String> favoriteFoods = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "ADDRESS", joinColumns =
+        @JoinColumn(name = "MEMBER_ID"))
+    private List<Address> addressHistory = new ArrayList<>();
+}
+```
+
+![](img/value_type_02.PNG)
+
+- 값 타입은 엔티티와 달리 식별자 개념이 없다.
+- 값을 변경하면 추적이 어렵다.
+- **값 타입 컬렉션에 변경 사항이 발생하면,**
+- **주인 엔티티와 연관된 모든 데이터를 삭제했다가 컬렉션에 있는 현재값을 모두 다시 저장하는 방식으로 동작한다.**
+- 정말 단순한게 아니라면 값 타입 컬렉션은 안 쓰는게 낫다.
+
+#
+
+## 값 타입 컬렉션의 대안 => 엔티티로 승급, 연관 관계 매핑 활용
+
+```java
+@Entity
+@Table(name = "ADDRESS")
+public class AddressEntity {
+
+    @Id @GeneratedValue
+    private Long id;
+
+    private Address address;
+}
+```
+
+- 값 타입을 엔티티로 한 번 매핑하는 것이다.
+- 자체적인 키를 가지고 있고, MEMBER_ID를 외래키로 사용한다.
+- 기본 키를 갖는 엔티티이기 때문에, 값 추적이 가능하고 데이터 변경도 마음껏 가능하다.
+
+```java
+@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+@JoinColumn(name = "MEMBER_ID")
+private List<AddressEntity> addressHistory = new ArrayList<>();
+```
+
+- 값 타입 컬렉션 대신에 일대다 관계로 매핑해서 사용한다.
+- 영속성 전이 + 고아 객체 제거를 사용해서 값 타입 컬렉션 처럼 사용이 가능하다.
+    - 두 옵션을 모두 활성화 하면 부모 엔티티를 통해 자식의 생명 주기를 관리할 수 있다.
+
+---
+
 ## Reference
 
 - [자바 ORM 표준 JPA 프로그래밍 - 기본편](https://www.inflearn.com/course/ORM-JPA-Basic/dashboard)
