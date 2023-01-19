@@ -101,57 +101,6 @@ DataAccessException resultEx = exTranslator.translate("select", sql, e);
 </bean>
 ```
 
----
-
-## 스프링 예외 추상화 적용
-
-### MemberServiceV4
-```java
-package hello.jdbc.service;
-
-import hello.jdbc.domain.Member;
-import hello.jdbc.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-
-/**
- * 예외 누수 문제 해결
- * SQLException 제거
- *
- * MemberRepository 인터페이스 의존
- */
-@Slf4j
-@RequiredArgsConstructor
-public class MemberServiceV4 {
-
-    private final MemberRepository memberRepository;
-
-    @Transactional
-    public void accountTransfer(String fromId, String toId, int money) {
-        bizLogic(fromId, toId, money);
-    }
-
-    private void bizLogic(String fromId, String toId, int money) {
-        Member fromMember = memberRepository.findById(fromId);
-        Member toMember = memberRepository.findById(toId);
-
-        memberRepository.update(fromId, fromMember.getMoney() - money);
-        validation(toMember);
-        memberRepository.update(toId, fromMember.getMoney() + money);
-    }
-
-    private void validation(Member toMember) {
-        if (toMember.getMemberId().equals("ex")) {
-            throw new IllegalStateException("이체중 예외 발생");
-        }
-    }
-}
-```
-
-MemberService는 특정 기술에 종속되지 않고, 자바 코드로만 이루어진 순수한 클래스가 되었다.  
-따라서 서비스 계층은 특정 구현 기술이 변경되어도 그대로 유지할 수 있다.  
-  
 서비스 계층에서 예외를 잡아서 복구하는 경우, 예외가 스프링이 제공하는 데이터 접근 예외로 변경되어서  
 서비스 계층에 넘어오기 때문에 필요한 경우 예외를 잡아서 복구하면 된다.
 
