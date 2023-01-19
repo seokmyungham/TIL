@@ -1,39 +1,51 @@
 # API 개발 시 DTO를 사용해야 하는 이유
 
-## 엔티티를 RequestBody에 직접 매핑하면 생기는 문제점
-
-### Member 엔티티를 직접 받는경우
+### 엔티티(Member)를 외부에 직접 노출하는 경우
 
 ```java
-@PostMapping("/api/v1/members")
-public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
-    Long id = memberService.join(member);
-    return new CreateMemberResponse(id);
+@GetMapping("/api/v1/members")
+public List<Member> membersV1() {
+    return memberService.findMembers();
 }
 ```
 
+- 엔티티의 모든 값들이 외부에 노출된다.
 - 엔티티에 @NotEmpty와 같은 API 검증을 위한 로직이 들어가게 된다.
 - 엔티티가 변경되면 API 스펙이 변한다
     - 엔티티는 여러 곳에서 사용하기 때문에 스펙이 바뀔 확률이 높다. 
     - 엔티티 수정이 일어날 때 마다 API의 스펙 자체도 바뀌는 것이 가장 큰 문제이다.
 - 한 엔티티에 각각의 API를 위한 모든 요청 요구사항을 담기가 어렵다.
+- 컬렉션을 직접 반환하게 되면 향후 API 스펙을 변경하기 어렵다.
 
 #
 
-### 엔티티 대신 DTO를 RequestBody에 매핑하는 경우
+### 엔티티 대신 DTO를 사용하는 경우
 
 ```java
-@PostMapping("/api/v2/members")
-public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request) {
-    Member member = new Member();
-    member.setName(request.getName());
+@GetMapping("/api/v2/members")
+public Result memberV2() {
+    List<Member> findMembers = memberService.findMembers();
+    
+    List<MemberDto> collect = findMembers.stream()
+            .map(m -> new MemberDto(m.getName()))
+            .collect(Collectors.toList());
 
-    Long id = memberService.join(member);
-    return new CreateMemberResponse(id);
+    return new Result(collect);
+}
+
+@Data
+@AllArgsConstructor
+static class Result<T> {
+    private T data;
+}
+
+@Data
+@AllArgsConstructor
+static class MemberDto {
+    private String name;
 }
 ```
 
-- CreateMemberRequest를 만들어서 매핑하였다.
 - 엔티티와 프레젠테이션 계층을 위한 로직을 분리할 수 있다.
 - 엔티티와 API 스펙을 명확하게 분리할 수 있고, 엔티티가 변해도 API 스펙이 변하지 않는다.
     - 엔티티에 수정이 일어나면 API에 영향없이 컴파일 오류로 엔티티 변경사항을 파악할 수 있다.
