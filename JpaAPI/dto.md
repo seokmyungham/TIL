@@ -1,4 +1,4 @@
-# API 개발시 DTO를 사용해야 하는 이유
+# API 개발 시 DTO를 사용해야 하는 이유
 
 ## 엔티티를 RequestBody에 직접 매핑하면 생기는 문제점
 
@@ -16,6 +16,8 @@ public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
 - 엔티티가 변경되면 API 스펙이 변한다
 - 한 엔티티에 각각의 API를 위한 모든 요청 요구사항을 담기가 어렵다.
 - 실무에서는 엔티티를 API 스펙에 노출하면 안된다
+
+#
 
 ### 엔티티 대신 DTO를 RequestBody에 매핑하는 경우
 
