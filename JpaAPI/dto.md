@@ -14,8 +14,9 @@ public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
 
 - 엔티티에 @NotEmpty와 같은 API 검증을 위한 로직이 들어가게 된다.
 - 엔티티가 변경되면 API 스펙이 변한다
+    - 엔티티는 여러 곳에서 사용하기 때문에 스펙이 바뀔 확률이 높다. 
+    - 엔티티 수정이 일어날 때 마다 API의 스펙 자체도 바뀌는 것이 가장 큰 문제이다.
 - 한 엔티티에 각각의 API를 위한 모든 요청 요구사항을 담기가 어렵다.
-- 실무에서는 엔티티를 API 스펙에 노출하면 안된다
 
 #
 
@@ -35,6 +36,7 @@ public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest
 - CreateMemberRequest를 만들어서 매핑하였다.
 - 엔티티와 프레젠테이션 계층을 위한 로직을 분리할 수 있다.
 - 엔티티와 API 스펙을 명확하게 분리할 수 있고, 엔티티가 변해도 API 스펙이 변하지 않는다.
+    - 엔티티에 수정이 일어나면 API에 영향없이 컴파일 오류로 엔티티 변경사항을 파악할 수 있다.
 
 ---
 
