@@ -20,7 +20,7 @@ public List<Order> findAllWithMemberDelivery() {
             .getResultList();
 }
 ```
-![](img/tuning_01.png)
+![](img/tuning_01.PNG)
 
 - 리포지토리에서 Order 엔티티를 패치 조인으로 쿼리 1번에 조회할 수 있다.
 
@@ -98,7 +98,7 @@ public List<OrderSimpleQueryDto> findOrderDtos() {
 }
 ```
 
-![](img/tuning_02.png)
+![](img/tuning_02.PNG)
 
 - new 명령어를 사용해서 JPQL의 결과를 DTO로 즉시 반환할 수 있다.
 - Select 절에서 원하는 데이터를 직접 선택하므로 조금의 성능 최적화가 가능하다.
