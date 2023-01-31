@@ -78,3 +78,9 @@ for(Team team : teams) {
 - Select 절에 distinct 명령어를 추가하면 애플리케이션에서 중복된 엔티티 데이터를 제거할 수 있다.
 - DB입장에서 distinct 명령어는 row 데이터가 100% 동일한 경우에만 중복으로 판단하여 데이터를 제거한다.
 - 하지만 조회 결과가 애플리케이션으로 넘어오면 JPA가 자동으로 같은 엔티티의 중복을 막아주고 제거해주어 데이터의 증가를 막는 것이 가능하다.
+
+---
+ 
+## Reference
+
+- [자바 ORM 표준 JPA 프로그래밍 - 기본편](https://www.inflearn.com/course/ORM-JPA-Basic/dashboard)
