@@ -1,4 +1,4 @@
-# API - OntToMany 성능 최적화
+# API - OnToMany 성능 최적화
 
 ## 페치 조인 사용과 페이징 한계 돌파
 
