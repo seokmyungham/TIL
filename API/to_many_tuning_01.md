@@ -1,4 +1,4 @@
-# API - OnToMany 성능 최적화
+# API - OneToMany 성능 최적화
 
 ## 페치 조인 사용과 페이징 한계 돌파
 
@@ -133,4 +133,9 @@ static class OrderItemDto {
 - 페치 조인 방식과 비교해서 SQL 호출 수가 약간 증가하지만, DB의 데이터 전송량이 감소한다.
 - 옵션의 사이즈는 DB 또는 애플리케이션이 순간 부하를 어느 정도까지 견딜 수 있는지를 확인하여 1000 이하로 설정하는 것이 좋다.
 
+---
 
+## Reference
+
+- [실전! 스프링 부트와 JPA 활용2 - API 개발과 성능 최적화](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-JPA-API%EA%B0%9C%EB%B0%9C-%EC%84%B1%EB%8A%A5%EC%B5%9C%EC%A0%81%ED%99%94/dashboard)
+- [자바 ORM 표준 JPA 프로그래밍 - 기본편](https://www.inflearn.com/course/ORM-JPA-Basic/dashboard)
