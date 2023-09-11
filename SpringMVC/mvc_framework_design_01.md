@@ -1,102 +1,55 @@
-# 4. MVC 프레임워크 만들기
+# 4. MVC Framework - FrontController
 
-## 프론트 컨트롤러 패턴
+## 프론트 컨트롤러 패턴의 탄생 배경
+
+MVC 패턴을 도입한 이후, 컨트롤러와 뷰의 역할을 명확하게 구분할 수 있었다.  
+관심사를 분리함으로서 개발자는 코드를 유지보수 하기 쉬워지고, 코드 생산량이 늘어나는 장점이 있었다.  
+
+하지만 기능이 점점 늘어날 수록 컨트롤러에서 공통적으로 처리해야 하는 코드들이 늘어나고  
+컨트롤러의 코드 밀도가 높아지면서 부하가 늘어나는 문제가 발생하게 되었는데  
+이를 개선하기 위해 프론트 컨트롤러라는 개념이 탄생하게 된다.  
+
+## 프론트 컨트롤러란?
+
+![](img/servlet_jsp_mvc_07.PNG)
+
+각 컨트롤러마다 공통적으로 필요한 로직들이 필요했지만,  
+공통의 관심사를 하나로 묶는 마치 서블릿의 역할을 하는 프론트 컨트롤러라는 개념을 도입해서  
+개발자는 컨트롤러를 쉽게 관리하는 것이 가능하다.
+
+> 서블릿이란?  
+> 서블릿의 자세한 역할: https://github.com/seokmyungham/TIL/blob/main/SpringMVC/servlet.md
 
 -  **Front Controller 패턴 특징**
   - 프론트 컨트롤러 서블릿 하나로 클라이언트의 요청을 받음
   - 프론트 컨트롤러가 요청의 맞는 컨트롤러를 찾아서 호출
-  - 입구를 하나로!
-  - 공통 처리 가능
-  - 프론트 컨트롤러를 제외한 나머지 컨트롤러는 서블릿을 사용하지 않아도 된다.
-
-![](img/servlet_jsp_mvc_07.PNG)
+  - 입구를 하나로! 공통 처리
+  - 프론트 컨트롤러를 제외한 나머지 컨트롤러는 서블릿을 사용하지 않아도 된다
 
 스프링 웹 MVC의 핵심도 바로 **FrontController**  
 스프링 웹 MVC의 **DispatcherServlet**이 프론트 컨트롤러 패턴으로 구현되어 있다.
 
 ---
 
-## 프론트 컨트롤러 도입 - v1
+## 프론트 컨트롤러 - v1
 
-프론트 컨트롤러를 단계적으로 도입해보자.  
-목표는 기존 코드를 최대한 유지하면서, 프론트 컨트롤러를 도입하는 것이다.
-먼저 구조를 맞추어두고 점진적으로 리팩터링 해보자.
+프론트 컨트롤러의 역할은 명확하다.  
+각 컨트롤러들이 수행해야 했던 공통로직들을 앞에서 미리 처리해주는 것  
 
-**V1의 구조**  
+- 기존 MVC 패턴의 dispatcher.forward를 호출해주는 일
+- viewPath의 중복을 해결
+- HttpServlet을 대신 상속받아서 서블릿의 역할을 대신 수행 등
+
+위의 공통 로직들을 클라이언트와 컨트롤러 사이에서 적절히 수행하며 수문장 역할을 해주면 된다.
+
+**v1의 구조**  
 ![](img/servlet_jsp_mvc_08.PNG) 
-
-**ControllerV1**
-```java
-package hello.servlet.web.frontcontroller.v1;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-public interface ControllerV1 {
-    void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
-}
-```
-
-- 서블릿과 비슷한 모양의 컨트롤러 인터페이스를 도입, 각 컨트롤러들은 이 인터페이스를 구현하면 된다.  
-- 기존 로직을 최대한 유지하면서 인터페이스를 구현한 컨트롤러를 만들어보고 한 번 기능을 살펴보자.  
-
-**MemberSaveControllerV1 - 회원 저장 컨트롤러**
-```java
-package hello.servlet.web.frontcontroller.v1.controller;
-
-import hello.servlet.domain.member.Member;
-import hello.servlet.domain.member.MemberRepository;
-import hello.servlet.web.frontcontroller.v1.ControllerV1;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-public class MemberSaveControllerV1 implements ControllerV1 {
-
-    private MemberRepository memberRepository = MemberRepository.getInstance();
-
-    @Override
-    public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
-        int age = Integer.parseInt(request.getParameter("age"));
-
-        Member member = new Member(username, age);
-        memberRepository.save(member);
-
-        //Model에 데이터를 보관한다.
-        request.setAttribute("member", member);
-
-        String viewPath = "/WEB-INF/views/save-result.jsp";
-        RequestDispatcher dispatcher = request.getRequestDispatcher(viewPath);
-        dispatcher.forward(request, response);
-    }
-}
-```
 
 #
 
 **FrontControllerServletV1 - 프론트 컨트롤러**
+
 ```java
-package hello.servlet.web.frontcontroller.v1;
-
-import hello.servlet.web.frontcontroller.v1.controller.MemberFormControllerV1;
-import hello.servlet.web.frontcontroller.v1.controller.MemberListControllerV1;
-import hello.servlet.web.frontcontroller.v1.controller.MemberSaveControllerV1;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 @WebServlet(name = "frontControllerServletV1", urlPatterns = "/front-controller/v1/*")
 public class FrontControllerServletV1 extends HttpServlet {
 
@@ -124,25 +77,29 @@ public class FrontControllerServletV1 extends HttpServlet {
     }
 }
 ```
+  
+> - **urlPatterns**  
+    - urlPatterns을 사용함으로 모든 하위 요청은 이 서블릿에서 받아들인다.  
+    - 예) /front-controller/v1, /front-controller/v1/a
+> - **controllerMap**  
+    - key: 매핑 URL  
+    - value: 호출될 컨트롤러  
+> - **service()**  
+    - 먼저 requestURI를 조회해서 실제 호출할 컨트롤러를 controllerMap에서 찾는다  
+    - 없다면 404(SC_NOT_FOUND) 상태 코드를 반환한다  
+    - 컨트롤러를 찾고 controller.process(request, response)를 호출해서 해당 컨트롤러를 실행한다  
 
-- **urlPatterns**
-    - urlPatterns = "/front-controller/v1/\*": /front-controller/v1를 포함한 하위 모든 요청은 이 서블릿에서 받아들인다.
-    - 예) /front-controller/v1, /front-controller/v1/a, /front-controller/v1/a/b
-- **controllerMap**
-    - key: 매핑 URL
-    - value: 호출될 컨트롤러
-- **service()**
-    - 먼저 requestURI를 조회해서 실제 호출할 컨트롤러를 controllerMap에서 찾는다
-    - 없다면 404(SC_NOT_FOUND) 상태 코드를 반환한다
-    - 컨트롤러를 찾고 controller.process(request, response)를 호출해서 해당 컨트롤러를 실행한다
-- JSP
-    - JSP는 이전 MVC에서 사용했던 것을 그대로 사용한다.
+
+위 버전 1의 프론트 컨트롤러를 도입함으로서,  
+모든 사용자 요청은 위의 프론트 컨트롤러에서 매핑되어 호출하게 된다. (controllerMap)
 
 ---
 
 ## View 분리 - v2
 
-모든 컨트롤러에서 뷰로 이동하는 부분에 중복이 있고, 깔끔하지 않다
+아직은 FrontController의 역할이 부족하다.  
+모든 컨트롤러에서 뷰로 이동하는 부분에 중복이 발생한다.
+(위 사진 참조 3. 컨트롤러에서 JSP forward)
 
 ```java
 String viewPath = "/WEB-INF/views/new-form.jsp";
@@ -150,7 +107,8 @@ RequestDispatcher dispatcher = request.getRequestDispatcher(viewPath);
 dispatcher.forward(request, response);
 ```
 
-이 부분을 깔끔하게 분리하기 위해 별도로 뷰를 처리하는 객체가 필요하다.
+위와 같이 jsp를 호출하는 부분을 컨트롤러에서 깔끔하게 분리하기 위해   
+별도로 뷰를 처리하는 객체가 필요하다.
 
 **V2 구조**  
 ![](img/servlet_jsp_mvc_09.PNG)
@@ -159,14 +117,6 @@ dispatcher.forward(request, response);
 
 **MyView 도입**
 ```java
-package hello.servlet.web.frontcontroller;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
 public class MyView {
     private String viewPath;
 
@@ -181,40 +131,22 @@ public class MyView {
 }
 ```
 
+viewPath를 넘겨받아 dispatcher.forward를 호출하는 역할을 하는 MyView를 만들어  
+기존 컨트롤러의 과한 업무 비중을 축소시킬 수 있다.  
+  
+이렇게 관심사를 분리시키면 컨트롤러는 Myview 객체를 생성하기만 하면 되며 코드가 가벼워질 수 있다.
+
 #
 
-다음 버전의 컨트롤러 인터페이스도 만들어보자. 컨트롤러가 뷰를 반환하는 특징이 있다.
-
-**ControllerV2**
+**interface controllerV2**
 ```java
-package hello.servlet.web.frontcontroller.v2;
-
-import hello.servlet.web.frontcontroller.MyView;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
 public interface ControllerV2 {
     MyView process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 }
 ```
 
-**MemberSaveControllerV2 - 회원 저장**
+**관심사가 분리된 컨트롤러**
 ```java
-package hello.servlet.web.frontcontroller.v2.controller;
-
-import hello.servlet.domain.member.Member;
-import hello.servlet.domain.member.MemberRepository;
-import hello.servlet.web.frontcontroller.MyView;
-import hello.servlet.web.frontcontroller.v2.ControllerV2;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
 public class MemberSaveControllerV2 implements ControllerV2 {
 
     private MemberRepository memberRepository = MemberRepository.getInstance();
@@ -235,31 +167,14 @@ public class MemberSaveControllerV2 implements ControllerV2 {
 }
 ```
 
-별도로 View를 처리해주는 객체 MyView를 도입한 이후로 각 컨트롤러는 복잡한 dispatcher.forward()를 직접 생성 호출하지 않아도 된다.  
+별도로 View를 처리해주는 객체 MyView를 도입한 이후로  
+각 컨트롤러는 복잡한 dispatcher.forward()를 직접 생성 호출하지 않아도 된다.  
 단순히 MyView 객체를 생성하고 거기에 뷰 이름만 넣고 반환하면 된다.  
-회원 저장 컨트롤러의 V1 버전과 V2 버전을 비교해보면 코드가 좀 더 간결해지고 중복이 확실히 제거된 것을 확인할 수 있다.
 
 #
 
 **프론트 컨트롤러 V2**
 ```java
-package hello.servlet.web.frontcontroller.v2;
-
-import hello.servlet.web.frontcontroller.MyView;
-import hello.servlet.web.frontcontroller.v1.ControllerV1;
-import hello.servlet.web.frontcontroller.v2.controller.MemberFormControllerV2;
-import hello.servlet.web.frontcontroller.v2.controller.MemberListControllerV2;
-import hello.servlet.web.frontcontroller.v2.controller.MemberSaveControllerV2;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 @WebServlet(name = "frontControllerServletV2", urlPatterns = "/front-controller/v2/*")
 public class FrontControllerServletV2 extends HttpServlet {
 
@@ -287,7 +202,8 @@ public class FrontControllerServletV2 extends HttpServlet {
 }
 ```
 
-프론트 컨트롤러는 호출 결과로 MyView를 반환 받고, view.render()를 호출해서 중복 제거했던 forward 로직을 수행시켜 JSP를 실행한다. 
+프론트 컨트롤러는 호출 결과로 MyView를 반환 받고,  
+view.render()를 호출해서 중복 제거했던 forward 로직을 수행시켜 JSP를 실행한다. 
   
 프론트 컨트롤러의 도입으로 MyView 객체의 render()를 호출하는 부분을 모두 일관되게 처리할 수 있다.  
 각각의 컨트롤러는 MyView 객체를 생성만 해서 반환하면 된다.
@@ -297,7 +213,8 @@ public class FrontControllerServletV2 extends HttpServlet {
 ## Model추가 - v3
 
 ### 서블릿 종속성 제거
-컨트롤러의 입장에서 HttpServeltRequest, HttpServletResponse가 필요 없도록 변경해보자.  
+컨트롤러의 입장에서 서블릿 기술인 HttpServeltRequest, HttpServletResponse가 필요 없도록 변경할 수 있다.  
+  
 요청 파라미터의 정보는 자바의 Map으로 대신 넘기도록 하면 지금 구조에서는 컨트롤러가 서블릿 기술을 몰라도 동작할 수 있다.
 그리고 request객체를 Model로 사용하는 대신에 별도의 Model객체를 만들어서 반환하면 된다.  
 
