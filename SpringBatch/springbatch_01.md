@@ -46,7 +46,7 @@ Job > Step > Tasklet으로 이어지는 일련의 실행을 말한다.
 
 ## 스프링 배치 초기화 설정 클래스
 
-<img src="SpringBatch/img/image.png"  width="280" height="495">
+<img src="/SpringBatch/img/image.png"  width="280" height="495">
 
 ### 1. BatchAutoConfiguration
 
