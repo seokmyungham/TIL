@@ -1,4 +1,4 @@
-# 4. MVC Framework - FrontController
+# 4. MVC Framework - FrontController(DispatcherSevlet)
 
 ## 프론트 컨트롤러 패턴의 탄생 배경
 
