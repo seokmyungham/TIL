@@ -2,20 +2,7 @@
 
 ## 로깅 간단히 알아보기
 
-- ```log.info("hello")```
-- ```System.out.println("hello")```
-
-시스템 콘솔로 직접 출력하는 것 보다 로그를 사용하면 다음과 같은 장점이 있다. 실무에서는 항상 로그를 사용해야 한다.
-
 ```java
-package hello.springmvc.basic;
-
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 @Slf4j // private final Logger log = LoggerFactory.getLogger(getClass());
 @RestController
 public class LogTestController {
@@ -37,23 +24,13 @@ public class LogTestController {
 }
 ```
 
-**매핑 정보**
-- @RestController
-    - @Controller는 반환 값이 String이면 뷰 이름으로 인식된다. 그래서 뷰를 찾고 뷰가 랜더링 된다.
-    - @RestController는 반환 값으로 뷰를 찾는 것이 아니라, HTTP 메시지 바디에 바로 입력한다. 따라서 실행 결과로 ok 메시지를 받을 수 있다.
-
-
 **테스트**
 - 로그가 출력되는 포맷 확인
     - 시간, 로그 레벨, 프로세스 ID, 쓰레드명, 클래스명, 로그 메시지
 
 ![](img/springmvc_function_01.PNG)
 
-- 로그 레벨 설정을 변경해서 출력 결과를 보자.
-    - LEVEL: TRACE > DEBUG > INFO > WARN > ERROR
-    - 개발 서버는 debug 출력
-    - 운영 서버는 info 출력
-
+- LEVEL: TRACE > DEBUG > INFO > WARN > ERROR
 
 **로그 레벨 설정**
 ```application.properties```
