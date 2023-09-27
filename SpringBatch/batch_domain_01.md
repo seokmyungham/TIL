@@ -49,9 +49,9 @@ public class SimpleJob extends AbstractJob {
 }
 ```
 
-기본 구현체들은 Job을 상속받은 추상클래스 AbstractJob을 상속받은 구조인데  
+기본 구현체들은 Job을 상속받은 추상클래스 AbstractJob을 상속받은 구조인데,  
 이 중에서 SimpleJob의 경우 내부적으로 steps라고 불리는 List변수를 가지고 있고  
-간단하게 보면 Job이 execute되면 순차적으로 Step이 실행되는 형태를 띄고있다.  
+Job이 execute되면 순차적으로 Step이 실행되는 형태를 띄고있다.  
 
 ---
 
@@ -93,9 +93,8 @@ public void run(ApplicationArguments args) throws Exception {
 }
 ```
 
-JobLauncher는 배치 Job을 실행시킬 때 Job + JobParameter라는 두 개의 인자를 필요로 한다.  
-JobRepository는 DB로 부터 JobName과 JobParameter에 해당되는 JobInstance를 확인해서  
-현재 실행중인 Job이 처음 실행하는 Job인지 확인하는 과정을 거친다.  
+JobLauncher는 배치 Job을 실행시킬 때 Job + JobParameter라는 두 개의 인자를 필요로 하며, 
+JobRepository는 DB로 부터 JobName과 JobParameter에 해당되는 JobInstance를 확인해서 현재 실행중인 Job이 처음 실행하는 Job인지 확인하는 과정을 거친다.  
   
 이 때 만약 해당되는 JobInstance가 없을 경우에는 객체를 새로 만들어 반환하고  
 실행시점에 해당되는 JobInstance가 존재한다면 기존 인스턴스를 반환한다음 더이상 Job이 실행되지않고 예외를 발생시킨다.
@@ -104,7 +103,7 @@ JobRepository는 DB로 부터 JobName과 JobParameter에 해당되는 JobInstanc
 ![](img/job_instance_error2.png)  
 
 이미 동일한 내용의 Job과 JobParameter로 이루어진 JobInstance가 이미 존재하므로(이전에 실행된 이력이 있으므로)  
-다시 실행하고 싶으면 JobParameter의 값을 변경하라는 의미이다.  
+다시 실행하고 싶으면 JobParameter의 값을 변경하라는 의미다.  
   
   
 ![](img/BATCH_JOB_PARAMETER.png)
@@ -114,7 +113,8 @@ JobParameter의 값은 BATCH_JOB_PARAMETER 테이블을 조회하면 쉽게 확�
 위와같은 에러로 JOB_NAME(job)과 JOB_KEY(JobParameter 해시값)이 동일한 값은 중복해서 저장할 수 없고,  
 Job과 JobInstance는 근본적으로 1대N 관계를 이루게 된다.
 
+#
 
-### BATCH_JOB_PARAMETER
+## BATCH_JOB_PARAMETER
 
 
