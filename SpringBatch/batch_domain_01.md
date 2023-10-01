@@ -117,4 +117,14 @@ Job과 JobInstance는 근본적으로 1대N 관계를 이루게 된다.
 
 ## BATCH_JOB_PARAMETER
 
+### JobParameter의 용도 (1)
+
+Job을 실행시키는 클래스 JobLauncher는 Job과 JobParameter 두 개의 인자를 필요로 한다.  
+그 중 JobParameter는 Key와 Value로 구성된 Map을 포함하고 있고, 우리가 지정한 Key와 Value는 데이터베이스에 저장된다.  
+덕분에 우리는 Job의 실행 단계예서 지정한 Key로 Value를 참조하여 비즈니스 로직에 사용이 가능하다.
+
+### JobParameter의 용도 (2)
+
+JobParameter 덕분에 하나의 Job의 존재할 수 있는 여러개의 JobInstance를 구분이 가능하다.  
+그렇기 때문에 JobInstance와 JobParameter는 1대1 관계를 이룬다.
 
