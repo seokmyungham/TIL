@@ -108,7 +108,7 @@ JobRepository는 DB로 부터 JobName과 JobParameter에 해당되는 JobInstanc
   
 ![](img/BATCH_JOB_PARAMETER.png)
 
-JobParameter의 값은 BATCH_JOB_PARAMETER 테이블을 조회하면 쉽게 확인이 가능하다.  
+JobParameter의 값은 BATCH_JOB_EXECUTION_PARAMS 테이블을 조회하면 쉽게 확인이 가능하다.  
   
 위와같은 에러로 JOB_NAME(job)과 JOB_KEY(JobParameter 해시값)이 동일한 값은 중복해서 저장할 수 없고,  
 Job과 JobInstance는 근본적으로 1대N 관계를 이루게 된다.
@@ -128,3 +128,79 @@ Job을 실행시키는 클래스 JobLauncher는 Job과 JobParameter 두 개의 �
 JobParameter 덕분에 하나의 Job의 존재할 수 있는 여러개의 JobInstance를 구분이 가능하다.  
 그렇기 때문에 JobInstance와 JobParameter는 1대1 관계를 이룬다.
 
+#
+
+```java
+@Component
+@RequiredArgsConstructor
+public class JobRunner implements ApplicationRunner {
+
+    private final JobLauncher jobLauncher;
+    private final Job job;
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("name", "user1")
+                .addLong("seq", 2L)
+                .addDate("date", new Date())
+                .addDouble("age", 16.5)
+                .toJobParameters();
+
+        jobLauncher.run(job, jobParameters);
+    }
+}
+```
+
+JobParameter의 래퍼 클래스인 JobParamters는 LinkedHashMap<String, JobParameter>를 내부에 포함하고 있는데  
+스프링 배치는 우리가 지정할 수 있는 4개의(String, Long, Date, Double) 파라미터 타입을 지원한다.  
+
+![](img/BATCH_JOB_PARAMETER02.png)
+
+#
+
+### JobParameter 참조
+
+```java
+@Bean
+public Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+    return new StepBuilder("step1", jobRepository)
+            .tasklet(new Tasklet() {
+                @Override
+                public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+                    System.out.println("step1 was executed");
+                    return RepeatStatus.FINISHED;
+                }
+            }, transactionManager)
+            .build();
+}
+```
+
+우리는 Step단계에서 JobParameters를 참조하여 사용할 수 있다.  
+StepContribution와 ChunkContext는 내부에 각각 StepExecution 클래스를 참조하고 있고, StepExecution는   
+JobParameters를 속성으로 가지고 있는 JobExecution를 참조하고 있기 때문에  
+StepExecution -> JobExecution -> JobParamters 형태로 참조하여 사용할 수 있다.  
+
+```java
+JobParameters jobParameters = contribution.getStepExecution().getJobExecution().getJobParameters();
+jobParameters.getString("name");
+jobParameters.getLong("seq");
+jobParameters.getDate("date");
+jobParameters.getDouble("age");
+
+Map<String, Object> jobParameters1 = chunkContext.getStepContext().getJobParameters();
+```
+
+다만 두 방식에서의 차이점은 위는 JobParameters 객체를 반환하고, 밑은 Map 객체를 반환한다는 점이다.  
+
+#
+
+### Batch jar 실행 시 파라미터 바인딩
+
+JobParameter를 jar 파일 실행 시 주입하여 배치를 실행시킬 수도 있다.  
+
+![](img/batch_jar.png)
+
+주의할 점은 실행할 때 파라미터 데이터 타입을 괄호안에 명시해주어야 한다.  
+타입을 제대로 명시하지 않거나, 문장에 오류가 있을시에는 에러를 발생시키고 Job이 실행되지 않는다.
