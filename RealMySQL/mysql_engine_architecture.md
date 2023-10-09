@@ -16,6 +16,6 @@ MySQL 서버에서 MySQL 엔진은 하나지만 스토리지 엔진은 여러 �
 ```sql
 CREATE TABLE test_table (fd1 INT, fd2 INT) ENGINE=INNODB;
 ```
-
+ 
 위와 같이 테이블이 사용할 스토리지 엔진을 지정해서 지정한 스토리지가 해당 테이블의 모든 읽기 작업이나 변경 작업을 전담하도록 할 수 있다.
 
