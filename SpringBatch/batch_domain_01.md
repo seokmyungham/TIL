@@ -2,9 +2,9 @@
 
 ## 목차
 1. [Job](#job)  
-2. [JobInstance](#batch_job_instance)  
-3. [JobParameter](#batch_job_parameter)  
-4. [JobExecution](#batch_job_execution)
+2. [JobInstance](#jobinstance)  
+3. [JobParameter](#jobparameter)  
+4. [JobExecution](#jobexecution)
 
 #
 
@@ -76,7 +76,7 @@ Job이 execute되면 순차적으로 Step이 실행되는 형태를 띄고있다
 
 #
 
-## BATCH_JOB_INSTANCE
+## JobInstance
 
 ![](img/BATCH_JOB_INSTANCE.png)
 
@@ -123,7 +123,7 @@ Job과 JobInstance는 근본적으로 1대N 관계를 이루게 된다.
 
 #
 
-## BATCH_JOB_PARAMETER
+## JobParameter
 
 ### JobParameter의 용도 (1)
 
@@ -215,13 +215,45 @@ JobParameter를 jar 파일 실행 시 주입하여 배치를 실행시킬 수도
 
 #
 
-## Batch_JOB_EXECUTION
+## JobExecution
 
 JobExecution은 JobInstance에 대한 한 번의 시도를 의미하는 객체로서 Job실행 중에 발생한 정보들을 저장하고 있는 객체이다.  
 우리는 JobExecution을 확인해서 JobInstance가 어떠한 성공 혹은 실패 이력을 갖고있는지 파악이 가능하다.  
   
 JobExecution은 *FAILED*, *COMPLETED* 의 상태 결과를 가지고 있는데 이는 JobInstance가 정상적으로 실행이 되었는지를 의미한다.  
-만약 JobInstance의 JobExecution의 실행 상태 결과가 COMPLETED면 JobInstance 실행이 완료된 것으로 간주해서 재 실행이 불가능하다.   
+만약 JobInstance의 JobExecution의 실행 상태 결과가 COMPLETED면 JobInstance 실행이 완료된 것으로 간주해서 재실행이 불가능하다.  
+[재 실행시 생기는 에러](#jobinstance)  
+
+![](img/job_execution_01.png)
+
+JobExecution의 실행 상태 결과가 FAILED면 JobInstance실행이 완료되지 않은 것으로 간주해서 재실행이 가능하다.  
+이때는 JobParameter가 동일한 값으로 Job을 실행할지라도 JobInstance를 계속 실행할 수 있다.  
+
+따라서 JobExecution의 실행 상태 결과에 따라 하나의 JobInstance 내에서 여러 번의 시도가 생길 수 있다.  
+결과적으로 JobInstance와 JobExecution은 1대N 관계를 이룬다.
+
+#
+
+![](img/job_execution_02.png)
+
+JobExecution의 속성들은 BATCH_JOB_EXECUTION 테이블로 확인할 수 있다.  
+테이블은 JOB_EXECUTION_ID, JOB_INSTANCE_ID와 각종 시간, 상태들을 저장한다.  
+  
+위의 사진과 같은 경우 STATUS가 COMPLETED이기 때문에 같은 JobParameter로 Job을 실행시 에러를 발생시키고 Execution도 생성되지 않을 것이다.  
+  
+![](img/job_execution_03.png)
+  
+위는 강제로 에러를 발생시켜서 테이블을 확인한 모습이다.  
+하나의 JobInstance에 여러 개의 JobExecution 객체가 저장되는 모습을 확인할 수 있고 STATUS는 FAILED가 저장이 되었다.  
+
+![](img/job_execution_04.png)  
+
+FAILED 이후 정상적으로 Job이 실행되면 STATUS는 COMPLETED가 저장이 되고, 이제 같은 JobParameter로는 해당 Job을 실행하지 못한다.  
+  
+따라서 궁극적으로는 하나의 JobInstance에 여러 개의 JobExecution가 존재할 경우 해당 Job은 과거에 실패했던 적이 존재했다는 것을 의미함을 알 수 있다.
 
 
-[asas](#batch_job_instance)
+## Reference
+
+- [스프링 배치 - Spring Boot 기반으로 개발하는 Spring Batch](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%EB%B0%B0%EC%B9%98/dashboard)
+- [Appendix B. Meta-Data Schema](https://docs.spring.io/spring-batch/docs/3.0.x/reference/html/metaDataSchema.html)
