@@ -204,3 +204,16 @@ JobParameter를 jar 파일 실행 시 주입하여 배치를 실행시킬 수도
 
 주의할 점은 실행할 때 파라미터 데이터 타입을 괄호안에 명시해주어야 한다.  
 타입을 제대로 명시하지 않거나, 문장에 오류가 있을시에는 에러를 발생시키고 Job이 실행되지 않는다.
+
+#
+
+## Batch_JOB_EXECUTION
+
+JobExecution은 JobInstance에 대한 한 번의 시도를 의미하는 객체로서 Job실행 중에 발생한 정보들을 저장하고 있는 객체이다.  
+우리는 JobExecution을 확인해서 JobInstance가 어떠한 성공 혹은 실패 이력을 갖고있는지 파악이 가능하다.  
+  
+JobExecution은 *FAILED*, *COMPLETED* 의 상태 결과를 가지고 있는데 이는 JobInstance가 정상적으로 실행이 되었는지를 의미한다.  
+만약 JobInstance의 JobExecution의 실행 상태 결과가 COMPLETED면 JobInstance 실행이 완료된 것으로 간주해서 재 실행이 불가능하다.   
+
+
+[asas](#batch_job_instance)
