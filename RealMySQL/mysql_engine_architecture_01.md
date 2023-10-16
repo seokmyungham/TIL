@@ -34,7 +34,9 @@ SHOW GLOBAL STATUS LIKE 'Handler%';
 
 ## MySQL Thread
 
-![](img/mysql_thread01.png)
+<img src="img/mysql_thread01.png"  width="617" height="376">
+
+> 클라이언트가 MySQL에 접속하면, MySQL 서버에서는 클라이언트 커넥션으로부터의 요청을 처리하기 위해 스레드를 하나씩 할당한다.
 
 MySQL 서버는 스레드 기반으로 작동하며, 크게 포그라운드 스레드와 백그라운드 스레드로 구분할 수 있다.  
 스레드 목록을 확인해보면 전체 44개, 41개의 백그라운드 스레드와 3개의 포그라운드 스레드가 실행 중인 것을 확인할 수 있다.  
