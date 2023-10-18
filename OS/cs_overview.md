@@ -96,6 +96,6 @@ CPU가 데이터를 요청하여 캐시 메모리에 접근했을 때 `해당 �
 
 # Reference
 
-**위 내용은 KOREATECH 김덕수 교수님의 운영체제 강의를 보고 정리한 내용입니다.**
+**위 내용은 KOREATECH 김덕수 교수님의 운영체제 강의를 듣고 정리한 내용입니다.**
 
 - [https://hpclab.tistory.com/1?category=887083](https://hpclab.tistory.com/1?category=887083)
