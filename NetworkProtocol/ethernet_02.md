@@ -2,7 +2,7 @@
 
 ## Multiple access protocols
 
-<img sre="img/datalink04.png">  
+<img src="img/datalink04.png">  
 
 `다중 접속 링크(Multiple Access Link)`는 여러 장치가 네트워크 채널을 공유하여 데이터를 송수신하는 방법을 의미한다.  
 
@@ -34,14 +34,14 @@
 
 ### Pure(unslotted) ALOHA
 
-<img sre="img/datalink05.png">  
+<img src="img/datalink05.png">  
 
 명칭 그대로 정해진 슬롯이 없다는 뜻으로 `no synchronization`하다는 의미이다.  
 노드들은 프레임이 완성되자마자 즉시 링크에 데이터를 전송하고 collision이 발생한다.  
 
 ### Slotted ALOHA
 
-<img sre="img/datalink06.png"> 
+<img src="img/datalink06.png"> 
 
 `Slotted ALOHA`는 `Pure ALOHA`의 개선된 버전으로, 시간을 슬롯으로 나누어 데이터 전송을 조정한다.  
   
@@ -59,7 +59,7 @@
 만약 채널이 사용 가능한 상태라면 노드는 데이터 프레임을 전송하고,  
 채널이 사용중인 상태라면 노드는 전송을 연기하고 나중에 다시 시도한다.  
 
-<img sre="img/datalink07.png">   
+<img src="img/datalink07.png">   
   
 하지만 먼저 채널의 상태를 확인한다고 해도 
 `두 노드의 거리`와 `전파 지연` 때문에 collision은 여전히 발생할 수 있다.
