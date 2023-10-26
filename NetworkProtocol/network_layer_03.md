@@ -18,7 +18,7 @@ DORA는 DHCP를 사용하는
 DHCP의 주요 목적은 호스트가 네트워크에 참가할 때 IP 주소를 동적으로 할당하는 것이다.  
 DHCP 서버는 사용가능한 IP 주소 하나를 호스트에게 할당한다.  
 
-<img src="dhcp01.png">  
+<img src="img/dhcp01.png">  
 
 과정은 아래와 같다
 
