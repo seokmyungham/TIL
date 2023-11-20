@@ -55,7 +55,7 @@ public String mappingGetV2() {
     return "ok";
 }
 ```
-
+ 
 HTTP 메서드를 축약한 어노테이션을 사용하는 것이 가독성이 좋고 더 직관적인 것을 알 수 있다.
 
 #
