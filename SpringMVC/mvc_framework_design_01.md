@@ -1,4 +1,4 @@
-# 4. MVC Framework - FrontController(DispatcherSevlet)
+# MVC Framework - FrontController(DispatcherSevlet)
 
 ## 프론트 컨트롤러 패턴의 탄생 배경
 
@@ -18,7 +18,7 @@ MVC 패턴을 도입한 이후, 컨트롤러와 뷰의 역할을 명확하게 �
 개발자는 컨트롤러를 쉽게 관리하는 것이 가능하다.
 
 > 서블릿이란?  
-> 서블릿의 자세한 역할: https://github.com/seokmyungham/TIL/blob/main/SpringMVC/servlet.md
+> 서블릿의 자세한 역할: https://github.com/seokmyungham/TIL/blob/main/SpringMVC/web_application_02.md
 
 -  **Front Controller 패턴 특징**
   - 프론트 컨트롤러 서블릿 하나로 클라이언트의 요청을 받음
