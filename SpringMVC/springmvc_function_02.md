@@ -213,3 +213,8 @@ public String mappingProduces() {
 
 위 코드의 경우 요청 헤더의 Accept값이 text/html인 경우에만 매핑이 이루어지게 된다.  
 만약 일치하지 않으면 HTTP 406 상태코드(Not Acceptable)을 반환한다.
+
+---
+
+### Reference
+- [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard)
