@@ -29,6 +29,9 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [요청 파라미터 조회 방법](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/springmvc_function_04.md)
 - [바디 텍스트 조회](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/springmvc_function_05.md)
 - [PRG(Post, Redirect, Get)](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/prg_pattern.md)
+- [Thymeleaf Basic](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thymeleaf.md)
+- [스프링 & 타임리프 설정](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thyme_spring_integration_form_1.md)
+- [스프링 & 타임리프 통합](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thyme_spring_integration_form_2.md)
 
 ### SpringDB
 - [JDBC 이해](https://github.com/seokmyungham/TIL/blob/main/SpringDB/jdbc.md)
