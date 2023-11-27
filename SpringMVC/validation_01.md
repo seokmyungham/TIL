@@ -35,7 +35,6 @@
 
 ### 상품 등록 검증
 
-**ValidationItemControllerV1 - addItem() 수정**
 ```java
 @PostMapping("/add")
 public String addItem(@ModelAttribute Item item, RedirectAttributes redirectAttributes, Model model) {
