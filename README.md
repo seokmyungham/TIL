@@ -32,6 +32,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [Thymeleaf Basic](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thymeleaf.md)
 - [스프링 & 타임리프 설정](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thyme_spring_integration_form_1.md)
 - [스프링 & 타임리프 통합](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thyme_spring_integration_form_2.md)
+- [Validation](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_01.md)
+- [Validation - BindingResult](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_02.md)
 
 ### SpringDB
 - [JDBC 이해](https://github.com/seokmyungham/TIL/blob/main/SpringDB/jdbc.md)
