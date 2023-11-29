@@ -99,7 +99,7 @@ public String addItem(@ModelAttribute Item item, RedirectAttributes redirectAttr
         </div>
 </div>
 ```
-
+ 
 뷰에서 모델에 담긴 검증 오류 정보 Map을 사용할 수 있다.    
 `${errors?.containsKey('quantity')}`만족하는 오류가 있다면 해당하는 오류 메시지 HTML 태그를 출력하면 된다.
 
