@@ -104,6 +104,38 @@ Object[] arguments, @Nullable String defaultMessage)
 - `defaultMessage`: 오류 기본 메시지
 
 ---
+
+## 오류 코드와 메시지 처리
+
+`FieldError`와 `ObjectError` 생성자가 제공하는 파라미터  
+`errorCode`, `arguments`를 사용하면서 오류 메시지를 한 곳으로 모으면 메시지를 체계적으로 관리할 수 있다.  
+
+```properties
+spring.messages.basename=messages,errors
+```
+```properties
+required.item.itemName=상품 이름은 필수입니다.
+range.item.price=가격은 {0} ~ {1} 까지 허용합니다.
+max.item.quantity=수량은 최대 {0} 까지 허용합니다.
+totalPriceMin=가격 * 수량의 합은 {0}원 이상이어야 합니다. 현재 값 = {1}
+```
+
+`application.properties`에 해당 메시지 파일을 인식할 수 있도록 설정을 추가하고  
+`errors.properties`를 생성해서 오류 메시지를 정의한다.  
+
+```java
+//range.item.price=가격은 {0} ~ {1} 까지 허용합니다.
+//가격은 1000 ~ 1000000 까지 허용합니다.
+
+new FieldError("item", "price", item.getPrice(), false,
+    new String[]{"range.item.price"}, new Object[]{1000, 1000000}
+)
+```
+
+메시지 코드는 배열로 여러 값을 전달할 수 있는데 순서대로 매칭해서 처음 매칭되는 메시지가 사용된다.  
+위 코드는 `range.item.price`만 전달하고 있고 `arguments`에 전달한 값이 대입되어 메시지가 사용된다.
+
+---
  
 ### 글로벌 오류 처리
 
