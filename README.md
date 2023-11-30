@@ -34,6 +34,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [스프링 & 타임리프 통합](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thyme_spring_integration_form_2.md)
 - [Validation](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_01.md)
 - [Validation - BindingResult](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_02.md)
+- [Validation - rejectValue(), reject()](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_03.md)
+- [Validation - MessageCodesResolver](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_04.md)
 
 ### SpringDB
 - [JDBC 이해](https://github.com/seokmyungham/TIL/blob/main/SpringDB/jdbc.md)
