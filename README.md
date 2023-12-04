@@ -37,6 +37,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [Validation - rejectValue(), reject()](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_03.md)
 - [Validation - MessageCodesResolver](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_04.md)
 - [Validation - 검증 로직 분리, Validator](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_05.md)
+- [Bean Validation](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/bean_validation_01.md)
+- [Bean Validation - HttpMessageConverter](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/bean_validation_02.md)
 
 ### SpringDB
 - [JDBC 이해](https://github.com/seokmyungham/TIL/blob/main/SpringDB/jdbc.md)
