@@ -16,6 +16,7 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 ### HTTP
 - [HTTP 기본](https://github.com/seokmyungham/TIL/blob/main/Http/http_basic.md)
 - [인터넷 네트워크](https://github.com/seokmyungham/TIL/blob/main/Http/internet_network.md)
+- [Cookie (쿠키)](https://github.com/seokmyungham/TIL/blob/main/Http/cookie.md)
 
 ### SpringMVC
 - [웹 서버, 웹 애플리케이션 서버](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/web_application_01.md)  
