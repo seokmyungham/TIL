@@ -33,13 +33,14 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [Thymeleaf Basic](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thymeleaf.md)
 - [스프링 & 타임리프 설정](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thyme_spring_integration_form_1.md)
 - [스프링 & 타임리프 통합](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/thyme_spring_integration_form_2.md)
-- [Validation](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_01.md)
+- [Validation - 직접 구현](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_01.md)
 - [Validation - BindingResult](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_02.md)
 - [Validation - rejectValue(), reject()](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_03.md)
 - [Validation - MessageCodesResolver](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_04.md)
 - [Validation - 검증 로직 분리, Validator](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/validation_05.md)
 - [Bean Validation](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/bean_validation_01.md)
 - [Bean Validation - HttpMessageConverter](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/bean_validation_02.md)
+- [로그인 - 세션(Session) 직접 구현](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/session_01.md)
 
 ### SpringDB
 - [JDBC 이해](https://github.com/seokmyungham/TIL/blob/main/SpringDB/jdbc.md)
