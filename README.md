@@ -66,6 +66,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [Network Layer](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/network_layer_01.md)
 - [Subnets](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/network_layer_02.md)
 - [DHCP](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/network_layer_03.md)
+- [Transport Layer](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/transport_layer_01.md)
+- [Error Control, Flow Control, Congestion Control](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/transport_layer_02.md)
 
 ### JPA
 - [영속성 컨텍스트 이해](https://github.com/seokmyungham/TIL/blob/main/JPA/persistence_context.md)
