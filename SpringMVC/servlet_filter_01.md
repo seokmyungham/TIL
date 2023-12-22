@@ -94,8 +94,8 @@ public class LoginCheckFilter implements Filter {
 
 ```
 
-`whitelist`에 포함된 url 요청이 아니라면 구현해둔  
-세션을 확인해서 인증된 사용자만 특정 페이지에 접근하도록 구현한 간단한 로직이다.  
+`whitelist`에 포함된 url 요청이 아니라면  
+구현해둔 세션을 확인해서 인증된 사용자만 특정 페이지에 접근하도록 구현한 간단한 로직이다.  
 
 `HTTP 요청`이 오면 `doFilter`가 호출되는데  
 `ServletRequest`는 `HTTP 요청`이 아닌 경우까지 고려해서 만든 인터페이스이기 때문에 `HTTP`를 사용하면 위 코드처럼 다운 캐스팅해서 사용하면 된다.  
