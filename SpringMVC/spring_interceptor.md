@@ -50,7 +50,7 @@ public interface HandlerInterceptor {
  
 #
  
-여기서 가장 중요한 점은 `예외가 발생했을 시`에 인터셉터 호출 흐름이다.  
+여기서 중요한 점은 `예외가 발생했을 시`에 인터셉터 호출 흐름이다.  
 
 <img src="img/interceptor01.png">
 
@@ -59,3 +59,86 @@ public interface HandlerInterceptor {
 
 `postHandle`과 다르게 `afterCompletion`은 예외와 무관하게 항상 호출되는 메서드이므로  
 예외와 무관하게 어떠한 공통 처리를 하려면 `postHandle`이 아닌 `afterCompletion`을 사용해야 한다.
+
+#
+
+### 인터셉터 예시: 요청 로깅
+
+```java
+@Slf4j
+public class LogInterceptor implements HandlerInterceptor {
+
+    public static final String LOD_ID = "lodId";
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
+        String requestURI = request.getRequestURI();
+        String uuid = UUID.randomUUID().toString();
+        request.setAttribute(LOD_ID, uuid);
+
+        //HandlerMethod: @Controller, @RequestMapping 
+        //ResourceHttpRequestHandler: 정적 리소스
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod hm = (HandlerMethod) handler;
+        }
+
+        log.info("REQUEST [{}][{}][{}]", uuid, requestURI, handler);
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                           ModelAndView modelAndView) throws Exception {
+        log.info("postHandler [{}]", modelAndView);
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+        String requestURI = request.getRequestURI();
+        String uuid = (String) request.getAttribute(LOD_ID);
+        log.info("RESPONSE [{}][{}]", uuid, requestURI);
+        if (ex != null) {
+            log.error("afterCompletion error!!", ex);
+        }
+    }
+}
+```
+
+`스프링 인터셉터`의 특징은 위와 같이 컨트롤러 직전 단계에서  
+`HttpServletRequest`, `HttpServletResponse` 내부 데이터를 조작하고 컨트롤러로 전달할 수 있다는 점이다.  
+
+또한 `preHandle` 단계에서 호출할 핸들러의 정보도 받아서 확인할 수 있다.  
+
+#
+
+### 인터셉터 등록
+
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LogInterceptor())
+                .order(1)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**", "/*.ico", "/error");
+
+        registry.addInterceptor(new LoginCheckInterceptor())
+                .order(2)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/", "/members/add", "/login", "/logout",
+                        "/css/**", "/*.ico", "/error");
+    }
+}
+```
+
+인터셉터를 등록할 때는 `addInterceptors()`를 사용해서 등록한다.  
+필터와는 달리 매우 정교하게 URL 패턴을 지정하는 것이 가능하다.
+
+
+---
+
+### Reference
+- [스프링 MVC 2편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2/dashboard)
