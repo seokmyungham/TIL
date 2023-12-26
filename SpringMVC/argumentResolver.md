@@ -9,7 +9,7 @@
 매우 다양한 파라미터를 사용할 수 있었던 것도 스프링이 기본적으로 30개가 넘는 `ArgumnetResolver`를 지원하기 때문이다.
 > https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/arguments.html
 
-<img src="argumentResolver01.png">
+<img src="img/argumentResolver01.png">
 
 `@RequestMapping`을 처리하는 핸들러 어댑터 `RequestMappingHandlerAdapter`는  
 HTTP 요청이 들어오면 핸들러가 필요로 하는 다양한 파라미터의 값을 생성하는데  
