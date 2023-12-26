@@ -119,10 +119,10 @@ public String homeLoginV3ArgumentResolver(@Login Member loginMember, Model model
 ```java
 public interface HandlerMethodReturnValueHandler {
 
-	boolean supportsReturnType(MethodParameter returnType);
+    boolean supportsReturnType(MethodParameter returnType);
 
-	void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType,
-			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception;
+    void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType,
+        ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception;
 
 }
 ```
