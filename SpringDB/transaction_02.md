@@ -16,11 +16,7 @@
     - 실제 데이터베이스에 접근하는 코드
     - 주 사용 기술: JDBC, JPA, File, Redis, Mongo..
 
-#
-
-### 순수한 서비스 계층
-
-서비스 계층은 특정 기술에 종속되지 않도록, 최대한 순수 비즈니스 로직만 구현해야 한다.  
+서비스 계층은 특정 기술에 종속되지 않도록, `최대한 순수 비즈니스 로직`만 구현해야 한다.  
 그러면 비즈니스 로직을 유지보수 하기도 쉽고, 테스트도 쉽다.  
 또한 향후 구현 기술이 변경될 때 변경의 영향 범위를 최소화 할 수 있다.  
   
@@ -53,27 +49,16 @@ public interface PlatformTransactionManager extends TransactionManager {
 #
 
 트랜잭션을 유지하려면 트랜잭션 시작부터 끝까지 같은 데이터베이스 커넥션을 유지해야한다.  
-그런데 파라미터를 커넥션으로 전달하는 방법을 사용하면 코드가 지저분해지는 등 단점들이 많다.  
+그런데 커넥션을 파라미터로 전달하게 된다면 코드가 지저분해지는 등 단점들이 존재한다.  
 
 ![](img/transaction_05.PNG)
 
-스프링은 트랜잭션 동기화 매니저를 제공한다. 이것은 쓰레드 로컬(ThreadLocal)을 사용해서 커넥션을 동기화해준다.  
-트랜잭션 매니저는 내부에서 이 트랜잭션 동기화 매니저를 사용한다.
+스프링은 `트랜잭션 동기화 매니저`를 제공한다.  
+`트랜잭션 동기화 매니저`는 `쓰레드 로컬(ThreadLocal)`을 이용해서 멀티쓰레드 상황에서 안전하게 커넥션을 동기화할 수 있도록 커넥션을 관리한다.  
+  
+`트랜잭션 매니저`는 내부에서 이 `트랜잭션 동기화 매니저`를 사용한다.
 
-### MemeberServiceV3_1
 ```java
-package hello.jdbc.service;
-
-import hello.jdbc.domain.Member;
-import hello.jdbc.repository.MemberRepositoryV3;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
-import java.sql.SQLException;
-
 /**
  * 트랜잭션 - 트랜잭션 매니저
  */
@@ -151,10 +136,10 @@ public class MemberServiceV3_1 {
 
 ## 트랜잭션 템플릿
 
-템플릿 콜백 패턴을 활용하면 트랜잭션을 시작할 때마다 반복되는 코드들(성공시 커밋, 실패시 롤백)을 줄일 수 있다.  
+더 나아가 `템플릿 콜백 패턴`을 활용하면 트랜잭션을 시작할 때마다 반복되는 코드들(성공시 커밋, 실패시 롤백)을 줄일 수 있다.  
   
-템플릿 콜백 패턴을 적용하려면 템플릿을 제공하는 클래스를 작성해야 하는데,  
-스프링은 TransactionTemplate라는 템플릿 클래스를 제공한다.
+`템플릿 콜백 패턴`을 적용하려면 템플릿을 제공하는 클래스를 작성해야 하는데,  
+스프링은 `TransactionTemplate` 템플릿 클래스를 제공한다.
 
 ### TransactionTemplate
 
@@ -190,8 +175,6 @@ public void accountTransfer(String fromId, String toId, int money) throws SQLExc
     });
 }
 ```
-
-트랜잭션 템플릿 덕분에 트랜잭션을 시작하고, 커밋하거나 롤백하는 코드가 모두 제거되었다.  
 
 - 트랜잭션 템플릿 기본 동작
     - 비즈니스 로직이 정상 수행되면 커밋한다.
