@@ -98,7 +98,7 @@ filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType
 #
 
 인터셉터는 서블릿이 제공하는 기능이 아니라 스프링이 제공하는 기능이기 때문에 `DispatcherType`와 무관하게 항상 호출된다.  
-대신 인터셉터의 `excludePathPatterns`에 발생하는 오류 페이지 호출 경로를 제외해서 인터셉터 사용을 막을 수 있다.
+대신 인터셉터의 `excludePathPatterns`에 발생하는 오류 페이지 호출 경로를 추가해서 인터셉터 사용을 막을 수 있다.
 
 ```java
 registry.addInterceptor(new LogInterceptor()) //InterceptorRegistry registry
