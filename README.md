@@ -46,6 +46,7 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [스프링 인터셉터](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/spring_interceptor.md)
 - [ArgumentResolver](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/argumentResolver.md)
 - [예외 처리 - 서블릿](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/exception_handling_01.md)
+- [예외 처리 - 스프링 부트](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/exception_handling_02.md)
 
 ### SpringDB
 - [JDBC 이해](https://github.com/seokmyungham/TIL/blob/main/SpringDB/jdbc.md)
