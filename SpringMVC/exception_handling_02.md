@@ -1,49 +1,39 @@
-# 13. 예외 처리와 오류 페이지 - 스프링 부트
+# 예외 처리 - 스프링 부트
 
-지금까지 예외 처리 페이지를 만들기 위해 직접 만들어보며 공부했던,
-- WebServerCustomizer
-- 예외 종류에 따라 Errorpage를 추가
-- 예외 처리용 컨트롤러 ErrorpageController
+스프링 부트는 이전의 서블릿 예외 처리에서 학습했던 과정들을 모두 기본으로 제공한다.  
 
-와 같은 과정들을 스프링 부트는 모두 기본으로 제공한다.
+- [예외 처리 - 서블릿](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/exception_handling_01.md)
+- WebServerCustomizer을 생성해서 오류 페이지 등록하는 일
+- 오류 페이지를 호출하기 위해 별도의 컨트롤러를 생성하고 경로를 매핑하는 일
 
-- ErrorPage를 자동으로 등록한다. 이때 /error라는 경로로 기본 오류 페이지를 설정한다.
-    - new ErrorPage("/error"), 상태코드와 예외를 설정하지 않으면 기본 오류 페이지로 사용된다.
-    - 서블릿 밖으로 예외가 발생하거나, response.sendError(...)가 호출되면 모든 오류는 /error를 호출하게 된다
-- BasicErrorController라는 스프링 컨트롤러를 자동으로 등록한다.
-    - ErrorPage에서 등록한 /error를 매핑해서 처리하는 컨트롤러이다.
-
-#
+스프링 부트는 오류 페이지를 자동으로 등록하고 `/error`라는 경로로 기본 오류 페이지를 설정한다.  
+그리고 `BasicErrorController`라는 스프링 컨트롤러를 자동으로 등록해서 오류 호출 경로를 매핑해서 처리한다.  
+  
+따라서 개발자는 `BasicErrorController`가 제공하는 규칙과 우선순위에 따라 오류 페이지 화면만 생성하면 된다.  
 
 ## 개발자는 오류 페이지만 등록하면 된다!
 
-BasicErrorController는 기본적인 로직이 모두 개발되어 있기 때문에,  
-개발자는 오류 페이지 화면만 BasicErrorController가 제공하는 룰과 우선순위에 따라 등록하면 된다.
-
-### BasicErrorController의 뷰 처리 순서
+### BasicErrorController의 뷰 처리 우선 순위
 
 - 1\. 뷰 템플릿
-    - resources/templates/error/500.html
-    - resources/templates/error/5xx.html
+    - resources/`templates`/error/500.html
+    - resources/`templates`/error/5xx.html
 - 2\. 정적 리소스(static, public)
-    - resources/static/error/400.html
-    - resources/static/error/404.html
-    - resources/static/error/4xx.html
+    - resources/`static`/error/400.html
+    - resources/`static`/error/404.html
+    - resources/`static`/error/4xx.html
 - 3\. 적용 대상이 없을 때 뷰 이름(error)
-    - resources/templates/error.html
+    - resources/templates/`error.html`
 
-5xx, 4xx로 등록하면 알아서 500대, 400대 오류를 처리해준다.  
-- http://localhost:8080/error-404 -> 404.html
-- http://localhost:8080/error-400 -> 4xx.html
-- http://localhost:8080/error-500 -> 500.html
-- http://localhost:8080/error-ex -> 500.html
+
+뷰 템플릿이 정적 리소스보다 우선순위가 높고  
+구체적인(500,400,404)것이 5xx처럼 덜 구체적인 것보다 우선순위가 높다.  
 
 ---
 
-## BasicErrorController가 제공하는 기본 정보들
+## BasicErrorController가 제공하는 기본 정보
 
-BasicErrorController 컨트롤러는 다음 정보를 model에 담아서 뷰에 전달한다.  
-뷰 템플릿은 이 값을 활용해서 출력할 수 있다.
+`BasicErrorController` 컨트롤러는 다음 정보들을 model에 담아서 뷰에 전달한다.  
 
 ```
 * timestamp: Fri Feb 05 00:00:00 KST 2021
@@ -56,44 +46,8 @@ BasicErrorController 컨트롤러는 다음 정보를 model에 담아서 뷰에 
 * path: 클라이언트 요청 경로 (`/hello`)
 ``` 
 
-### 오류 정보 출력
-
-```html
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="utf-8">
-</head>
-<body>
-<div class="container" style="max-width: 600px">
-  <div class="py-5 text-center">
-    <h2>500 오류 화면 스프링 부트 제공</h2>
-  </div>
-  <div>
-    <p>오류 화면 입니다.</p>
-  </div>
-  <ul>
-    <li>오류 정보</li>
-    <ul>
-      <li th:text="|timestamp: ${timestamp}|"></li>
-      <li th:text="|path: ${path}|"></li>
-      <li th:text="|status: ${status}|"></li>
-      <li th:text="|message: ${message}|"></li>
-      <li th:text="|error: ${error}|"></li>
-      <li th:text="|exception: ${exception}|"></li>
-      <li th:text="|errors: ${errors}|"></li>
-      <li th:text="|trace: ${trace}|"></li>
-    </ul>
-    </li>
-  </ul>
-  <hr class="my-4">
-</div> <!-- /container -->
-</body>
-</html>
-```
-
-그런데 오류 관련 내부 정보들을 고객에게 노출하는 것은 좋지 않다. 고객이 해당 정보를 읽어도 혼란만 더해지고, 보안상 문제가 될 수 있다.  
-그래서 BasicErrorController 오류 컨트롤러에서 다음 오류 정보를 model에 포함할지 여부를 선택할 수 있다.
+그런데 오류 관련 내부 정보들을 고객에게 노출하는 것은 좋지 않다.  
+그래서 BasicErrorController 오류 컨트롤러에서 오류 정보들을 model에 포함할지 여부를 선택할 수 있다.  
 
 ### application.properties
 ```
@@ -107,9 +61,9 @@ server.error.include-stacktrace=on_param
 server.error.include-binding-errors=on_param
 ```
 
-실무에서는 이것들을 노출하면 안된다.  
-사용자에게는 이쁜 오류 화면과 고객이 이해할 수 있는 간단한 오류 메시지를 보여주고,  
-오류는 서버에 로그로 남겨서 로그로 확인해야한다.
+실무에서는 이러한 정보들을 외부에 노출하면 안된다.  
+사용자에게는 이쁜 오류 화면과 고객이 이해할 수 있는 간단한 오류 메시지만 보여주고  
+오류는 서버에 로그로 남겨서 로그로 확인하도록 하자.
 
 ---
 
