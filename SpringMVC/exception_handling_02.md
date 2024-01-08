@@ -6,7 +6,11 @@
 - WebServerCustomizer을 생성해서 오류 페이지 등록하는 일
 - 오류 페이지를 호출하기 위해 별도의 컨트롤러를 생성하고 경로를 매핑하는 일
 
-스프링 부트는 오류 페이지를 자동으로 등록하고 `/error`라는 경로로 기본 오류 페이지를 설정한다.  
+#
+
+스프링 부트는 오류 페이지를 자동으로 등록하고, `/error` 경로로 기본 오류 페이지를 설정한다.  
+상태코드와 예외를 설정하지 않으면 `new ErrorPage("/error")` 가 기본으로 호출된다.  
+  
 그리고 `BasicErrorController`라는 스프링 컨트롤러를 자동으로 등록해서 오류 호출 경로를 매핑해서 처리한다.  
   
 따라서 개발자는 `BasicErrorController`가 제공하는 규칙과 우선순위에 따라 오류 페이지 화면만 생성하면 된다.  
@@ -15,7 +19,7 @@
 
 ### BasicErrorController의 뷰 처리 우선 순위
 
-- 1\. 뷰 템플릿
+- 1\. 뷰 템플릿(동적으로 처리를 원할 떄)
     - resources/`templates`/error/500.html
     - resources/`templates`/error/5xx.html
 - 2\. 정적 리소스(static, public)
