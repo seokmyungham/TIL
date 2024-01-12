@@ -48,6 +48,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [예외 처리 - 서블릿](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/exception_handling_01.md)
 - [예외 처리 - 스프링 부트](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/exception_handling_02.md)
 - [API 예외 처리 - ExceptionResolver 이해](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/api_exception_handling_01.md)
+- [API 예외 처리 - ExceptionHandlerExceptionResolver](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/api_exception_handling_02.md)
+- [API 예외 처리 - ResponseStatusExceptionResolver, DefaultHandlerExceptionResolver](https://github.com/seokmyungham/TIL/blob/main/SpringMVC/api_exception_handling_03.md)
 
 ### SpringDB
 - [JDBC 이해](https://github.com/seokmyungham/TIL/blob/main/SpringDB/jdbc.md)
