@@ -1,4 +1,4 @@
-# API 예외처리 - ExceptionHandlerExceptionResolver
+# API 예외 처리 - ExceptionHandlerExceptionResolver
 
 ## 스프링이 제공하는 ExceptionResolver
 
