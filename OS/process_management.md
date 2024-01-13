@@ -64,6 +64,9 @@
 이 상태에서 프로세스는 프로세서 스케줄링에 의해 다시 `Ready` 상태로 돌아갈 수도 있고 
 I/O등 자원 할당 요청으로 인해 `Asleep` 상태로 진행될 수도 있다.  
 
+- `Preemption`: Timer run-out, 프로세서를 빼앗기는 것을 말한다.
+- `Block`(Sleep): I/O등 자원 할당을 요청하는 것을 말한다.
+
 #
 
 ### Blocked/Asleep
