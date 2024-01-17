@@ -19,7 +19,7 @@ S가 0이상의 정수 값을 가질 수 있는 `Couning semaphore`가 존재하
 <img src="img/semaphore01.png">
 
 하지만 `스핀락`과 가장 큰 차이점은 `임의의 S 변수 하나에 ready queue 하나가 할당` 되어  
-프로세스가 계속 반복문을 통해 조건을 확인하고 기다리는 방식이 아닌    
+프로세스가 P() 연산 안에 갇혀 계속 반복문을 통해 조건을 확인하고 기다리는 방식이 아닌    
 `queue 안에서 기다리도록` 프로세스의 상태를 `block(asleep)`으로 변경 시킨다는 점이다.  
 > Process States: https://github.com/seokmyungham/TIL/blob/main/OS/process_management.md#process-states
 
