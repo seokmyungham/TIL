@@ -21,7 +21,7 @@
 - Condition queues
   - Monitor 내의 특정 이벤트를 기다리는 프로세스가 대기하는 `queue`가 존재
 - Waiting signaler queue
-  - Monitor에는 항상 하나의 신호제공자 큐가 존재한다.
+  - Monitor에는 항상 하나의 `신호제공자 queue`가 존재한다.
   - 큐에는 signal() 명령을 실행한 프로세스가 임시 대기하게 된다.
 
 ---
