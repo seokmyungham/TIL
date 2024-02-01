@@ -109,6 +109,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [Mutual Excluision Solutions - Spinlock](https://github.com/seokmyungham/TIL/blob/main/OS/mutual_exclusion_02.md)
 - [Mutual Excluision Solutions - Semaphore](https://github.com/seokmyungham/TIL/blob/main/OS/mutual_exclusion_03.md)
 - [Mutual Excluision Solutions - Monitor](https://github.com/seokmyungham/TIL/blob/main/OS/mutual_exclusion_04.md)
+- [Deadlock Resolution](https://github.com/seokmyungham/TIL/blob/main/OS/deadlock_resoulution.md)
+- [Main Memory Management](https://github.com/seokmyungham/TIL/blob/main/OS/main_memory_management.md)
 
 ### RealMySQL
 - [MySQL 엔진 아키텍처 - 엔진 구조](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture_01.md)
