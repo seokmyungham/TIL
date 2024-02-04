@@ -2,7 +2,7 @@
 
 ## Segmenation system
 
-<img src="img/segmentation01.png" width=80%>
+<img src="img/segmentation01.png" width=70%>
 
 페이징 시스템이 프로그램을 단순히 일정한 크기로 분할하는 방식이었다면,  
 `세그멘테이션 시스템`은 프로그램을 논리적 블록으로 분할하는 방법이다.  
@@ -18,14 +18,14 @@
 
 #
 
-<img src="img/segmentation02.png" width=80%>
+<img src="img/segmentation02.png" width=60%>
 
 세그멘테이션 시스템에서 주소 사상 과정은 페이징 시스템과 유사하다.  
 다만 SMT는 PMT에서 세그먼트의 길이와 권한을 나타내는 프로텍션 비트가 추가된 모습이다.  
   
 기능에 따라 세그먼트가 형성된 만큼 프로텍션 비트를 통해 수행 권한을 프로텍션 비트로 관리하여 세그먼트에 대한 접근을 쉽게 보호할 수 있다.
 
-<img src="img/segmentation03.png" width=80%>
+<img src="img/segmentation03.png" width=70%>
 
 직접 사상에서는 프로세스의 SMT가 저장되어 있는 주소 b에 접근하여  
 가상 주소의 세그먼트 번호를 이용해서 SMT에서 원하는 세그먼트 엔트리를 찾는다.  
@@ -50,7 +50,7 @@ https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory.md#associative-m
 
 ## Hybrid Paging/Segmentation
 
-<img src="img/pag-seg01.png" width=80%>
+<img src="img/pag-seg01.png" width=60%>
 
 Hybrid Paging/Segmentation은 페이징, 세그멘테이션의 각각의 장점을 결합하여 시스템의 성능을 향상시키는 방법이다.   
 프로그램을 논리 단위의 세그먼트로 분할한 후, 각 세그먼트를 고정된 크기의 페이지로 분할해서 페이지 단위로 메모리에 적재한다.  
@@ -62,13 +62,13 @@ Hybrid Paging/Segmentation은 페이징, 세그멘테이션의 각각의 장점�
 각 장점들을 결합함으로써 세그멘테이션 시스템의 블록 공유 및 프로텍션이 쉽다는 점과  
 페이징 시스템의 메모리 할당과 관리 오버헤드가 적다는 장점을 모두 챙길 수 있다.
 
-<img src="img/pag-seg02.png" width=80%>
-<img src="img/pag-seg03.png" width=80%>
+<img src="img/pag-seg02.png" width=60%>
+<img src="img/pag-seg03.png" width=60%>
 
 최종적으로 메모리에 올라가는 블록은 페이지이기 때문에  
 SMT에는 존재 비트가 없고, 각 세그먼트 번호와 PMT 주소가 매핑되어 있다.  
 
-<img src="img/pag-seg04.png" width=80%>
+<img src="img/pag-seg04.png" width=70%>
 
 직접 사상 과정은 프로세스의 SMT가 저장되어 있는 주소 b에 접근하여  
 가상 주소의 세그먼트 번호를 이용, 원하는 세그먼트 엔트리에 접근한다. 
