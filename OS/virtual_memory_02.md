@@ -63,11 +63,12 @@ Hybrid Paging/Segmentation은 페이징, 세그멘테이션의 각각의 장점�
 페이징 시스템의 메모리 할당과 관리 오버헤드가 적다는 장점을 모두 챙길 수 있다.
 
 <img src="img/pag-seg02.png" width=80%>
+<img src="img/pag-seg03.png" width=80%>
 
 최종적으로 메모리에 올라가는 블록은 페이지이기 때문에  
 SMT에는 존재 비트가 없고, 각 세그먼트 번호와 PMT 주소가 매핑되어 있다.  
 
-<img src="img/pag-seg03.png" width=80%>
+<img src="img/pag-seg04.png" width=80%>
 
 직접 사상 과정은 프로세스의 SMT가 저장되어 있는 주소 b에 접근하여  
 가상 주소의 세그먼트 번호를 이용, 원하는 세그먼트 엔트리에 접근한다. 
