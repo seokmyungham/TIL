@@ -1,3 +1,5 @@
+# Virtual memory
+
 ## Segmenation system
 
 <img src="img/segmentation01.png" width=80%>
@@ -56,7 +58,9 @@ Hybrid Paging/Segmentation은 페이징, 세그멘테이션의 각각의 장점�
 
 가상 주소 v는 세그먼트 번호, 페이지 번호, 오프셋 3개의 변수를 모두 사용한다. v=(s,p,d)
 각 프로세스마다 하나의 SMT가 존재하고, 각 세그먼트마다 하나의 PMT를 둔다. 최종적으로 메모리 관리는 FPM과 유사하다.  
-> 프로세스(1) - SMT(1) - PMT(1)
+
+각 장점들을 결합함으로써 세그멘테이션 시스템의 블록 공유 및 프로텍션이 쉽다는 점과  
+페이징 시스템의 메모리 할당과 관리 오버헤드가 적다는 장점을 모두 챙길 수 있다.
 
 <img src="img/pag-seg02.png" width=80%>
 
@@ -65,3 +69,17 @@ SMT에는 존재 비트가 없고, 각 세그먼트 번호와 PMT 주소가 매�
 
 <img src="img/pag-seg03.png" width=80%>
 
+직접 사상 과정은 프로세스의 SMT가 저장되어 있는 주소 b에 접근하여  
+가상 주소의 세그먼트 번호를 이용, 원하는 세그먼트 엔트리에 접근한다. 
+  
+이후 SMT에 매핑되어 있는 PMT 주소와 가상 주소의 페이지 번호를 활용하여  
+원하는 페이지의 존재 비트를 확인하고, 페이지 프레임 번호를 이용해 메모리에 접근하게 된다.
+  
+직접 사상의 경우 SMT, PMT, 메모리를 순서대로 접근하면서  
+메모리 접근이 3배로 늘어나는 단점이 존재하지만 TLB 같은 하드웨어를 이용하게 되면 성능적인 측면을 어느정도 해결할 수 있을 것이다.
+
+---
+
+# Reference
+
+- [https://hpclab.tistory.com/1?category=887083](https://hpclab.tistory.com/1?category=887083)
