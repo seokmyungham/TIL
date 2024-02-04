@@ -111,6 +111,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [Mutual Excluision Solutions - Monitor](https://github.com/seokmyungham/TIL/blob/main/OS/mutual_exclusion_04.md)
 - [Deadlock Resolution](https://github.com/seokmyungham/TIL/blob/main/OS/deadlock_resoulution.md)
 - [Main Memory Management](https://github.com/seokmyungham/TIL/blob/main/OS/main_memory_management.md)
+- [Virtual Memory - Paging system](https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory.md)
+- [Virtual Memory - Segmentation system](https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory_02.md)
 
 ### RealMySQL
 - [MySQL 엔진 아키텍처 - 엔진 구조](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture_01.md)
