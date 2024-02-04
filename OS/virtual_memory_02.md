@@ -1,5 +1,3 @@
-# Virtual Memory
-
 ## Segmenation system
 
 <img src="img/segmentation01.png" width=80%>
@@ -44,7 +42,26 @@ segment overflow exception 처리 모듈을 호출한다.
 
 세그멘테이션 시스템에서도 TLB같은 하드웨어를 활용해서  
 메모리를 2배 접근하는 문제를 해결할 수 있고 직접/연관 사상을 활용할 수 있다.  
-https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory.md
+https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory.md#associative-mapping
 
 ---
+
+## Hybrid Paging/Segmentation
+
+<img src="img/pag-seg01.png" width=80%>
+
+Hybrid Paging/Segmentation은 페이징, 세그멘테이션의 각각의 장점을 결합하여 시스템의 성능을 향상시키는 방법이다.   
+프로그램을 논리 단위의 세그먼트로 분할한 후, 각 세그먼트를 고정된 크기의 페이지로 분할해서 페이지 단위로 메모리에 적재한다.  
+> 프로그램(1) : 세그먼트(N) / 세그먼트(1) : 페이지(N)
+
+가상 주소 v는 세그먼트 번호, 페이지 번호, 오프셋 3개의 변수를 모두 사용한다. v=(s,p,d)
+각 프로세스마다 하나의 SMT가 존재하고, 각 세그먼트마다 하나의 PMT를 둔다. 최종적으로 메모리 관리는 FPM과 유사하다.  
+> 프로세스(1) - SMT(1) - PMT(1)
+
+<img src="img/pag-seg02.png" width=80%>
+
+최종적으로 메모리에 올라가는 블록은 페이지이기 때문에  
+SMT에는 존재 비트가 없고, 각 세그먼트 번호와 PMT 주소가 매핑되어 있다.  
+
+<img src="img/pag-seg03.png" width=80%>
 
