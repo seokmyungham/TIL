@@ -72,7 +72,7 @@ TLB나 비트 벡터같은 `하드웨어 요소`를 이용하거나, `소프트�
 
 ### 부하 조절 전략
 
-<img src="img/vm_management02.png" width=50%>
+<img src="img/vm_management02.png" width=60%>
 
 시스템의 멀티 프로그래밍 차수를 조절해서 자원과 성능 시스템 상태를 적절하게 유지시키는 전략이다.  
 
