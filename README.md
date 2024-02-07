@@ -113,6 +113,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의
 - [Main Memory Management](https://github.com/seokmyungham/TIL/blob/main/OS/main_memory_management.md)
 - [Virtual Memory - Paging system](https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory.md)
 - [Virtual Memory - Segmentation system](https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory_02.md)
+- [Virtual Memory Management - HW/SW Components](https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory_management_01.md)
+- [Virtual memory management - Replacement Strategies](https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory_management_02.md)
 
 ### RealMySQL
 - [MySQL 엔진 아키텍처 - 엔진 구조](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture_01.md)
