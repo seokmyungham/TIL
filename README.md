@@ -7,7 +7,7 @@
   
 따라서 기록된 내용은 미완이며 언제든지 수정, 변경될 수 있습니다.
 
-README 형식은 [namjunemy](https://github.com/namjunemy/TIL/tree/master)님의 Github를 보며 참고하였습니다.
+README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 보며 참고하였습니다.
   
 ---
 
