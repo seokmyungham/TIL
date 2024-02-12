@@ -13,7 +13,7 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 ## 규칙
 
 - 원작자가 허용하는 자료만 사용하고 내용의 Reference를 명시한다.
-- 진정한 학습과 성장은 퇴고에서 비롯되며 기록을 방치하지 않는다.  
+- 진정한 학습은 퇴고에서 비롯되며 기록을 방치하지 않는다.  
 ---
 
 ## 분류
