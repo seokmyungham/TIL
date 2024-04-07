@@ -111,7 +111,7 @@ mysql DB는 통째로 mysql.ibd라는 이름의 테이블스페이스에 저장�
 InnoDB가 지원하는 트랜잭션 덕분에 스키마 변경 작업 중간에 MySQL 서버가 비정상적으로 종료된다 하더라도 스키마 변경이 완전한 성공 또는 완전한 실패로 정리된다.
 8.0 버전 이전의 파일 기반 메타데이터를 사용할 때 처럼 데이터베이스나 테이블이 깨지는 현상이 더이상 발생하지 않게 된 것이다.
 
-## Reference
+## Reference 
 
 **위 내용은 책 RealMySQL 8.0을 구입하여 읽고 정리하였습니다.**
 - [도서 홈페이지 https://wikibook.co.kr/realmysql801/](https://wikibook.co.kr/realmysql801/)
