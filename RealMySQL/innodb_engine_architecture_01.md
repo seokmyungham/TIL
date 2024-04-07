@@ -1,6 +1,6 @@
 # InnoDB 스토리지 엔진 아키텍처
 
-<img src="img/innodb_01.png">
+<img src="img/innodb_01.png" width=50%>
 
 `InnoDB`는 MySQL에서 사용할 수 있는 스토리지 엔진 중 거의 유일하게 레코드 기반의 잠금을 제공한다.  
 덕분에 높은 동시성 처리가 가능하고 안정적이며 성능이 뛰어나다.
@@ -62,7 +62,7 @@ SET SESSION foreign_key_checks=OFF;
  
 InnoDB는 `언두 로그`를 사용해서 이 기능을 구현한다.  
 
-<img src="img/mvcc_01.png">
+<img src="img/mvcc_01.png" width=50%>
 
 위 그림은 이름이 홍길동, 지역이 `서울`인 레코드를 하나 추가한 후,  
 해당 레코드의 지역 컬럼의 값이 `경기`로 변경되었을 때 언두 로그가 어떻게 작동하는지를 보여주는 그림이다.  
