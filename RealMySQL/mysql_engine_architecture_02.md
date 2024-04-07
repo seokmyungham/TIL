@@ -1,4 +1,4 @@
-# 아키텍처 (MySQL Engine)
+# MySQL 엔진 아키텍처
 
 ## 쿼리 실행 구조
 
