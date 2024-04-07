@@ -7,7 +7,7 @@
 
 ## InnoDB 스토리지 엔진의 주요 특징
 
-- 프라이머리 키에 의한 클러스터링
+- [프라이머리 키에 의한 클러스터링](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8%EB%A6%AC-%ED%82%A4%EC%97%90-%EC%9D%98%ED%95%9C-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0%EB%A7%81)
 - 외래 키 지원
 - Muti Version Concurrency Control
 - 잠금 없는 일관된 읽기(Non-Locking Consistent Read)
