@@ -1,4 +1,4 @@
-# 아키텍처 (MySQL Engine)
+# MySQL 엔진 아키텍처
 
 ## MySQL의 전체 구조
 <img src="img/mysql_architecture01.png"  width="491" height="535"><img src="img/mysql_engine.png" width="429" height="441">
