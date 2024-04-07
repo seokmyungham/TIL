@@ -8,10 +8,10 @@
 ## InnoDB 스토리지 엔진의 주요 특징
 
 - [프라이머리 키에 의한 클러스터링](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8%EB%A6%AC-%ED%82%A4%EC%97%90-%EC%9D%98%ED%95%9C-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0%EB%A7%81)
-- 외래 키 지원
-- Muti Version Concurrency Control
-- 잠금 없는 일관된 읽기(Non-Locking Consistent Read)
-- 자동 데드락 감지
+- [외래 키 지원](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EC%99%B8%EB%9E%98-%ED%82%A4-%EC%A7%80%EC%9B%90)
+- [Muti Version Concurrency Control](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#mvcc)
+- [잠금 없는 일관된 읽기(Non-Locking Consistent Read)](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EC%9E%A0%EA%B8%88-%EC%97%86%EB%8A%94-%EC%9D%BC%EA%B4%80%EB%90%9C-%EC%9D%BD%EA%B8%B0)
+- [자동 데드락 감지](https://github.com/seokmyungham/TIL/edit/main/RealMySQL/innodb_engine_architecture_01.md#%EC%9E%90%EB%8F%99-%EB%8D%B0%EB%93%9C%EB%9D%BD-%EA%B0%90%EC%A7%80)
 - 자동화된 장애 복구
 - InnoDB 버퍼 풀
 - Double Write Buffer
@@ -89,6 +89,19 @@ MVCC를 통해 한 레코드에 대해 여러 버전이 있기 때문에, InnoDB
 
 다만 오랜 시간동안 활성된 트랜잭션으로 인해 언두 로그를 삭제하지 못하고 계속 유지하게 되면, 가끔 MySQL 서버가 느려지거나 문제가 발생할 수 있다.
 이를 막기위해 트랜잭션이 시작됐다면 가능한 한 빨리 롤백이나 커밋을 통해 트랜잭션을 완료하는 것이 좋다.
+
+## 자동 데드락 감지
+
+InnoDB 스토리지 엔진은 내부적으로 잠금이 교착 상태에 빠지지 않았는지 체크하기 위해 `잠금 대기 목록`을 `그래프` 형태로 관리한다. 그리고 `데드락 감지 스레드`가 주기적으로 잠금 대기 목록 그래프를 검사해서
+교착 상태에 빠진 트랜잭션을 찾고 그 중 하나를 강제 종료(롤백)한다.  
+  
+여기서 둘 중에 강제 종료할 트랜잭션을 선택하는 기준은 `언두 로그의 양`이다. 언두 로그의 양이 적다는 뜻은 롤백 시 언두 처리를 해야할 데이터가 적다는 의미이며 강제 롤백으로 인한 MySQL의 부하도 덜 유발하기 때문이다  
+
+동시 처리 스레드가 매우 많아지거나 각 트랜잭션이 가지는 잠금의 개수가 많아지면 데드락 감지 스레드가 느려진다. 데드락 감지 스레드는 잠금 목록을 검사할 때 잠금 상태의 변경을 막기 위해 잠금 테이블에 새로운 잠금을 걸고
+데드락 스레드를 찾게 되는데, 잠금의 개수가 많다는 것은 데드락 감지 스레드가 해야할 일이 많아져 느려진다는 의미이다. 따라서 서비스 쿼리를 처리 중인 스레드는 더이상 작업을 진행하지 못해고 대기하게 되면서 서비스에 악영향을 미친다.  
+
+데드락 감지 스레드를 사용하는 것이 부담스럽다면 `innodb_deadlock_detect` 시스템 변수를 OFF로 설정해서 데드락 감지 스레드를 비활성화 하여 문제를 해결할 수 있다. 
+또한 `innodb_lock_wait_timeout` 시스템 변수를 활성화하면 데드락 상황에서 일정 시간이 지났을 때 자동으로 요청이 실패하고 에러 메시지를 반환하도록 할 수 있다.
 
 ## Reference 
 
