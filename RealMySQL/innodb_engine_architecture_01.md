@@ -11,14 +11,14 @@
 - [외래 키 지원](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EC%99%B8%EB%9E%98-%ED%82%A4-%EC%A7%80%EC%9B%90)
 - [Muti Version Concurrency Control](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#mvcc)
 - [잠금 없는 일관된 읽기(Non-Locking Consistent Read)](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EC%9E%A0%EA%B8%88-%EC%97%86%EB%8A%94-%EC%9D%BC%EA%B4%80%EB%90%9C-%EC%9D%BD%EA%B8%B0)
-- [자동 데드락 감지](https://github.com/seokmyungham/TIL/edit/main/RealMySQL/innodb_engine_architecture_01.md#%EC%9E%90%EB%8F%99-%EB%8D%B0%EB%93%9C%EB%9D%BD-%EA%B0%90%EC%A7%80)
+- [자동 데드락 감지](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EC%9E%90%EB%8F%99-%EB%8D%B0%EB%93%9C%EB%9D%BD-%EA%B0%90%EC%A7%80)
 - 자동화된 장애 복구
 - [InnoDB 버퍼 풀](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_02.md#innodb-%EB%B2%84%ED%8D%BC-%ED%92%80)
-- [Double Write Buffer](https://github.com/seokmyungham/TIL/edit/main/RealMySQL/innodb_engine_architecture_01.md#double-write-buffer)
-- [언두 로그](https://github.com/seokmyungham/TIL/edit/main/RealMySQL/innodb_engine_architecture_01.md#%EC%96%B8%EB%91%90-%EB%A1%9C%EA%B7%B8)
-- [체인지 버퍼](https://github.com/seokmyungham/TIL/edit/main/RealMySQL/innodb_engine_architecture_01.md#%EC%B2%B4%EC%9D%B8%EC%A7%80-%EB%B2%84%ED%8D%BC)
-- [리두 로그 및 로그 버퍼](https://github.com/seokmyungham/TIL/edit/main/RealMySQL/innodb_engine_architecture_01.md#%EB%A6%AC%EB%91%90-%EB%A1%9C%EA%B7%B8-%EB%B0%8F-%EB%A1%9C%EA%B7%B8-%EB%B2%84%ED%8D%BC)
-- [어댑티브 해시 인덱스](https://github.com/seokmyungham/TIL/edit/main/RealMySQL/innodb_engine_architecture_01.md#%EC%96%B4%EB%8C%91%ED%8B%B0%EB%B8%8C-%ED%95%B4%EC%8B%9C-%EC%9D%B8%EB%8D%B1%EC%8A%A4)
+- [Double Write Buffer](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#double-write-buffer)
+- [언두 로그](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EC%96%B8%EB%91%90-%EB%A1%9C%EA%B7%B8)
+- [체인지 버퍼](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EC%B2%B4%EC%9D%B8%EC%A7%80-%EB%B2%84%ED%8D%BC)
+- [리두 로그 및 로그 버퍼](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EB%A6%AC%EB%91%90-%EB%A1%9C%EA%B7%B8-%EB%B0%8F-%EB%A1%9C%EA%B7%B8-%EB%B2%84%ED%8D%BC)
+- [어댑티브 해시 인덱스](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EC%96%B4%EB%8C%91%ED%8B%B0%EB%B8%8C-%ED%95%B4%EC%8B%9C-%EC%9D%B8%EB%8D%B1%EC%8A%A4)
 
 ---
 
