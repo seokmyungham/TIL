@@ -13,8 +13,8 @@
 - [잠금 없는 일관된 읽기(Non-Locking Consistent Read)](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md#%EC%9E%A0%EA%B8%88-%EC%97%86%EB%8A%94-%EC%9D%BC%EA%B4%80%EB%90%9C-%EC%9D%BD%EA%B8%B0)
 - [자동 데드락 감지](https://github.com/seokmyungham/TIL/edit/main/RealMySQL/innodb_engine_architecture_01.md#%EC%9E%90%EB%8F%99-%EB%8D%B0%EB%93%9C%EB%9D%BD-%EA%B0%90%EC%A7%80)
 - 자동화된 장애 복구
-- InnoDB 버퍼 풀
-- Double Write Buffer
+- [InnoDB 버퍼 풀](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_02.md#innodb-%EB%B2%84%ED%8D%BC-%ED%92%80)
+- [Double Write Buffer](https://github.com/seokmyungham/TIL/edit/main/RealMySQL/innodb_engine_architecture_01.md#double-write-buffer)
 - 언두 로그
 - 체인지 버퍼
 - 리두 로그 및 로그 버퍼
@@ -102,6 +102,19 @@ InnoDB 스토리지 엔진은 내부적으로 잠금이 교착 상태에 빠지�
 
 데드락 감지 스레드를 사용하는 것이 부담스럽다면 `innodb_deadlock_detect` 시스템 변수를 OFF로 설정해서 데드락 감지 스레드를 비활성화 하여 문제를 해결할 수 있다. 
 또한 `innodb_lock_wait_timeout` 시스템 변수를 활성화하면 데드락 상황에서 일정 시간이 지났을 때 자동으로 요청이 실패하고 에러 메시지를 반환하도록 할 수 있다.
+
+## Double Write Buffer
+
+InnoDB 스토리지 엔진의 리두 로그는 페이지의 변경된 내용만 기록한다. 이로 인해 InnoDB 스토리지 엔진이 더티 페이지를 디스크 파일로 플러시할 때 하드웨어 오작동이나 시스템의 비정상 종료가 일어나면 일부만 기록되는 문제가 발생할 수 있다.
+이러한 문제를 막기 위해 InnoDB 스토리지 엔진은 `Double Write` 기법을 이용한다.
+  
+쉽게 말하면 더티 페이지를 플러시할 때, 실제 데이터 파일에 변경 내용을 기록하기 전 더티 페이지들을 묶어 시스템 테이블 스페이스에 존재하는 Double Write 버퍼에 먼저 기록한다. 
+만약 비정상적으로 시스템이 종료되면 InnoDB 스토리지 엔진은 재시작하면서 항상 Double Write 버퍼의 내용과 데이터 파일의 페이지들을 모두 비교하고, 내용이 다르면 버퍼의 내용을 데이터 파일의 페이지로 복사하는 과정을 수행한다.
+  
+Double Write 기능은 `innodb_doublewirte` 시스템 변수로 제어할 수 있고, SSD 처럼 랜덤 IO나 순차 IO의 비용이 비슷한 저장 시스템에서는 상당히 부담스러울 수 있다.
+데이터의 무결성이 매우 중요한 서비스는 Double Write의 활성화를 고려하는 것이 좋고, 성능이 가장 우선시되어 InnoDB 리두 로그 동기화 설정을 1이 아닌 값으로 설정 했다면 Double Write도 비활성화하는 것이 좋다.
+
+## 언두 로그
 
 ## Reference 
 
