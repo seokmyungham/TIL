@@ -122,7 +122,6 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [Virtual memory management - Replacement Strategies](https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory_management_02.md)
 
 ### RealMySQL
-- [MySQL 엔진 아키텍처 - 엔진 구조](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture_01.md)
-- [MySQL 엔진 아키텍처 - 메모리 할당 및 사용 구조](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture_02.md)
-- [MySQL 엔진 아키텍처 - 플러그인 & 컴포넌트](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture_03.md)
-- [MySQL 엔진 아키텍처 - 쿼리 실행 구조](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture_04.md)
+- [MySQL 엔진 아키텍처](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture.md)
+- [InnoDB 스토리지 엔진 아키텍처](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md)
+- [InnoDB 스토리지 엔진 아키텍처 - InnoDB 버퍼 풀](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_02.md)
