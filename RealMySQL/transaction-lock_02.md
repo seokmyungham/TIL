@@ -20,7 +20,7 @@
 
 격리 수준을 그대로 해석하면 커밋되지 않은 데이터도 읽을 수 있다라는 뜻이다. 그래서 각 트랜잭션에서의 변경 내용이 커밋이나 롤백 여부에 상관없이 다른 트랜잭션에서 보이는 격리 수준이다.
 
-<img src = "img/read_uncommitted01.png">
+<img src = "img/read_uncommitted01.png" width=60%>
 
 위 그림처럼 `사용자 B`는 `사용자 A`가 `INSERT`한 사원의 정보를 커밋되지 않은 상태에서도 조회할 수 있다.  
 이 때 `사용자 A`가 `INSERT`된 내용을 롤백한다 하더라도, `사용자 B`는 그 사실을 알 수 없고 올바른 데이터라고 생각해서 계속 작업을 처리하는 심각한 문제가 발생할 수 있다.  
@@ -28,13 +28,13 @@
 
 ### READ COMMITTED
 
-<img src = "img/read_committed01.png">
+<img src = "img/read_committed01.png" width=60%>
 
 `READ COMMITTED`는 다른 트랜잭션에서 커밋이 완료된 데이터만 조회할 수 있다. 그렇기 때문에 `DIRTY READ` 문제는 발생하지 않는다.  
 `MVCC`를 이용해서 레코드를 새로운 값으로 변경하면 테이블에는 즉시 새로운 데이터가 기록되고, 이전 데이터는 언두 영역으로 백업된다.  
 커밋이 완료되기 전에는 변경 전 데이터를 언두 영역에 백업된 레코드에서 가져와 보여준다. 
 
-<img src = "img/read_committed02.png">
+<img src = "img/read_committed02.png" width=60%>
 
 `READ COMMITTED` 격리 수준에서도 데이터 부정합 문제가 발생할 수 있다.  
 
@@ -55,7 +55,7 @@ MySQL의 `InnoDB` 스토리지 엔진은 기본으로 `REPEATABLE RAED` 격리 �
 `InnoDB` 스토리지 엔진의 `REPEATABLE READ`는 트랜잭션이 롤백될 가능성에 대비해 변경되기 전 레코드를 언두 영역에 백업해두고 실제 레코드 값을 변경한다. 
 그래서 동일 트랜잭션 내에서는 동일한 결과를 보여줄 수 있게 보장한다.
 
-<img src = "img/repeatable_read01.png">
+<img src = "img/repeatable_read01.png" width=60%>
 
 그런데 `READ COMMITTED`, `REPEATABLE READ` 두 격리 수준의 차이점은 언두 영역에 백업된 레코드의 여러 버전 가운데 몇 번째 이전 버전까지 찾아 들어가느냐에 있다.  
 모든 InnoDB의 트랜잭션은 순차적으로 증가하는 고유한 트랜잭션 번호를 가지고 있는데, 언두 영역에 백업된 모든 레코드에는 변경을 발생시킨 트랜잭션의 번호가 포함되어 있다.  
