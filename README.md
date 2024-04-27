@@ -69,20 +69,17 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [스프링 트랜잭션](https://github.com/seokmyungham/TIL/blob/main/SpringDB/spring_transcation_01.md)
 - [스프링 트랜잭션 전파](https://github.com/seokmyungham/TIL/blob/main/SpringDB/transaction_propagation_01.md)
 
-### NetworkProtocol
-- [OSI Model](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/layer_01.md)
-- [TCP/IP Model](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/layer_02.md)
-- [Data Link Layer](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/ethernet_01.md)
-- [Multiple Access Protocols](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/ethernet_02.md)
-- [Ethernet](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/ethernet_03.md)
-- [ARP](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/arp.md)
-- [Network Layer](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/network_layer_01.md)
-- [Subnets](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/network_layer_02.md)
-- [DHCP](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/network_layer_03.md)
-- [Transport Layer](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/transport_layer_01.md)
-- [Error Control, Flow Control, Congestion Control](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/transport_layer_02.md)
-- [RDT 3.0, Pipelined Protocols](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/transport_layer_03.md)
-
+### MySQL
+- [MySQL 엔진 아키텍처](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture.md)
+- [InnoDB 스토리지 엔진 아키텍처](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md)
+- [InnoDB 스토리지 엔진 아키텍처 - InnoDB 버퍼 풀](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_02.md)
+- [트랜잭션과 잠금 개요](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/transaction-lock_01.md)
+- [MySQL의 격리 수준](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/transaction-lock_02.md)
+- [디스크 읽기 방식](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/index_01.md)
+- [인덱스 개요](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/index_02.md)
+- [B-Tree 인덱스를 통한 데이터 읽기 방식](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/index_03.md)
+- [클러스터링, 유니크, 외래키 인덱스](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/index_04.md)
+  
 ### JPA
 - [영속성 컨텍스트 이해](https://github.com/seokmyungham/TIL/blob/main/JPA/persistence_context.md)
 - [엔티티, 테이블, 컬럼 매핑](https://github.com/seokmyungham/TIL/blob/main/JPA/entity_mapping_01.md)
@@ -121,7 +118,16 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [Virtual Memory Management - HW/SW Components](https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory_management_01.md)
 - [Virtual memory management - Replacement Strategies](https://github.com/seokmyungham/TIL/blob/main/OS/virtual_memory_management_02.md)
 
-### RealMySQL
-- [MySQL 엔진 아키텍처](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/mysql_engine_architecture.md)
-- [InnoDB 스토리지 엔진 아키텍처](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_01.md)
-- [InnoDB 스토리지 엔진 아키텍처 - InnoDB 버퍼 풀](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_engine_architecture_02.md)
+### NetworkProtocol
+- [OSI Model](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/layer_01.md)
+- [TCP/IP Model](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/layer_02.md)
+- [Data Link Layer](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/ethernet_01.md)
+- [Multiple Access Protocols](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/ethernet_02.md)
+- [Ethernet](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/ethernet_03.md)
+- [ARP](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/arp.md)
+- [Network Layer](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/network_layer_01.md)
+- [Subnets](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/network_layer_02.md)
+- [DHCP](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/network_layer_03.md)
+- [Transport Layer](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/transport_layer_01.md)
+- [Error Control, Flow Control, Congestion Control](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/transport_layer_02.md)
+- [RDT 3.0, Pipelined Protocols](https://github.com/seokmyungham/TIL/blob/main/NetworkProtocol/transport_layer_03.md)
