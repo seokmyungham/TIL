@@ -79,6 +79,9 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [인덱스 개요](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/index_02.md)
 - [B-Tree 인덱스를 통한 데이터 읽기 방식](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/index_03.md)
 - [클러스터링, 유니크, 외래키 인덱스](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/index_04.md)
+- [옵티마이저와 힌트](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/optimaizer_hint_01.md)
+- [실행 계획](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/explain.md)
+- [테이블 파티셔닝](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/table_partitioning.md)
   
 ### JPA
 - [영속성 컨텍스트 이해](https://github.com/seokmyungham/TIL/blob/main/JPA/persistence_context.md)
