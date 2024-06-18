@@ -27,3 +27,6 @@
   
 이처럼 적절히 테이블을 파티셔닝해서 사용할 수 있다면, DB 서버의 자원 사용량을 최적화하는 것과 더불어 쿼리 응답 시간을 단축시켜 애플리케이션 서비스의 품질을 향상시킬 수 있다.
 
+## Reference 
+
+- [Real MySQL 시즌 1 - Part 2](https://www.inflearn.com/course/real-mysql-part-2/dashboard)
