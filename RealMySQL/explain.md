@@ -248,3 +248,44 @@ select_type 칼럼에서는 각 단위 select 쿼리가 어떤 타입의 쿼리�
   - UNION의 첫 번째 단위 SELECT 쿼리는 UNION이 아니라 UNION되는 쿼리 결과들을 모아 저장하는 임시 테이블 DERIVED가 표시된다.
 - `DEPENDENT_UNION`
   - DEPENDENT란 UNION이나 UNION ALL로 결합된 단위 쿼리가 외부 쿼리에 영향을 받는 것을 의미한다.
+  - ```SQL
+    mysql> explain
+    -> select *
+    -> from employees e1 where e1.emp_no in (
+    -> select e2.emp_no from employees e2 where e2.first_name='Matt'
+    -> union
+    -> select e3.emp_no from employees e3 where e3.last_name='Matt'
+    -> );
+    +----+--------------------+------------+------------+--------+----------------------+---------+---------+------+--------+----------+-----------------+
+    | id | select_type        | table      | partitions | type   | possible_keys        | key     | key_len | ref  | rows   | filtered | Extra           |
+    +----+--------------------+------------+------------+--------+----------------------+---------+---------+------+--------+----------+-----------------+
+    |  1 | PRIMARY            | e1         | NULL       | ALL    | NULL                 | NULL    | NULL    | NULL | 299969 |   100.00 | Using where     |
+    |  2 | DEPENDENT SUBQUERY | e2         | NULL       | eq_ref | PRIMARY,ix_firstname | PRIMARY | 4       | func |      1 |     5.00 | Using where     |
+    |  3 | DEPENDENT UNION    | e3         | NULL       | eq_ref | PRIMARY              | PRIMARY | 4       | func |      1 |    10.00 | Using where     |
+    |  4 | UNION RESULT       | <union2,3> | NULL       | ALL    | NULL                 | NULL    | NULL    | NULL |   NULL |     NULL | Using temporary |
+    +----+--------------------+------------+------------+--------+----------------------+---------+---------+------+--------+----------+-----------------+
+    ```
+  - 위 쿼리의 경우 옵티마이저가 외부의 employees 테이블을 먼저 읽은 다음 서브 쿼리를 실행하는데, 이 때 employees 테이블의 칼럼 값이 서브쿼리에 영향을 준다.
+  - 이렇게 내부 쿼리가 외부의 값을 참조해서 처리될 때 DEPENDENT 키워드가 표시된다.
+  - 내부적으로는 UNION에 사용된 SELECT 쿼리의 WHERE 조건에 e2.emp_no=e1.emp_no와 e3.emp_no=e1.emp_no라는 조건이 자동으로 추가되어 실행된다.
+  - 외부에 정의된 employees 테이블의 emp_no 칼럼이 서브쿼리에 사용되기 때문에 DEPENDENT UNION이 표시되는 것이다.
+- `UNION RESULT`
+  - UNION RESULT는 UNION 결과를 담아두는 테이블을 의미한다.
+  - 8.0 버전부터 UNION ALL의 경우 임시 테이블을 사용하지 않도록 기능이 개선됐지만, UNION(또는 UNION DISTINCT)은 여전히 임시 테이블에 결과를 버퍼링한다.
+  - 이 임시 테이블을 가리키는 select_type이 UNION RESULT 이고, 실제 쿼리의 단위 쿼리가 아니기 때문에 별도의 id 값은 부여되지 않는다.
+  - UNION 대신 UNION ALL을 사용할 경우 해당 실행 계획 레코드는 보이지 않게 된다.
+- `SUBQUERY`
+  - select_type의 `SUBQUERY는 FROM절 이외`에서 사용되는 서브쿼리만을 의미한다.
+  - MySQL 서버의 실행 계획에서 `FROM 절에 사용된 서브쿼리는 DERIVED`로 표시되고, `그 밖의 위치에서 사용된 서브쿼리는 전부 SUBQUERY`라고 표시된다.
+  - 서브쿼리는 사용하는 위치에 따라 각각 다른 이름을 지니고 있다.
+    - `중첩된 쿼리(Nested Query)`: SELECT되는 칼럼에 사용된 서브쿼리를 네스티드 쿼리라고 한다.
+    - `서브쿼리(Subquery)`: WHERE 절에 사용된 경우에는 일반적으로 그냥 서브쿼리라고 한다.
+    - `파생 테이블(Derived Query)`: FROM 절에 사용된 서브쿼리를 MySQL에서는 파생 테이블이라고 하며, 일반적으로 RDBMS에서는 인라인 뷰, 또는 서브 셀렉트라고 부른다.
+  - 또한 서브쿼리가 반환하는 값의 특성에 따라 다음과 같이 구분하기도 한다.
+    - `스칼라 서브쿼리(Scalar Subquery)`: 하나의 값만(칼럼이 단 하나인 레코드 1건만) 반환하는 쿼리
+    - `로우 서브쿼리(Row Subquery)`: 칼럼의 개수와 관계없이 하나의 레코드만 반환하는 쿼리
+- 
+
+
+
+    
