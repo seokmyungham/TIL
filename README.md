@@ -84,6 +84,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [테이블 파티셔닝](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/table_partitioning.md)
 
 ### JavaConcurrency
+
+- [프로세스, 스레드 이해](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/process_thread_concept.md)
   
 ### JPA
 - [영속성 컨텍스트 이해](https://github.com/seokmyungham/TIL/blob/main/JPA/persistence_context.md)
