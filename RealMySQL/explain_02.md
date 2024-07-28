@@ -1,7 +1,7 @@
 # 실행 계획
 
 ## 실행 계획 분석
-
+ 
 ```sql
 mysql> explain
     -> select *
