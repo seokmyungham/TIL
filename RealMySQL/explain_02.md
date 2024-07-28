@@ -2,6 +2,182 @@
 
 ## 실행 계획 분석
 
+```sql
+mysql> explain
+    -> select *
+    -> from employees e
+    -> inner join salaries s on s.emp_no=e.emp_no
+    -> where first_name='ABC';
++----+-------------+-------+------------+------+----------------------+--------------+---------+--------------------+------+----------+-------+
+| id | select_type | table | partitions | type | possible_keys        | key          | key_len | ref                | rows | filtered | Extra |
++----+-------------+-------+------------+------+----------------------+--------------+---------+--------------------+------+----------+-------+
+|  1 | SIMPLE      | e     | NULL       | ref  | PRIMARY,ix_firstname | ix_firstname | 58      | const              |    1 |   100.00 | NULL  |
+|  1 | SIMPLE      | s     | NULL       | ref  | PRIMARY              | PRIMARY      | 4       | employees.e.emp_no |    9 |   100.00 | NULL  |
++----+-------------+-------+------------+------+----------------------+--------------+---------+--------------------+------+----------+-------+
+2 rows in set, 1 warning (0.00 sec)
+```
+
+MySQL 8.0 부터는 EXPLAIN 명령 결과로 출력되는 실행 계획 포맷을 기존 테이블 포맷과 JSON, TREE 형태로 선택할 수 있다.  
+아무런 옵션 없이 EXPLAIN 명령을 실행하면 쿼리 문장의 특성에 따라 표 형태로 1줄 이상의 결과가 표시된다.
+  
+표의 각 레코드는 쿼리 문장에서 사용된 테이블의 개수만큼 출력된다.  
+실행 계획은 위에서 아래로 순서대로 표시된다.(UNION이나 상관 서브쿼리의 경우 순서대로 표시되지 않을 수 있음)
+출력된 실행 계획에서 위쪽에 출력된 결과일수록 쿼리의 바깥 부분이거나 먼저 접근한 테이블이다.
+
+---
+
+### 분석 - id 칼럼
+
+하나의 SELECT 문장은 다시 1개 이상의 하위 SELECT 문장을 포함할 수 있다.  
+실행 계획에서 가장 왼쪽에 표시되는 id 칼럼은 단위 SELECT 쿼리별로 부여되는 식별자 값이다.
+
+하나의 SELECT 문장 안에서 여러 개의 테이블을 조인하면 조인되는 테이블의 개수만큼 실행 계획 레코드가 출력되지만 같은 id 값이 부여된다.  
+
+```sql
+mysql> explain
+    -> select
+    -> ( (select count(*) from employees) + (select count(*) from departments) ) as total_count;
++----+-------------+-------------+------------+-------+---------------+-------------+---------+------+--------+----------+----------------+
+| id | select_type | table       | partitions | type  | possible_keys | key         | key_len | ref  | rows   | filtered | Extra          |
++----+-------------+-------------+------------+-------+---------------+-------------+---------+------+--------+----------+----------------+
+|  1 | PRIMARY     | NULL        | NULL       | NULL  | NULL          | NULL        | NULL    | NULL |   NULL |     NULL | No tables used |
+|  3 | SUBQUERY    | departments | NULL       | index | NULL          | ux_deptname | 162     | NULL |      9 |   100.00 | Using index    |
+|  2 | SUBQUERY    | employees   | NULL       | index | NULL          | ix_hiredate | 3       | NULL | 299969 |   100.00 | Using index    |
++----+-------------+-------------+------------+-------+---------------+-------------+---------+------+--------+----------+----------------+
+3 rows in set, 1 warning (0.00 sec)
+```
+위 쿼리의 실행 계획의 경우 쿼리 문장이 3개의 단위 select 쿼리로 구성돼 있으므로 실행 계획의 각 레코드가 각기 다른 id값을 지닌다.  
+
+```sql
+mysql> explain
+    -> select * from dept_emp de
+    -> where de.emp_no= (select e.emp_no
+    -> from employees e
+    -> where e.first_name='Georgi'
+    -> and e.last_name='Facello' limit 1);
++----+-------------+-------+------------+------+-------------------+-------------------+---------+-------+------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys     | key               | key_len | ref   | rows | filtered | Extra       |
++----+-------------+-------+------------+------+-------------------+-------------------+---------+-------+------+----------+-------------+
+|  1 | PRIMARY     | de    | NULL       | ref  | ix_empno_fromdate | ix_empno_fromdate | 4       | const |    1 |   100.00 | Using where |
+|  2 | SUBQUERY    | e     | NULL       | ref  | ix_firstname      | ix_firstname      | 58      | const |  253 |    10.00 | Using where |
++----+-------------+-------+------------+------+-------------------+-------------------+---------+-------+------+----------+-------------+
+2 rows in set, 1 warning (0.01 sec)
+```
+주의할 점은 실행 계획의 id 칼럼이 테이블의 접근 순서를 의미하지는 않는다는 것이다.
+위 쿼리는 employees 테이블을 먼저 읽고 그 결과를 dept_emp 테이블과 조인함에도 불구하고 id가 순서와 일치하지 않는 것을 확인할 수 있다.
+
+---
+
+### 분석 - select_type 칼럼
+
+select_type 칼럼에서는 각 단위 select 쿼리가 어떤 타입의 쿼리인지 표시되는 칼럼이다.  
+  
+다음과 같은 값들이 표시될 수 있다.
+- `SIMPLE`
+  - UNION이나 서브쿼리를 사용하지 않는 단순한 SELECT 쿼리의 경우 SIMPLE로 표시된다(조인도 마찬가지).
+  - 쿼리 문장이 아무리 복잡하더라도 실행 계획에서 SIMPLE인 단위 SELECT 쿼리는 단 하나만 존재한다.
+  - 일반적으로 가장 바깥 SELECT 쿼리가 SIMPLE로 표시된다.
+- `PRIMARY`
+  - UNION이나 서브쿼리를 가지는 SELECT 쿼리의 경우 가장 바깥쪽에 있는 단위 SELECT 쿼리는 PRIMARY로 표시된다.
+  - SIMPLE과 마찬가지로 PRIMARY인 단위 SELECT 쿼리는 하나만 존재한다.
+- `UNION`
+  - UINON으로 결합하는 단위 SELECT 쿼리 가운데 `첫 번째를 제외한 두 번째 이후 단위 SELECT` 쿼리는 UNION으로 표시된다.
+  - UNION의 첫 번째 단위 SELECT 쿼리는 UNION이 아니라 UNION되는 쿼리 결과들을 모아 저장하는 임시 테이블 DERIVED가 표시된다.
+- `DEPENDENT_UNION`
+  - DEPENDENT란 UNION이나 UNION ALL로 결합된 단위 쿼리가 외부 쿼리에 영향을 받는 것을 의미한다.
+  - ```SQL
+    mysql> explain
+    -> select *
+    -> from employees e1 where e1.emp_no in (
+    -> select e2.emp_no from employees e2 where e2.first_name='Matt'
+    -> union
+    -> select e3.emp_no from employees e3 where e3.last_name='Matt'
+    -> );
+    +----+--------------------+------------+------------+--------+----------------------+---------+---------+------+--------+----------+-----------------+
+    | id | select_type        | table      | partitions | type   | possible_keys        | key     | key_len | ref  | rows   | filtered | Extra           |
+    +----+--------------------+------------+------------+--------+----------------------+---------+---------+------+--------+----------+-----------------+
+    |  1 | PRIMARY            | e1         | NULL       | ALL    | NULL                 | NULL    | NULL    | NULL | 299969 |   100.00 | Using where     |
+    |  2 | DEPENDENT SUBQUERY | e2         | NULL       | eq_ref | PRIMARY,ix_firstname | PRIMARY | 4       | func |      1 |     5.00 | Using where     |
+    |  3 | DEPENDENT UNION    | e3         | NULL       | eq_ref | PRIMARY              | PRIMARY | 4       | func |      1 |    10.00 | Using where     |
+    |  4 | UNION RESULT       | <union2,3> | NULL       | ALL    | NULL                 | NULL    | NULL    | NULL |   NULL |     NULL | Using temporary |
+    +----+--------------------+------------+------------+--------+----------------------+---------+---------+------+--------+----------+-----------------+
+    ```
+  - 위 쿼리의 경우 옵티마이저가 외부의 employees 테이블을 먼저 읽은 다음 서브 쿼리를 실행하는데, 이 때 employees 테이블의 칼럼 값이 서브쿼리에 영향을 준다.
+  - 이렇게 내부 쿼리가 외부의 값을 참조해서 처리될 때 DEPENDENT 키워드가 표시된다.
+  - 내부적으로는 UNION에 사용된 SELECT 쿼리의 WHERE 조건에 e2.emp_no=e1.emp_no와 e3.emp_no=e1.emp_no라는 조건이 자동으로 추가되어 실행된다.
+  - 외부에 정의된 employees 테이블의 emp_no 칼럼이 서브쿼리에 사용되기 때문에 DEPENDENT UNION이 표시되는 것이다.
+- `UNION RESULT`
+  - UNION RESULT는 UNION 결과를 담아두는 테이블을 의미한다.
+  - 8.0 버전부터 UNION ALL의 경우 임시 테이블을 사용하지 않도록 기능이 개선됐지만, UNION(또는 UNION DISTINCT)은 여전히 임시 테이블에 결과를 버퍼링한다.
+  - 이 임시 테이블을 가리키는 select_type이 UNION RESULT 이고, 실제 쿼리의 단위 쿼리가 아니기 때문에 별도의 id 값은 부여되지 않는다.
+  - UNION 대신 UNION ALL을 사용할 경우 해당 실행 계획 레코드는 보이지 않게 된다.
+- `SUBQUERY`
+  - select_type의 `SUBQUERY는 FROM절 이외`에서 사용되는 서브쿼리만을 의미한다.
+  - MySQL 서버의 실행 계획에서 `FROM 절에 사용된 서브쿼리는 DERIVED`로 표시되고, `그 밖의 위치에서 사용된 서브쿼리는 전부 SUBQUERY`라고 표시된다.
+  - 서브쿼리는 사용하는 위치에 따라 각각 다른 이름을 지니고 있다.
+    - `중첩된 쿼리(Nested Query)`: SELECT되는 칼럼에 사용된 서브쿼리를 네스티드 쿼리라고 한다.
+    - `서브쿼리(Subquery)`: WHERE 절에 사용된 경우에는 일반적으로 그냥 서브쿼리라고 한다.
+    - `파생 테이블(Derived Query)`: FROM 절에 사용된 서브쿼리를 MySQL에서는 파생 테이블이라고 하며, 일반적으로 RDBMS에서는 인라인 뷰, 또는 서브 셀렉트라고 부른다.
+  - 또한 서브쿼리가 반환하는 값의 특성에 따라 다음과 같이 구분하기도 한다.
+    - `스칼라 서브쿼리(Scalar Subquery)`: 하나의 값만(칼럼이 단 하나인 레코드 1건만) 반환하는 쿼리
+    - `로우 서브쿼리(Row Subquery)`: 칼럼의 개수와 관계없이 하나의 레코드만 반환하는 쿼리
+- `DEPENDENT SUBQUERY`
+  - 서브쿼리가 바깥쪽 SELECT 쿼리에서 정의된 칼럼을 사용하는 경우 DEPENDENT SUBQUERY라고 표시된다.
+  - ```sql
+    mysql> explain
+    -> select e.first_name,
+    -> (select count(*)
+    -> from dept_emp de, dept_manager dm
+    -> where dm.dept_no=de.dept_no and de.emp_no=e.emp_no) as cnt
+    -> from employees e
+    -> where e.first_name='Matt';
+    +----+--------------------+-------+------------+------+---------------------------+-------------------+---------+----------------------+------+----------+-------------+
+    | id | select_type        | table | partitions | type | possible_keys             | key               | key_len | ref                  | rows | filtered | Extra       |
+    +----+--------------------+-------+------------+------+---------------------------+-------------------+---------+----------------------+------+----------+-------------+
+    |  1 | PRIMARY            | e     | NULL       | ref  | ix_firstname              | ix_firstname      | 58      | const                |  233 |   100.00 | Using index |
+    |  2 | DEPENDENT SUBQUERY | de    | NULL       | ref  | PRIMARY,ix_empno_fromdate | ix_empno_fromdate | 4       | employees.e.emp_no   |    1 |   100.00 | Using index |
+    |  2 | DEPENDENT SUBQUERY | dm    | NULL       | ref  | PRIMARY                   | PRIMARY           | 16      | employees.de.dept_no |    2 |   100.00 | Using index |
+    +----+--------------------+-------+------------+------+---------------------------+-------------------+---------+----------------------+------+----------+-------------+
+    ```
+  - 또한 DEPENDENT UNION과 같이 DEPENDENT SUBQUERY 또한 외부 쿼리가 먼저 수행된 후 서브쿼리가 실행돼야 하므로 DEPENDENT 키워드가 없는 일반 서브쿼리보다는 처리속도가 느릴 때가 많다.
+- `DERIVED`
+  - DERIVED는 단위 SELECT 쿼리의 실행 결과로 메모리나 디스크에 임시 테이블을 생성하는 것을 의미한다.
+  - 5.5 버전까지는 서브쿼리가 FROM절에 사용된 경우 항상 select_type이 DERIVED였지만, 5.6 버전부터 옵티마이저 옵션에 따라 FROM 절의 서브쿼리를 외부 쿼리와 통합하는 형태의 최적화가 수행되기도 한다.
+  - 5.5 버전까지는 파생 테이블에 인덱스가 전혀 없으므로 다른 테이블과 조인할 때 성능상 불리할 때가 많았는데, 5.6 버전부터 옵티마이저 옵션에 따라 쿼리의 특성에 맞게 임시 테이블에도 인덱스를 만들 수 있게 최적화 됐다.
+  - MySQL 서버는 버전이 업그레이드되면서 조인 쿼리에 대한 최적화는 많이 성숙된 상태이므로 파생 테이블에 대한 최적화가 부족한 MySQL 서버를 사용 중일 경우, 가능하다면 DERIVED 형태의 실행 계획을 조인으로 해결할 수 있게 쿼리를 바꿔주는 것이 좋다.
+  - 8.0 버전부터는 FROM 절의 서브쿼리에 대한 최적화도 많이 개선되어 가능하다면 불필요한 서브쿼리는 조인으로 쿼리를 재작성해서 처리한다.
+  - ```
+    쿼리를 튜닝하기 위해 실행 계획을 확인할 때 가장 먼저 select_type 칼럼의 값이 DERIVED인 것이 있는지 확인해야 한다.
+    서브쿼리를 조인으로 해결할 수 있는 경우라면 서브쿼리보다는 조인을 사용할 것을 강력히 권장한다.
+    ```
+- `DEPENDENT DERIVED`
+  - 8.0 이전 버전에서는 FROM 절의 서브쿼리는 외부 칼럼을 사용할 수 없었는데, 8.0 버전부터 래터럴 조인(LATERAL JOIN) 기능이 추가되었다.
+  - DEPENDENT DERIVED 키워드는 해당 테이블이 래터럴 조인으로 사용된 것을 의미한다.
+- `UNCACHEABLE SUBQUERY`
+  - 하나의 쿼리 문장에 서브 쿼리가 하나만 있더라도 실제로 그 서브쿼리가 한 번만 실행되는게 아님
+  - 그런데 조건이 똑같은 서브쿼리가 실행될 때는 다시 실행하지 않고 이전의 실행 결과를 그대로 사용할 수 있게 서브쿼리의 결과를 내부적인 캐시 공간에 담아둔다.
+  - select_type이 SUBQUERY인 경우와 UNCACHEABLE SUBQUERY는 이 캐시를 사용할 수 있느냐 없느냐의 차이가 있다.
+  - 서브쿼리에 포함된 요소에 의해 캐시 자체가 불가능할 수가 있는데, 그럴 경우 select_type이 UNCACHEABLE SUBQUERY로 표시된다.
+- `UNCACHEABLE UNION`
+- `MATERIALIZED`
+  - 주로 FROM 절이나 IN 형태의 쿼리에 사용된 서브쿼리의 최적화를 위해 사용된다.
+  - ```sql
+    mysql> explain
+    -> select *
+    -> from employees e
+    -> where e.emp_no in (select emp_no from salaries where salary between 100 and 1000);
+    +----+--------------+-------------+------------+--------+-------------------+-----------+---------+--------------------+------+----------+--------------------------+
+    | id | select_type  | table       | partitions | type   | possible_keys     | key       | key_len | ref                | rows | filtered | Extra                    |
+    +----+--------------+-------------+------------+--------+-------------------+-----------+---------+--------------------+------+----------+--------------------------+
+    |  1 | SIMPLE       | <subquery2> | NULL       | ALL    | NULL              | NULL      | NULL    | NULL               | NULL |   100.00 | NULL                     |
+    |  1 | SIMPLE       | e           | NULL       | eq_ref | PRIMARY           | PRIMARY   | 4       | <subquery2>.emp_no |    1 |   100.00 | NULL                     |
+    |  2 | MATERIALIZED | salaries    | NULL       | range  | PRIMARY,ix_salary | ix_salary | 4       | NULL               |    1 |   100.00 | Using where; Using index |
+    +----+--------------+-------------+------------+--------+-------------------+-----------+---------+--------------------+------+----------+--------------------------+
+    3 rows in set, 1 warning (0.00 sec)
+    ```
+
+---
+
 ### 분석 - table 칼럼
 
 MySQL 서버의 실행 계획은 단위 SELECT 쿼리 기준이 아니라 테이블 기준으로 표시된다.  
@@ -53,10 +229,14 @@ mysql> explain
     -> where e.emp_no=tb.emp_no;
 ```
 
+---
+
 ### 분석 - partitions 칼럼
 
 partitions 컬럼을 통해 파티션이 여러 개인 테이블에서 불필요한 파티션을 제외하고, 쿼리를 수행하기 위해 접근해야 할 것으로 판단되는 테이블만 골라낼 수 있다.  
 이러한 과정을 파티션 프루닝이라한다.
+
+---
   
 ### 분석 - type 칼럼
 
