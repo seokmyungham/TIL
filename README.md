@@ -80,7 +80,9 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [B-Tree 인덱스를 통한 데이터 읽기 방식](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/index_03.md)
 - [클러스터링, 유니크, 외래키 인덱스](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/index_04.md)
 - [옵티마이저와 힌트](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/optimaizer_hint_01.md)
-- [실행 계획](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/explain.md)
+- [실행 계획 이해 - 히스토그램, 코스트 모델](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/explain_01.md)
+- [실행 계획 분석 columns: id, select_type, table, partitions, type](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/explain_02.md)
+- [실행 계획 분석 columns: possible_keys, key, key_len, ref, rows, filtered, Extra](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/explain_03.md)
 - [테이블 파티셔닝](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/table_partitioning.md)
 
 ### JavaConcurrency
