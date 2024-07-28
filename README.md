@@ -82,6 +82,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [옵티마이저와 힌트](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/optimaizer_hint_01.md)
 - [실행 계획](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/explain.md)
 - [테이블 파티셔닝](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/table_partitioning.md)
+
+### JavaConcurrency
   
 ### JPA
 - [영속성 컨텍스트 이해](https://github.com/seokmyungham/TIL/blob/main/JPA/persistence_context.md)
