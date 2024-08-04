@@ -83,6 +83,7 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [실행 계획 이해 - 히스토그램, 코스트 모델](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/explain_01.md)
 - [실행 계획 분석 columns: id, select_type, table, partitions, type](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/explain_02.md)
 - [실행 계획 분석 columns: possible_keys, key, key_len, ref, rows, filtered, Extra](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/explain_03.md)
+- [쿼리 최적화 - MySQL 내장 함수](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_01.md)
 - [테이블 파티셔닝](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/table_partitioning.md)
 
 ### JavaConcurrency
