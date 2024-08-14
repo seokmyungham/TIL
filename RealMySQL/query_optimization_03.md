@@ -142,9 +142,19 @@ FROM 절에 서브쿼리가 사용됐기 때문에 파생 테이블(DERIVED)로 
  
 지연된 조인은 조인의 개수를 줄이는 것뿐만 아니라 GROUP BY나 ORDER BY 처리가 필요한 레코드의 전체 크기를 줄이는 역할도 한다.
 
+### ORDER BY
 
+ORDER BY에서 인덱스를 사용하지 못할 때는 추가 정렬 작업이 수행되며, 쿼리 실행 계획에 있는 Extra 칼럼에 `Using filesort`라는 코멘트가 표시된다.
+  
+ORDER BY 절은 1개 또는 그 이상 여러 개의 칼럼으로 정렬을 수행할 수 있다. 그리고 8.0 버전부터 오름차순과 내림차순을 혼용해서 인덱스를 생성할 수 있게 개선됐다. 
 
+```SQL
+ALTER TABLE salaries ADD INDEX is_salary_fromdate (salary DESC, from_date ASC);
+```
 
+특정 쿼리가 내림차순으로만 레코드를 정렬해서 가져간다면 인덱스는 당연히 DESC를 생성하는 것이 좋다.
 
+## Reference 
 
-
+**위 글은 책 RealMySQL 8.0 2권을 구입하여 읽고 정리한 내용입니다.**
+- [도서 홈페이지 https://wikibook.co.kr/realmysql802/](https://wikibook.co.kr/realmysql802/)
