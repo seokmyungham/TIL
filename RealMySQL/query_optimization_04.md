@@ -207,3 +207,64 @@ SELECT MAX(from_date) FROM salaries GROUP BY emp_no;
 윈도우 함수를 사용한 쿼리는 예상보다 훨씬 많은 레코드를 가공하고, 그로 인해 MySQL 서버 내부적으로 레코드의 읽고 쓰기가 상당히 많이 발생한다. 
   
 가능하다면 윈도우 함수에 너무 의존하지 않는 것이 좋다. 배치 프로그램이라면 윈도우 함수를 사용해도 무방하겠지만 OLTP 에서는 많은 레코드에 대해 윈도우 함수를 적용하는 것은 가능하면 피하는 것이 좋다. 다만 소량의 레코드에 대해선 윈도우 함수를 사용해도 메모리에서 빠르게 처리될 것이므로 특별히 성능에 대해 고민하지 않아도 된다.
+
+### 잠금을 사용하는 SELECT
+
+InnoDB 테이블에 대해서는 레코드를 SELECT할 때 레코드에 아무런 잠금도 걸지 않는데, 이를 잠금 없는 읽기(Non Locking Consistent Read)라고 한다. 
+  
+하지만 SELECT 쿼리를 이용해 읽은 레코드의 칼럼 값을 애플리케이션에서 가공해서 다시 업데이트하고자 할 때는 SELECT가 실행된 후 다른 트랜잭션이 그 칼럼의 값을 변경하지 못하게 해야 한다. 이럴 때는 레코드를 읽으면서 강제로 잠금을 걸어 둘 필요가 있는데, 이때 사용하는 옵션이 FOR SHARE와 FOR UPDATE 절이다. FOR SHARE는 SELECT 쿼리로 읽은 레코드 에 대해서 읽기 잠금을 걸고, FOR UPDATE는 SELECT 쿼리가 읽은 레코드에 대해서 쓰기 잠금을 건다.
+
+
+- FOR SHARE 절은 SELECT된 레코드에 대해 읽기 잠금(공유 잠금, Shared lock)을 설정하고 다른 세션에서 해당 레코드를 변경하지 못하게 한다. 물론 다른 세션에서 잠금이 걸린 레코드를 읽는 것은 가능하다.
+- FOR UPDATE 절은 쓰기 잠금(배타 잠금, Exclusive lock)을 설정하고, 다른 트랜잭션에서는 그 레코드를 변경하는 것뿐만 아니라 읽기(FOR SHARE 절을 사용하는 SELECT 쿼리)도 수행할 수 없다.
+
+```SQL
+SELECT*
+FROM employees e
+INNER JOIN dept_emp de ON de.emp_no=e. emp_no
+INNER JOIN departments d ON d. dept_no=de.dept_no
+FOR UPDATE;
+```
+
+위 쿼리는 employees 테이블과 dept_emp 테이블, departments 테이블을 조인해서 읽으면서 FOR UPDATE 절을 사용한다. 그래서 InnoDB 스토리지 엔진은 3개 테이블에서 읽은 레코드에 대해 모두 쓰기 잠금을 걸게 된다. 
+  
+8.0 버전부터는 다음과 같이 잠금을 걸 테이블을 선택할 수 있도록 기능이 개선됐다. 다음 예제와 같이 FOR UPDATE 뒤에 "OF 테이블" 절을 추가 하면 해당 테이블에 대해서만 잠금을 걸게 된다. 테이블에 대해 별칭이 사용된 경우에는 별칭을 명시해야 한다. SELECT 쿼리에 사용된 테이블 중에서 특정 테이블만 잠금을 획득하는 옵션은 FOR UPDATE
+와 FOR SHARE 절 모두 적용할 수 있다.
+
+```SQL
+SELECT *
+FROM employees e
+INNER JOIN dept_emp de ON de. emp_no=e. emp_no
+INNER JOIN departments d ON d.dept_no=de.dept_no
+WHERE e. emp_no=10001
+FOR UPDATE OF e;
+```
+
+#### NOWAIT & SKIP LOCKED
+
+8.0 버전부터는 NOWAIT과 SKIP LOCKED 옵션을 사용할 수 있게 기능이 추가됐다. 지금까지의 MySQL 잠금은 누군가가 레코드를 잠그고 있다면 다른 트랜잭션은 그 잠금이 해제될 때까지 기다려야 했다. 때로는 일정 시간이 지나면 잠금 획득 실패 에러 메시지를 받을 수도 있었다. 하지만 이런 작동 방식은 휴대폰의 화면을 보면서 응답을 기다리고 있을 사용자를 생각하면 때로는 적절한 작동 방식이 아닐 수도 있다. 
+  
+애플리케이션의 어떤 기능에서는 레코드가 이미 잠겨진 상태라면 그냥 무시하고 즉시 에러를 반환하면 응용 프로그램에서 다른 처리를 수행하거나 다시 트랜잭션을 시작하도록 구현해야할 때도 있다. 이럴 때 SELECT 쿼리의 마지막에 NOMAIT 옵션을 사용하면 된다. FOR UPDATEL FOR SHARE 절이 없는 SELECT 쿼리는 잠금 대기 자체가 없기 때문에 NOWAIT 옵션을 사용하는 것은 의미가 없다
+  
+```SQL
+SELECT * FROM employees
+WHERE emp_no=10001
+FOR UPDATE NOWAIT;
+
+ERROR 3572 (HY000): Statement aborted
+because lock(5) could not be acquired immediately and NOMAIT is set.
+```
+
+NOMAIT 옵션을 사용하면 SELECT 쿼리가 해당 레코드에 대해 즉시 잠금을 획득했다면 NOWAIT 옵션이 없을 때와 동일하게 실행된다. 하지만 해당 레코드가 다른 트랜잭션에 의해서 잠겨진 상태라면 다음과 같이 에러를 반환하면서 쿼리는 즉시 종료된다.
+
+```SQL
+SELECT * FROM salaries WHERE emp_no=10001 FOR UPDATE SKIP LOCKED;
+```
+
+SKIP LOCKED 옵션은 SELECT하려는 레코드가 다른 트랜잭션에 의해 이미 잠겨진 상태라면 에러를 반환하지 않는다. 잠긴 레코드는 무시하고 잠금이 걸리지 않은 레코드만 가져온다.
+
+
+
+
+
+
