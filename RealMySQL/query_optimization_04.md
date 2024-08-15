@@ -141,7 +141,69 @@ MySQL 8.0을 사용한다면 세미 조인 최적화에 익숙해져야 한다.
 
 IN (subquery)와 비슷한 형태지만 이 경우를 `안티 세미 조인`이라고 부른다.
 
+### CTE(Common Table Expression)
 
+CTE는 이름을 가지는 임시테이블로서, SQL 문장 내에서 한 번 이상 사용될 수 있으며 SQL 문장이 종료되면 자동으로 CTE 임시 테이블은 삭제된다. CTE는 재귀적 반복 실행 여부를 기준으로 Non-recursive와 Recursive CTE로 구분된다.
 
+#### 비 재귀적 CTE
 
+```sql
+WITH cte1 AS (SELECT * FROM departments)
+SELECT * FROM cte1;
+```
 
+CTE 쿼리는 WITH 절로 정의하고 CTE 쿼리로 생성되는 임시 테이블의 이름은 WITH 바로 뒤에 cte1로 정의했다.
+cte1 임시 테이블은 한 번만 사용되기 때문에 다음 쿼리처럼 FROM 절의 서브쿼리로 바꿔 사용할 수 있다.
+실제 두 쿼리는 실행 계획까지 동일하게 사용한다.
+
+```sql
+SELECT *
+FROM (SELECT * FROM departments) cte1;
+```
+
+```sql
+WITH cte1 AS (SELECT * FROM departments),
+     cte2 AS (SELECT * FROM dept_emp)
+SELECT *
+FROM temp1
+   INNER JOIN cte2 ON cte2.dept_no=cte1.dept_no;
+```
+
+### 윈도우 함수(Window Fuction)
+
+윈도우 함수는 조회하는 현재 레코드를 기준으로 연관된 레코드 집합의 연산을 수행한다.
+GROUP BY 또는 집계 함수를 이용하면 다른 레코드의 칼럼값을 참조할 수 있다. 하지만 GROUP BY나 집계 함수를 사용하면 결과 집합의 모양이 바뀐다. 그에 반해, 윈도우 함수는 결과 집합을 그대로 유지하면서 하나의 레코드 연산에 다른 레코드의 칼럼 값을 참조할 수 있다.
+    
+윈도우 함수를 사용하는 쿼리의 결과에 보여지는 레코드는 FROM 절과 WHERE 절, GROUP BY와 HAVAING에 의해 결정되고
+그 이후에 윈도우 함수가 실행된다. 그리고 마지막으로 SELECT 절과 ORDER BY절, LIMIT 절이 실행되어 최종 결과가 반환된다.
+  
+예를 들어 윈도우 함수를 GROUP BY 칼럼으로 사용하거나, WHERE 절에는 사용할 수 없다. 윈도우 함수 이전에 WHERE, FROM, GROUP BY, HAVING절이 실행되어야 하기 때문이다. 또한 반면 LIMIT을 먼저 실행한 다음 윈도우 함수를 적용할 수 없다.
+  
+```SQL
+AGGREGATE_FUNC() OVER(<partition> <order>) AS window_func_column
+```
+
+윈도우 함수는 용도별로 다양한 함수를 사용할 수 있고, 함수 뒤에 OVER 절을 이용해 연산 대상을 파티션하기 위한 옵션을 명시할 수 있다. 이렇게 OVER 절에 의해 만들어진 그룹을 파티션 또는 윈도우라고 한다.
+
+# 
+
+MySQL 서버의 윈도우 함수에는 집계 함수와 비 집계 함수를 모두 사용할 수 있다.
+집계 함수는 GROUP BY 절과 함께 사용할 수 있는 함수들을 의미하는데, 집계 함수는 OVER() 절 없이 단독으로도 사용될 수 있고
+OVER() 절을 가진 윈도우 함수로도 사용될 수 있다. 반면 비 집계 함수는 반드시 OVER()절을 가지고 있어야 하며 윈도우 함수로만 사용될 수 있다.
+
+MySQL 서버의 윈도우 함수는 8.0 버전에 처음 도입됐으며, 아직 인덱스를 이용한 최적화가 부족한 부분도 있다.
+
+```SQL
+SELECT MAX(from_date) OVER(PARTITION BY emp_no) AS max_from_date FROM salaries)
+
+SELECT MAX(from_date) FROM salaries GROUP BY emp_no;
+```
+
+윈도우 함수를 사용하는 쿼리는 인덱스를 풀 스캔하고, 레코드 정렬 작업까지 실행했다.  
+반면 GROUP BY 절을 사용하는 쿼리는 별도의 정렬 작업 없이 루스 인덱스 스캔으로 MAX(from_date)값을 찾아냈다.
+  
+윈도우 함수는 salaries 테이블의 모든 레코드 건수만큼의 결과를 만들어야 하지만 GROUP BY절을 사용하는 쿼리는
+유니크한 emp_no별로 레코드를 1건씩만 결과를 만들면 된다. 그래서 기본적으로 레코드 건수에서 차이가 날 수 있다.
+윈도우 함수를 사용한 쿼리는 예상보다 훨씬 많은 레코드를 가공하고, 그로 인해 MySQL 서버 내부적으로 레코드의 읽고 쓰기가 상당히 많이 발생한다. 
+  
+가능하다면 윈도우 함수에 너무 의존하지 않는 것이 좋다. 배치 프로그램이라면 윈도우 함수를 사용해도 무방하겠지만 OLTP 에서는 많은 레코드에 대해 윈도우 함수를 적용하는 것은 가능하면 피하는 것이 좋다. 다만 소량의 레코드에 대해선 윈도우 함수를 사용해도 메모리에서 빠르게 처리될 것이므로 특별히 성능에 대해 고민하지 않아도 된다.
