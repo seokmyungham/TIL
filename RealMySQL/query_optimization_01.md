@@ -231,7 +231,7 @@ mysql> SELECT GROUP_CONCAT(dept_no SEPARATOR '|') FROM departments;
 | d009|d005|d002|d003|d001|d004|d006|d008|d007 |
 +----------------------------------------------+
 ```
-
+ 
 `GROUP_CONCAT()` 함수는 지정한 칼럼의 값들을 연결하기 위해 제한적인 메모리 버퍼 공간을 사용한다. 어떤 쿼라에서 `GROUP_CONCAT()` 함수의 결과가 시스템 변수에 지정된 크기를 초과하면 경고 메시지가 발생한다. `GROUP_CONCAT()` 함수가 JDBC로 실행될 때는 경고가 아니라 에러로 취급되어 쿼리가 실패하기 때문에 `GROUP_CONCAT()` 결과가 지정된 버퍼 크기를 초과하지 않게 주의해야 한다.
   
 `GROUP_CONCAT()` 함수가 사용하는 메모리 버퍼 크기는 group_concat_max_len 시스템 변수로 조정할 수 있다.
