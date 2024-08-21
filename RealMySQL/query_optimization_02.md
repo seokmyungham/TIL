@@ -10,7 +10,6 @@
   
 ![image](https://github.com/user-attachments/assets/a6755727-cd8f-43a4-962e-0ddadbf6883b)
 
-
 위는 SQL 쿼리가 실행되는 순서다. 각 요소가 없는 경우는 가능하지만, 이 순서가 바뀌어서 실행되는 쿼리는 거의 없다.
 또한 ORDER BY나 GROUP BY 절이 있더라도 인덱스를 이용해 처리할 때는 처리 단계가 생략된다.
 
