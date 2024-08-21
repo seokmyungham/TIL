@@ -264,7 +264,7 @@ SELECT * FROM salaries WHERE emp_no=10001 FOR UPDATE SKIP LOCKED;
 SKIP LOCKED 옵션은 SELECT하려는 레코드가 다른 트랜잭션에 의해 이미 잠겨진 상태라면 에러를 반환하지 않는다. 잠긴 레코드는 무시하고 잠금이 걸리지 않은 레코드만 가져온다.
 
 
+## Reference 
 
-
-
-
+**위 글은 책 RealMySQL 8.0 2권을 구입하여 읽고 정리한 내용입니다.**
+- [도서 홈페이지 https://wikibook.co.kr/realmysql802/](https://wikibook.co.kr/realmysql802/)
