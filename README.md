@@ -95,6 +95,7 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [동시성, 병렬성 이해](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/concurrency_parallelism.md)
 - [사용자 모드, 커널 모드](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/user_kernel_mod.md)
 - [사용자 수준 스레드, 커널 수준 스레드](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/user_kernel_thread.md)
+- [자바 스레드 기초](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/thread_fundamentals.md)
   
 ### JPA
 - [영속성 컨텍스트 이해](https://github.com/seokmyungham/TIL/blob/main/JPA/persistence_context.md)
