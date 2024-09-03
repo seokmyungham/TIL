@@ -290,4 +290,7 @@ mysql ALTER TABLE employees ADD INDEX ix_firstname_lastname (first_name, last_na
 
 그뿐만 아니라 최초 인덱스를 생성할 때도 가시성을 설정할 수 있다.
 
-## 쿼리 성능 테스트
+## Reference 
+
+**위 글은 책 RealMySQL 8.0 2권을 구입하여 읽고 정리한 내용입니다.**
+- [도서 홈페이지 https://wikibook.co.kr/realmysql802/](https://wikibook.co.kr/realmysql802/)
