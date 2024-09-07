@@ -87,6 +87,10 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [쿼리 최적화 - SELECT : WHERE 절, GROUP BY 절, ORDER BY 절](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_02.md)
 - [쿼리 최적화 - SELECT : JOIN](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_03.md)
 - [쿼리 최적화 - SELECT : 서브 쿼리](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_04.md)
+- [쿼리 최적화 - INSERT](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_05.md)
+- [쿼리 최적화 - UPDATE, DELETE](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_06.md)
+- [쿼리 최적화 - 스키마 조작(DDL)](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_07.md)
+- [쿼리 최적화 - 쿼리 성능 테스트](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_08.md)
 - [테이블 파티셔닝](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/table_partitioning.md)
 
 ### JavaConcurrency
@@ -97,6 +101,7 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [사용자 수준 스레드, 커널 수준 스레드](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/user_kernel_thread.md)
 - [자바 스레드 기초](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/thread_fundamentals.md)
 - [사용자 스레드, 데몬 스레드](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/user_daemon_thread.md)
+- [ThreadLocal](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/thread_local.md)
   
 ### JPA
 - [영속성 컨텍스트 이해](https://github.com/seokmyungham/TIL/blob/main/JPA/persistence_context.md)
