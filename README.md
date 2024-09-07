@@ -102,6 +102,7 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [자바 스레드 기초](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/thread_fundamentals.md)
 - [사용자 스레드, 데몬 스레드](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/user_daemon_thread.md)
 - [ThreadLocal](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/thread_local.md)
+- [Mutual Exclusion](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/mutual_exclusion.md)
   
 ### JPA
 - [영속성 컨텍스트 이해](https://github.com/seokmyungham/TIL/blob/main/JPA/persistence_context.md)
