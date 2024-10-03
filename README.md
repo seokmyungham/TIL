@@ -91,6 +91,8 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [쿼리 최적화 - UPDATE, DELETE](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_06.md)
 - [쿼리 최적화 - 스키마 조작(DDL)](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_07.md)
 - [쿼리 최적화 - 쿼리 성능 테스트](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_08.md)
+- [데이터 타입](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/data_type.md)
+- [복제](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/replication.md)
 - [테이블 파티셔닝](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/table_partitioning.md)
 
 ### JavaConcurrency
@@ -105,6 +107,7 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [Mutual Exclusion](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/mutual_exclusion.md)
 - [Semaphore](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/semaphore.md)
 - [Monitor](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/monitor.md)
+- [Synchronized](https://github.com/seokmyungham/TIL/blob/main/JavaConcurrency/synchronized.md)
   
 ### JPA
 - [영속성 컨텍스트 이해](https://github.com/seokmyungham/TIL/blob/main/JPA/persistence_context.md)
