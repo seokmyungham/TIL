@@ -93,6 +93,7 @@ README 형식은 [namjunemy](https://github.com/namjunemy)님의 Github TIL를 �
 - [쿼리 최적화 - 쿼리 성능 테스트](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/query_optimization_08.md)
 - [데이터 타입](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/data_type.md)
 - [복제](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/replication.md)
+- [InnoDB 클러스터](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/innodb_cluster.md)
 - [테이블 파티셔닝](https://github.com/seokmyungham/TIL/blob/main/RealMySQL/table_partitioning.md)
 
 ### JavaConcurrency
