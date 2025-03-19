@@ -52,7 +52,7 @@
 MySQL의 `InnoDB` 스토리지 엔진은 기본으로 `REPEATABLE RAED` 격리 수준을 사용한다.  
 해당 격리 수준에서는 `DIRTY READ`, `NON-REPEATABLE READ` 부정합 문제가 발생하지 않는다.
   
-`InnoDB` 스토리지 엔진의 `REPEATABLE READ`는 트랜잭션이 롤백될 가능성에 대비해 변경되기 전 레코드를 언두 영역에 백업해두고 실제 레코드 값을 변경한다. 
+`InnoDB` 스토리지 엔진은 `READ COMMITTED`, `REPEATABLE READ` 격리 수준에서 트랜잭션이 롤백될 가능성에 대비해 변경되기 전 레코드를 언두 영역에 백업해두고 실제 레코드 값을 변경한다. 
 그래서 동일 트랜잭션 내에서는 동일한 결과를 보여줄 수 있게 보장한다.
 
 <img src = "img/repeatable_read01.png" width=60%>
